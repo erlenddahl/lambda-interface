@@ -2,7 +2,7 @@ import React from 'react';
 import DeckGL from '@deck.gl/react';
 import {GeoJsonLayer} from '@deck.gl/layers';
 import circle from '@turf/circle';
-import './App.css';
+import './LambdaMap.css';
 
 import {TerrainLayer} from '@deck.gl/geo-layers';
 
