@@ -1,5 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DeckGL from '@deck.gl/react';
+import {StaticMap} from 'react-map-gl';
 import {GeoJsonLayer} from '@deck.gl/layers';
 import circle from '@turf/circle';
 import './LambdaMap.css';
@@ -33,47 +35,86 @@ class LambdaMap extends React.Component{
 
   constructor(props){
     super(props);
-    this.state = { hoveredObject: null };
+
+    this.onMapClicked = this.onMapClicked.bind(this);
+
+    this.state = { 
+      hoveredObject: null,
+      stations: [
+        {
+          id: 1254,
+          name: "Test",
+          color: {
+            r: 160,
+            g: 0,
+            b: 0,
+            a: 255
+          },
+          lngLat: [10.355430273040675, 63.42050427064208],
+          frequency: 22000,
+          height: 300
+        },
+        {
+          id: 1255,
+          name: "Alfabra",
+          color: {
+            r: 160,
+            g: 0,
+            b: 0,
+            a: 255
+          },
+          lngLat: [10.355430273040675, 63.41050427064208],
+          frequency: 22000,
+          height: 300
+        }
+      ]
+    };
+  }
+
+  onMapClicked(info){
+
+    this.setState((state) => {
+      state.stations.push({
+        id: -1,
+        name: "New station",
+        color: {
+          r: 0,
+          g: 160,
+          b: 0,
+          a: 255
+        },
+        lngLat: info.lngLat,
+        frequency: 22000,
+        height: 300
+      });
+    });
+
+    this.props.onMapClicked(info);
   }
 
   render(){
 
-    const stations = [
-      {
-        id: 1254,
-        name: "Test",
-        color: {
-          r: 160,
-          g: 0,
-          b: 0,
-          a: 255
-        },
-        latLng: [63.42050427064208, 10.355430273040675],
-        frequency: 22000,
-        height: 300
-      }
-    ];
-  
     const data = {
       "type":"FeatureCollection",
-      "features": stations.map(p => ({"type":"Feature","properties": p,"geometry":{"type":"Polygon","coordinates":circle([p.latLng[1], p.latLng[0]], 0.01).geometry.coordinates}}))
+      "features": this.state.stations.map(p => ({"type":"Feature","properties": p,"geometry":{"type":"Polygon","coordinates":circle([p.lngLat[0], p.lngLat[1]], 0.01).geometry.coordinates}}))
     };
+
+    new TerrainLayer({
+      id: 'terrain',
+      minZoom: 0,
+      maxZoom: 23,
+      strategy: 'no-overlap',
+      elevationDecoder: ELEVATION_DECODER,
+      elevationData: TERRAIN_IMAGE,
+      texture: SURFACE_IMAGE,
+      wireframe: false,
+      color: [255, 255, 255]
+    });
 
     return <DeckGL 
       initialViewState={INITIAL_VIEW_STATE} 
       controller={true} 
       layers={[
-        new TerrainLayer({
-          id: 'terrain',
-          minZoom: 0,
-          maxZoom: 23,
-          strategy: 'no-overlap',
-          elevationDecoder: ELEVATION_DECODER,
-          elevationData: TERRAIN_IMAGE,
-          texture: SURFACE_IMAGE,
-          wireframe: false,
-          color: [255, 255, 255]
-        }),
         new GeoJsonLayer({
           id: 'geojson-layer',
           data,
@@ -88,13 +129,19 @@ class LambdaMap extends React.Component{
           getLineWidth: 1,
           getElevation: p => p.properties.height,
           autoHighlight: true,
-          highlightColor: [0,0,0,255],
-          onClick: info => console.log("CLICK", info)
+          highlightColor: [0,0,0,255]
         })
     ]}
-    getTooltip={function(info){return info.object && info.object.properties.name; }}>
+    getTooltip={function(info){return info.object && info.object.properties.name; }}
+    onClick={this.onMapClicked}
+    getCursor={() => 'crosshair'}>
+      <StaticMap mapboxApiAccessToken={MAPBOX_TOKEN} mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" />
     </DeckGL>;
   }
+}
+
+LambdaMap.propTypes = {
+  onMapClicked: PropTypes.func.isRequired
 }
 
 export default LambdaMap;
