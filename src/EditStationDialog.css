@@ -1,9 +1,6 @@
 .station-editor{
-    position: absolute;
-    z-index: 1;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.7);
-    width: 300px;
+    padding: 10px;
+    width: 100%;
 }
 
 .station-editor button{

@@ -1,9 +1,11 @@
 import React from 'react';
 import LambdaMap from './LambdaMap';
 import EditStationDialog from './EditStationDialog'
+import Sidebar from './Sidebar'
 import _ from 'lodash';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 class App extends React.Component {
 
@@ -133,7 +135,9 @@ class App extends React.Component {
 
     render() {
         return (<div>
-            <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.isEditing} />
+            <Sidebar>
+                <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.isEditing} />
+            </Sidebar>
             <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} />
         </div>)
     }
