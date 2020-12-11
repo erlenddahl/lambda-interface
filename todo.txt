@@ -1,0 +1,14 @@
+importStationsDialog: 
+    Use different SRIDs
+    Allow picking columns for different fields
+
+lambdaMap:
+    Show icons instead of poles when zooming out
+    More layer options
+    Allow 3D with stations and other layers being draw correctly on top of the terrain
+
+app:
+    Better menu organization
+    Add attribute table
+        Searchable
+        Zoom to station on map
