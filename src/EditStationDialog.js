@@ -30,7 +30,7 @@ class EditStationDialog extends React.Component {
 
     render() {
         if (!this.props.selectedStation) return null;
-        return <div className="station-editor">
+        return <div className="station-editor sidebar-block">
             <h2>{this.props.isEditing ? "Edit station" : "New station"}</h2>
             <FormGroup>
                 <FormLabel>Location:</FormLabel>

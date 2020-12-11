@@ -2,7 +2,10 @@ import React from 'react';
 import LambdaMap from './LambdaMap';
 import EditStationDialog from './EditStationDialog'
 import Sidebar from './Sidebar'
+import MainMenu from './MainMenu'
 import _ from 'lodash';
+
+import { faCloudUpload, faMapMarkerEdit } from '@fortawesome/pro-solid-svg-icons'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -16,11 +19,23 @@ class App extends React.Component {
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
         this.onEditDelete = this.onEditDelete.bind(this);
+        this.onMenuItemClicked = this.onMenuItemClicked.bind(this);
 
         this.defaultStationColor = [160, 0, 0, 255];
         this.editedStationColor = [0, 160, 0, 255];
 
         this.state = {
+            menuItems: [
+                {
+                    icon: faMapMarkerEdit,
+                    text: "Edit",
+                    active: true
+                },
+                {
+                    icon: faCloudUpload,
+                    text: "Import"
+                }
+            ],
             selectedStation: null,
             clickedPoint: null,
             stations: [
@@ -51,14 +66,16 @@ class App extends React.Component {
         let wasCreatedNow = false;
         let wasExistingActivated = false;
 
-        if(info.object && !selectedStation){
+        if (info.object && !selectedStation) {
             selectedStation = info.object.properties;
             selectedStation.color = this.editedStationColor;
             wasExistingActivated = true;
-            this.setState({ editOriginal: {
-                lngLat: selectedStation.lngLat,
-                id: selectedStation.id
-            } });
+            this.setState({
+                editOriginal: {
+                    lngLat: selectedStation.lngLat,
+                    id: selectedStation.id
+                }
+            });
         }
 
         if (!selectedStation) {
@@ -72,8 +89,8 @@ class App extends React.Component {
                 height: 300
             };
         }
-        
-        if(!wasCreatedNow && !wasExistingActivated){
+
+        if (!wasCreatedNow && !wasExistingActivated) {
             selectedStation.lngLat = info.lngLat;
         }
 
@@ -98,7 +115,7 @@ class App extends React.Component {
 
         values.color = this.defaultStationColor;
 
-        if(isNew)
+        if (isNew)
             values.id = _(this.state.stations).map("id").max() + 1;
 
         console.log(values);
@@ -113,9 +130,9 @@ class App extends React.Component {
 
         this.setState((state) => ({
             selectedStation: null,
-            stations: state.stations.map(p => { 
-                p.color = this.defaultStationColor; 
-                if(this.state.editOriginal && p.id == this.state.editOriginal.id){
+            stations: state.stations.map(p => {
+                p.color = this.defaultStationColor;
+                if (this.state.editOriginal && p.id == this.state.editOriginal.id) {
                     p.lngLat = this.state.editOriginal.lngLat;
                 }
                 return p;
@@ -125,7 +142,7 @@ class App extends React.Component {
 
     onEditDelete() {
 
-        if(!this.state.editOriginal) return;
+        if (!this.state.editOriginal) return;
 
         this.setState((state) => ({
             selectedStation: null,
@@ -133,11 +150,22 @@ class App extends React.Component {
         }));
     }
 
+    onMenuItemClicked(item){
+        this.setState(state => ({
+            menuItems: state.menuItems.map(p => {
+                p.active = p.text == item.text;
+                return p;
+            })
+        }));
+    }
+
     render() {
         return (<div>
-            <Sidebar>
-                <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.isEditing} />
-            </Sidebar>
+            <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
+            {this.state.selectedStation &&
+                <Sidebar style={{ marginTop: "60px" }}>
+                    <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.isEditing} />
+                </Sidebar>}
             <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} />
         </div>)
     }

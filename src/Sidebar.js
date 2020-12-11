@@ -10,14 +10,15 @@ class Sidebar extends React.Component {
     }
 
     render() {
-        return <div className="sidebar">
+        return <div className="sidebar" style={this.props.style}>
             {this.props.children}
         </div>
     }
 }
 
 Sidebar.propTypes = {
-    children: PropTypes.array
+    children: PropTypes.element,
+    style: PropTypes.object
 };
 
 export default Sidebar;
