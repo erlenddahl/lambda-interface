@@ -36,67 +36,16 @@ class LambdaMap extends React.Component{
   constructor(props){
     super(props);
 
-    this.onMapClicked = this.onMapClicked.bind(this);
-
     this.state = { 
-      hoveredObject: null,
-      stations: [
-        {
-          id: 1254,
-          name: "Test",
-          color: {
-            r: 160,
-            g: 0,
-            b: 0,
-            a: 255
-          },
-          lngLat: [10.355430273040675, 63.42050427064208],
-          frequency: 22000,
-          height: 300
-        },
-        {
-          id: 1255,
-          name: "Alfabra",
-          color: {
-            r: 160,
-            g: 0,
-            b: 0,
-            a: 255
-          },
-          lngLat: [10.355430273040675, 63.41050427064208],
-          frequency: 22000,
-          height: 300
-        }
-      ]
+      hoveredObject: null
     };
-  }
-
-  onMapClicked(info){
-
-    this.setState((state) => {
-      state.stations.push({
-        id: -1,
-        name: "New station",
-        color: {
-          r: 0,
-          g: 160,
-          b: 0,
-          a: 255
-        },
-        lngLat: info.lngLat,
-        frequency: 22000,
-        height: 300
-      });
-    });
-
-    this.props.onMapClicked(info);
   }
 
   render(){
 
     const data = {
       "type":"FeatureCollection",
-      "features": this.state.stations.map(p => ({"type":"Feature","properties": p,"geometry":{"type":"Polygon","coordinates":circle([p.lngLat[0], p.lngLat[1]], 0.01).geometry.coordinates}}))
+      "features": this.props.stations.map(p => ({"type":"Feature","properties": p,"geometry":{"type":"Polygon","coordinates":circle([p.lngLat[0], p.lngLat[1]], 0.01).geometry.coordinates}}))
     };
 
     new TerrainLayer({
@@ -111,7 +60,7 @@ class LambdaMap extends React.Component{
       color: [255, 255, 255]
     });
 
-    return <DeckGL 
+    return (<DeckGL 
       initialViewState={INITIAL_VIEW_STATE} 
       controller={true} 
       layers={[
@@ -124,7 +73,7 @@ class LambdaMap extends React.Component{
           extruded: true,
           lineWidthScale: 20,
           lineWidthMinPixels: 2,
-          getFillColor: p => { console.log("COLOR", p); var c = p.properties.color || {}; if(p.properties.isSelected){ c = [0,0,0,255]; } return [c.r || 0, c.g || 0, c.b || 0, c.a || 255]; },
+          getFillColor: p => p.properties.color,
           getRadius: 10,
           getLineWidth: 1,
           getElevation: p => p.properties.height,
@@ -133,15 +82,16 @@ class LambdaMap extends React.Component{
         })
     ]}
     getTooltip={function(info){return info.object && info.object.properties.name; }}
-    onClick={this.onMapClicked}
+    onClick={this.props.onMapClicked}
     getCursor={() => 'crosshair'}>
       <StaticMap mapboxApiAccessToken={MAPBOX_TOKEN} mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" />
-    </DeckGL>;
+    </DeckGL>);
   }
 }
 
 LambdaMap.propTypes = {
-  onMapClicked: PropTypes.func.isRequired
+  onMapClicked: PropTypes.func.isRequired,
+  stations: PropTypes.array.isRequired
 }
 
 export default LambdaMap;
