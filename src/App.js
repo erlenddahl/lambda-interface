@@ -9,6 +9,7 @@ import { faCloudUpload, faMapMarkerEdit } from '@fortawesome/pro-solid-svg-icons
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import ImportStationsDialog from './importStationsDialog';
 
 class App extends React.Component {
 
@@ -16,10 +17,15 @@ class App extends React.Component {
         super(props);
 
         this.onMapClicked = this.onMapClicked.bind(this);
+
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
         this.onEditDelete = this.onEditDelete.bind(this);
+        
         this.onMenuItemClicked = this.onMenuItemClicked.bind(this);
+        
+        this.onImportSaved = this.onImportSaved.bind(this);
+        this.onImportCancelled = this.onImportCancelled.bind(this);
 
         this.defaultStationColor = [160, 0, 0, 255];
         this.editedStationColor = [0, 160, 0, 255];
@@ -159,12 +165,24 @@ class App extends React.Component {
         }));
     }
 
+    onImportSaved(){
+        
+    }
+
+    onImportCancelled(){
+        
+    }
+
     render() {
         return (<div>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             {this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.isEditing} />
+                </Sidebar>}
+            {true &&
+                <Sidebar style={{ marginTop: "60px", width: "600px" }}>
+                    <ImportStationsDialog onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
                 </Sidebar>}
             <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} />
         </div>)
