@@ -4,9 +4,11 @@ import FormControl from 'react-bootstrap/FormControl';
 import FormCheck from 'react-bootstrap/FormCheck';
 import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
+import Alert from 'react-bootstrap/Alert'
 import PropTypes from 'prop-types';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
+import Papa from 'papaparse';
 
 import { WithOnChangeHandler } from 'formik-form-callbacks';
 
@@ -19,7 +21,7 @@ class ImportStationsDialog extends React.Component {
         this.onFormValueChanged = this.onFormValueChanged.bind(this);
 
         this.validation = yup.object().shape({
-            separator: yup.string().required(),
+            delimiter: yup.string().required(),
             decimalSign: yup.string().required(),
             hasHeaders: yup.bool(),
             csv: yup.string().required()
@@ -27,11 +29,11 @@ class ImportStationsDialog extends React.Component {
 
         this.state = {
             defaultValues: {
-                separator: ";",
+                delimiter: ";",
                 decimalSign: ",",
                 hasHeaders: true,
                 csv: "id;name;frequency;height;lat;lng\r\n" + 
-                     "181199;Station name;25000;250;10,365430273040675;63,42050427064208"
+                     "181199;Station name;25000;250;63,42050427064208;10,365430273040675"
             }
         }
     }
@@ -41,11 +43,30 @@ class ImportStationsDialog extends React.Component {
         this.props.onSave(values);
     }
 
+    parseNumberWithSign(v, decimalSign, error){
+        if(v == null) throw error;
+        if(decimalSign == ".")
+            return parseFloat(v.replaceAll(",", ""));
+        else
+            return parseFloat(v.replaceAll(".", "").replaceAll(",", "."));
+    }
+
     onFormValueChanged(values, errors){
+
+        if(this.formValues){
+            var isChanged = false;
+            for(var key in values)
+                if(this.formValues.values[key] != values[key]){
+                    isChanged = true;
+                    break;
+                }
+
+            if(!isChanged) return;
+        }
 
         if(this.formValues && this.formValues.timer){
             clearTimeout(this.formValues.timer);
-        } 
+        }
 
         this.formValues = {
             values, 
@@ -54,7 +75,45 @@ class ImportStationsDialog extends React.Component {
             timer: setTimeout(() => {
                 if(!this.formValues.hasErrors){
                     // Now, here is an actual valid form change.
-                    console.log(this.formValues.values);
+
+                    try{
+                        const csv = Papa.parse(values.csv, {
+                            delimiter: values.delimiter,
+                            header: values.hasHeaders
+                        });
+    
+                        const previewStations = csv.data.map((p, i) => ({
+                            id: p.id,
+                            name: p.name,
+                            frequency: this.parseNumberWithSign(p.frequency, values.decimalSign, "Invalid frequency at line " + i),
+                            height: this.parseNumberWithSign(p.height, values.decimalSign, "Invalid height at line " + i),
+                            lngLat: [this.parseNumberWithSign(p.lng, values.decimalSign, "Invalid lng at line " + i), this.parseNumberWithSign(p.lat, values.decimalSign, "Invalid lat at line " + i)],
+                            color: [100, 100, 100, 100],
+                            state: "preview"
+                        }));
+
+                        if(previewStations.map((p, i) => {
+                            if(!p.id && p.id != 0) throw "Invalid id at line " + i;
+                            if(!p.name) throw "Invalid name at line " + i;
+                            if(isNaN(p.frequency)) throw "Invalid frequency at line " + i;
+                            if(isNaN(p.height)) throw "Invalid height at line " + i;
+                            if(isNaN(p.lngLat[0])) throw "Invalid lng at line " + i;
+                            if(isNaN(p.lngLat[1])) throw "Invalid lat at line " + i;
+                        }))
+    
+                        this.setState({
+                            parsedStations: previewStations.length,
+                            parseError: null
+                        });
+
+                        this.props.onPreview(previewStations);
+                    }catch(err){
+                        this.setState({
+                            parsedStations: null,
+                            parseError: JSON.stringify(err)
+                        });
+                        this.props.onPreview([]);
+                    }
                 }
             }, 500)
         };
@@ -70,12 +129,12 @@ class ImportStationsDialog extends React.Component {
             >
                 {({ isSubmitting }) => (
                     <Form>
-                        <Field name="separator">
+                        <Field name="delimiter">
                             {({ field }) => (
-                                <FormGroup controlId="separator">
-                                    <FormLabel>Separator:</FormLabel>
+                                <FormGroup controlId="delimiter">
+                                    <FormLabel>Delimiter:</FormLabel>
                                     <FormControl type="text" {...field} />
-                                    <ErrorMessage name="separator" component="div" />
+                                    <ErrorMessage name="delimiter" component="div" />
                                 </FormGroup>
                             )}
                         </Field>
@@ -110,8 +169,11 @@ class ImportStationsDialog extends React.Component {
                             {({ values, errors }) => this.onFormValueChanged(values, errors)}
                         </WithOnChangeHandler>
 
-                        <Button disabled={isSubmitting} type="submit">Import</Button>
-                        <Button variant="secondary" disabled={isSubmitting} onClick={this.props.onCancel}>Cancel</Button>
+                        {this.state.parsedStations && <Alert variant="info">Previewing {this.state.parsedStations} parsed stations on the map.</Alert>}
+                        {this.state.parseError && <Alert variant="danger">Parse error: {this.state.parseError}</Alert>}
+
+                        <Button className="w-100 mb-2" disabled={isSubmitting || this.state.parseError} type="submit">{(this.state.parseError || !this.state.parsedStations) ? "[Nothing to import]" : "Import " + this.state.parsedStations + " stations"}</Button>
+                        <Button className="w-100 mb-2" variant="secondary" disabled={isSubmitting} onClick={this.props.onCancel}>Cancel</Button>
                     </Form>
                 )}
             </Formik>
@@ -122,6 +184,7 @@ class ImportStationsDialog extends React.Component {
 ImportStationsDialog.propTypes = {
     onSave: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
+    onPreview: PropTypes.func.isRequired
 };
 
 export default ImportStationsDialog;

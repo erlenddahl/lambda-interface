@@ -26,6 +26,7 @@ class App extends React.Component {
         
         this.onImportSaved = this.onImportSaved.bind(this);
         this.onImportCancelled = this.onImportCancelled.bind(this);
+        this.onImportPreview = this.onImportPreview.bind(this);
 
         this.defaultStationColor = [160, 0, 0, 255];
         this.editedStationColor = [0, 160, 0, 255];
@@ -35,13 +36,16 @@ class App extends React.Component {
                 {
                     icon: faMapMarkerEdit,
                     text: "Edit",
+                    cmd: "edit",
                     active: true
                 },
                 {
                     icon: faCloudUpload,
-                    text: "Import"
+                    text: "Import",
+                    cmd: "import"
                 }
             ],
+            activeCommand: "edit",
             selectedStation: null,
             clickedPoint: null,
             stations: [
@@ -66,6 +70,8 @@ class App extends React.Component {
     }
 
     onMapClicked(info) {
+
+        if(this.state.activeCommand != "edit") return;
 
         let selectedStation = this.state.selectedStation;
 
@@ -161,16 +167,42 @@ class App extends React.Component {
             menuItems: state.menuItems.map(p => {
                 p.active = p.text == item.text;
                 return p;
-            })
+            }),
+            activeCommand: item.cmd
         }));
+
+        if(this.state.selectedStation && item.cmd != "edit") this.onEditCancelled();
+        if(_.some(this.state.stations, p => p.state == "preview") && item.cmd != "import") this.removePreviewedStations();
     }
 
     onImportSaved(){
-        
+        this.setState(state => ({
+            stations: state.stations.map(p => {
+                if(p.state == "preview"){
+                    p.state = null;
+                    p.color = this.defaultStationColor;
+                }
+                return p;
+            })
+        }));
+        this.onMenuItemClicked(this.state.menuItems[0]);
+    }
+
+    removePreviewedStations(){
+        this.setState(state => ({
+            stations: state.stations.filter(p => p.state != "preview")
+        }));
     }
 
     onImportCancelled(){
-        
+        this.removePreviewedStations();
+        this.onMenuItemClicked(this.state.menuItems[0]);
+    }
+
+    onImportPreview(previewStations){
+        this.setState(state => ({
+            stations: state.stations.filter(p => p.state != "preview").concat(previewStations)
+        }));
     }
 
     render() {
@@ -180,9 +212,9 @@ class App extends React.Component {
                 <Sidebar style={{ marginTop: "60px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.isEditing} />
                 </Sidebar>}
-            {true &&
+            {this.state.activeCommand == "import" &&
                 <Sidebar style={{ marginTop: "60px", width: "600px" }}>
-                    <ImportStationsDialog onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
+                    <ImportStationsDialog onPreview={this.onImportPreview} onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
                 </Sidebar>}
             <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} />
         </div>)
