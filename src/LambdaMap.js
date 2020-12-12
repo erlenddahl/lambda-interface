@@ -49,6 +49,19 @@ class LambdaMap extends React.Component{
     return [160, 0, 0, 255];
   }
 
+  getStationTooltip(station){
+    var prefix = "Station";
+
+    if(station.state == "new")
+      prefix = "Newly created station";
+    if(station.state == "edited" || station.isEditClone)
+      prefix = "Currently edited station";
+    if(station.state == "preview")
+      prefix = "Import preview station";
+
+    return prefix + " (" + station.name + ")";
+  }
+
   render(){
 
     const data = {
@@ -89,7 +102,7 @@ class LambdaMap extends React.Component{
           highlightColor: [0,0,0,255]
         })
     ]}
-    getTooltip={function(info){return info.object && info.object.properties.name; }}
+    getTooltip={info => info.object && this.getStationTooltip(info.object.properties)}
     onClick={this.props.onMapClicked}
     getCursor={() => 'crosshair'}>
       <StaticMap mapboxApiAccessToken={MAPBOX_TOKEN} mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" />
