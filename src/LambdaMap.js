@@ -41,6 +41,14 @@ class LambdaMap extends React.Component{
     };
   }
 
+  getStationColor(station){
+    if(station.state == "new") return [0, 160, 0, 255];
+    if(station.state == "edited") return [100, 100, 100, 100];
+    if(station.state == "preview") return [255, 247, 0, 255];
+
+    return [160, 0, 0, 255];
+  }
+
   render(){
 
     const data = {
@@ -73,7 +81,7 @@ class LambdaMap extends React.Component{
           extruded: true,
           lineWidthScale: 20,
           lineWidthMinPixels: 2,
-          getFillColor: p => p.properties.color,
+          getFillColor: p => this.getStationColor(p.properties),
           getRadius: 10,
           getLineWidth: 1,
           getElevation: p => p.properties.height,

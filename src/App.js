@@ -28,9 +28,6 @@ class App extends React.Component {
         this.onImportCancelled = this.onImportCancelled.bind(this);
         this.onImportPreview = this.onImportPreview.bind(this);
 
-        this.defaultStationColor = [160, 0, 0, 255];
-        this.editedStationColor = [0, 160, 0, 255];
-
         this.state = {
             menuItems: [
                 {
@@ -52,7 +49,6 @@ class App extends React.Component {
                 {
                     id: 1254,
                     name: "Stasjon 1",
-                    color: this.defaultStationColor,
                     lngLat: [10.355430273040675, 63.42050427064208],
                     frequency: 22000,
                     height: 300
@@ -60,7 +56,6 @@ class App extends React.Component {
                 {
                     id: 1255,
                     name: "Alfabra",
-                    color: this.defaultStationColor,
                     lngLat: [10.355430273040675, 63.41050427064208],
                     frequency: 22000,
                     height: 300
@@ -79,27 +74,22 @@ class App extends React.Component {
         let wasExistingActivated = false;
 
         if (info.object && !selectedStation) {
-            selectedStation = info.object.properties;
-            selectedStation.color = this.editedStationColor;
             wasExistingActivated = true;
-            this.setState({
-                editOriginal: {
-                    lngLat: selectedStation.lngLat,
-                    id: selectedStation.id
-                }
-            });
         }
 
         if (!selectedStation) {
             wasCreatedNow = true;
-            selectedStation = {
-                id: -1,
-                name: "New station",
-                color: this.editedStationColor,
-                lngLat: info.lngLat,
-                frequency: 22000,
-                height: 300
-            };
+            if(wasExistingActivated)
+                selectedStation = {...info.object.properties, state: "new", isEditClone: true};
+            else
+                selectedStation = {
+                    id: -1,
+                    name: "New station",
+                    lngLat: info.lngLat,
+                    frequency: 22000,
+                    height: 300,
+                    state: "new"
+                };
         }
 
         if (!wasCreatedNow && !wasExistingActivated) {
@@ -108,33 +98,37 @@ class App extends React.Component {
 
         this.setState((state) => {
 
-            var newState = {
+            const newlyCreated = wasCreatedNow ? [selectedStation] : [];
+
+            return {
                 selectedStation: selectedStation,
-                isEditing: selectedStation.id != -1
+                stations: state.stations.map(p => {
+                    if(wasExistingActivated && p.id == info.object.properties.id){
+                        p.state = "edited";
+                    }
+                    return p;
+                }).concat(newlyCreated)
             };
+        });
+    }
 
-            if (wasCreatedNow)
-                newState.stations = state.stations.concat(selectedStation);
-
-            return newState;
+    resetStationList(stations){
+        return stations.filter(p => p.state != "preview" && p.state != "new").map(p => {
+            p.state = null;
+            return p;
         });
     }
 
     onEditSaved(values) {
 
-        const isNew = values.id == -1;
-        const originalId = values.id;
-
-        values.color = this.defaultStationColor;
+        const isNew = values.state == "new"
 
         if (isNew)
             values.id = _(this.state.stations).map("id").max() + 1;
 
-        console.log(values);
-
         this.setState((state) => ({
             selectedStation: null,
-            stations: state.stations.map(p => p.id == originalId ? values : p)
+            stations: this.resetStationList(state.stations.map(p => p.state == "edited" ? values : p))
         }));
     }
 
@@ -142,23 +136,17 @@ class App extends React.Component {
 
         this.setState((state) => ({
             selectedStation: null,
-            stations: state.stations.map(p => {
-                p.color = this.defaultStationColor;
-                if (this.state.editOriginal && p.id == this.state.editOriginal.id) {
-                    p.lngLat = this.state.editOriginal.lngLat;
-                }
-                return p;
-            }).filter(p => p.id != -1)
+            stations: this.resetStationList(state.stations)
         }));
     }
 
     onEditDelete() {
 
-        if (!this.state.editOriginal) return;
+        if (!this.state.selectedStation.isEditClone) return;
 
         this.setState((state) => ({
             selectedStation: null,
-            stations: state.stations.filter(p => p.id != this.state.editOriginal.id)
+            stations: this.resetStationList(state.stations.filter(p => p.state != "edited"))
         }));
     }
 
@@ -180,7 +168,6 @@ class App extends React.Component {
             stations: state.stations.map(p => {
                 if(p.state == "preview"){
                     p.state = null;
-                    p.color = this.defaultStationColor;
                 }
                 return p;
             })
@@ -210,7 +197,7 @@ class App extends React.Component {
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             {this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
-                    <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.isEditing} />
+                    <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.selectedStation.isEditClone} />
                 </Sidebar>}
             {this.state.activeCommand == "import" &&
                 <Sidebar style={{ marginTop: "60px", width: "600px" }}>
