@@ -8,6 +8,9 @@ lambdaMap:
     More layer options
     Allow 3D with stations and other layers being draw correctly on top of the terrain
 
+editStationDialog:
+    Add id as edit field (and remove auto generated id in App.js)
+
 app:
     Better menu organization
     Add attribute table

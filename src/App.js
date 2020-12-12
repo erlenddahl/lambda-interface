@@ -9,7 +9,7 @@ import { faCloudUpload, faMapMarkerEdit } from '@fortawesome/pro-solid-svg-icons
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import ImportStationsDialog from './importStationsDialog';
+import ImportStationsDialog from './ImportStationsDialog';
 
 class App extends React.Component {
 
@@ -121,9 +121,7 @@ class App extends React.Component {
 
     onEditSaved(values) {
 
-        const isNew = values.state == "new"
-
-        if (isNew)
+        if (values.state == "new")
             values.id = _(this.state.stations).map("id").max() + 1;
 
         this.setState((state) => ({
