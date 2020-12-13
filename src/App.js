@@ -1,11 +1,12 @@
 import React from 'react';
 import LambdaMap from './LambdaMap';
 import EditStationDialog from './EditStationDialog'
+import CalculatorSetup from './CalculatorSetup'
 import Sidebar from './Sidebar'
 import MainMenu from './MainMenu'
 import _ from 'lodash';
 
-import { faCloudUpload, faMapMarkerEdit } from '@fortawesome/pro-solid-svg-icons'
+import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList } from '@fortawesome/pro-solid-svg-icons'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -21,9 +22,9 @@ class App extends React.Component {
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
         this.onEditDelete = this.onEditDelete.bind(this);
-        
+
         this.onMenuItemClicked = this.onMenuItemClicked.bind(this);
-        
+
         this.onImportSaved = this.onImportSaved.bind(this);
         this.onImportCancelled = this.onImportCancelled.bind(this);
         this.onImportPreview = this.onImportPreview.bind(this);
@@ -40,6 +41,16 @@ class App extends React.Component {
                     icon: faCloudUpload,
                     text: "Import",
                     cmd: "import"
+                },
+                {
+                    icon: faClipboardList,
+                    text: "List",
+                    cmd: "list"
+                },
+                {
+                    icon: faAbacus,
+                    text: "Calculate",
+                    cmd: "calculate"
                 }
             ],
             activeCommand: "edit",
@@ -66,7 +77,7 @@ class App extends React.Component {
 
     onMapClicked(info) {
 
-        if(this.state.activeCommand != "edit") return;
+        if (this.state.activeCommand != "edit") return;
 
         let selectedStation = this.state.selectedStation;
 
@@ -79,8 +90,8 @@ class App extends React.Component {
 
         if (!selectedStation) {
             wasCreatedNow = true;
-            if(wasExistingActivated)
-                selectedStation = {...info.object.properties, state: "new", isEditClone: true};
+            if (wasExistingActivated)
+                selectedStation = { ...info.object.properties, state: "new", isEditClone: true };
             else
                 selectedStation = {
                     id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
@@ -103,7 +114,7 @@ class App extends React.Component {
             return {
                 selectedStation: selectedStation,
                 stations: state.stations.map(p => {
-                    if(wasExistingActivated && p.id == info.object.properties.id){
+                    if (wasExistingActivated && p.id == info.object.properties.id) {
                         p.state = "edited";
                     }
                     return p;
@@ -112,7 +123,7 @@ class App extends React.Component {
         });
     }
 
-    resetStationList(stations){
+    resetStationList(stations) {
         return stations.filter(p => p.state != "preview" && p.state != "new").map(p => {
             p.state = null;
             return p;
@@ -145,7 +156,7 @@ class App extends React.Component {
         }));
     }
 
-    onMenuItemClicked(item){
+    onMenuItemClicked(item) {
         this.setState(state => ({
             menuItems: state.menuItems.map(p => {
                 p.active = p.text == item.text;
@@ -154,14 +165,14 @@ class App extends React.Component {
             activeCommand: item.cmd
         }));
 
-        if(this.state.selectedStation && item.cmd != "edit") this.onEditCancelled();
-        if(_.some(this.state.stations, p => p.state == "preview") && item.cmd != "import") this.removePreviewedStations();
+        if (this.state.selectedStation && item.cmd != "edit") this.onEditCancelled();
+        if (_.some(this.state.stations, p => p.state == "preview") && item.cmd != "import") this.removePreviewedStations();
     }
 
-    onImportSaved(){
+    onImportSaved() {
         this.setState(state => ({
             stations: state.stations.map(p => {
-                if(p.state == "preview"){
+                if (p.state == "preview") {
                     p.state = null;
                 }
                 return p;
@@ -170,18 +181,18 @@ class App extends React.Component {
         this.onMenuItemClicked(this.state.menuItems[0]);
     }
 
-    removePreviewedStations(){
+    removePreviewedStations() {
         this.setState(state => ({
             stations: state.stations.filter(p => p.state != "preview")
         }));
     }
 
-    onImportCancelled(){
+    onImportCancelled() {
         this.removePreviewedStations();
         this.onMenuItemClicked(this.state.menuItems[0]);
     }
 
-    onImportPreview(previewStations){
+    onImportPreview(previewStations) {
         this.setState(state => ({
             stations: state.stations.filter(p => p.state != "preview").concat(previewStations)
         }));
@@ -197,6 +208,10 @@ class App extends React.Component {
             {this.state.activeCommand == "import" &&
                 <Sidebar style={{ marginTop: "60px", width: "600px" }}>
                     <ImportStationsDialog onPreview={this.onImportPreview} onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
+                </Sidebar>}
+            {this.state.activeCommand == "calculate" &&
+                <Sidebar style={{ marginTop: "60px", width: "600px" }}>
+                    <CalculatorSetup />
                 </Sidebar>}
             <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} />
         </div>)
