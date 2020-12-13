@@ -17,6 +17,7 @@ class EditStationDialog extends React.Component {
         this.onSave = this.onSave.bind(this);
 
         this.validation = yup.object().shape({
+            id: yup.string().required(),
             name: yup.string().required(),
             frequency: yup.number().required().positive().integer(),
             height: yup.number().required().positive().required()
@@ -44,6 +45,15 @@ class EditStationDialog extends React.Component {
             >
                 {({ isSubmitting }) => (
                     <Form>
+                        <Field name="id">
+                            {({ field }) => (
+                                <FormGroup controlId="id">
+                                    <FormLabel>Id:</FormLabel>
+                                    <FormControl type="text" {...field} />
+                                    <ErrorMessage name="id" component="div" />
+                                </FormGroup>
+                            )}
+                        </Field>
                         <Field name="name">
                             {({ field }) => (
                                 <FormGroup controlId="name">

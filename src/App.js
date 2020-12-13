@@ -47,14 +47,14 @@ class App extends React.Component {
             clickedPoint: null,
             stations: [
                 {
-                    id: 1254,
+                    id: "1254",
                     name: "Stasjon 1",
                     lngLat: [10.355430273040675, 63.42050427064208],
                     frequency: 22000,
                     height: 300
                 },
                 {
-                    id: 1255,
+                    id: "1255",
                     name: "Alfabra",
                     lngLat: [10.355430273040675, 63.41050427064208],
                     frequency: 22000,
@@ -83,7 +83,7 @@ class App extends React.Component {
                 selectedStation = {...info.object.properties, state: "new", isEditClone: true};
             else
                 selectedStation = {
-                    id: -1,
+                    id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
                     name: "New station",
                     lngLat: info.lngLat,
                     frequency: 22000,
@@ -120,10 +120,7 @@ class App extends React.Component {
     }
 
     onEditSaved(values) {
-
-        if (values.state == "new")
-            values.id = _(this.state.stations).map("id").max() + 1;
-
+        values.state = null;
         this.setState((state) => ({
             selectedStation: null,
             stations: this.resetStationList(state.stations.map(p => p.state == "edited" ? values : p))
