@@ -3,6 +3,10 @@ importStationsDialog:
     Allow picking columns for different fields
     Preview stations on map while entering data (add a way of showing transparent markers in lambdaMap; use for currently edited station as well)
 
+editStationDialog
+    Zoom to location button on location field
+    Editable location
+
 lambdaMap:
     Show icons instead of poles when zooming out
     More layer options

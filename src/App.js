@@ -2,6 +2,7 @@ import React from 'react';
 import LambdaMap from './LambdaMap';
 import EditStationDialog from './EditStationDialog'
 import CalculatorSetup from './CalculatorSetup'
+import StationList from './StationList'
 import Sidebar from './Sidebar'
 import MainMenu from './MainMenu'
 import _ from 'lodash';
@@ -28,6 +29,8 @@ class App extends React.Component {
         this.onImportSaved = this.onImportSaved.bind(this);
         this.onImportCancelled = this.onImportCancelled.bind(this);
         this.onImportPreview = this.onImportPreview.bind(this);
+        
+        this.zoomToStation = this.zoomToStation.bind(this);
 
         this.state = {
             menuItems: [
@@ -198,6 +201,10 @@ class App extends React.Component {
         }));
     }
 
+    zoomToStation(station){
+        
+    }
+
     render() {
         return (<div>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
@@ -212,6 +219,10 @@ class App extends React.Component {
             {this.state.activeCommand == "calculate" &&
                 <Sidebar style={{ marginTop: "60px", width: "600px" }}>
                     <CalculatorSetup />
+                </Sidebar>}
+            {this.state.activeCommand == "list" &&
+                <Sidebar style={{ marginTop: "60px", width: "800px" }}>
+                    <StationList stations={this.state.stations} onStationClicked={this.zoomToStation} />
                 </Sidebar>}
             <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} />
         </div>)
