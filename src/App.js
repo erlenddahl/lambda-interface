@@ -78,7 +78,7 @@ class App extends React.Component {
             ],
             viewport: {
                 width: "100%",
-                height: 900,
+                height: "100%",
                 latitude: 63.42050427064208,
                 longitude: 10.355430273040675,
                 zoom: 13.5,
@@ -224,7 +224,7 @@ class App extends React.Component {
     }
 
     render() {
-        return (<div>
+        return (<div style={{width: "100%", height: "100%"}}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             {this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
