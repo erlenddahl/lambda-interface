@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactMapGL, { FlyToInterpolator } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import circle from '@turf/circle';
-import * as d3 from 'd3-ease';
 import './LambdaMap.css';
+import ReactMapGL from 'react-map-gl';
 
 import { TerrainLayer } from '@deck.gl/geo-layers';
 
@@ -28,20 +27,9 @@ class LambdaMap extends React.Component {
   constructor(props) {
     super(props);
 
-    this.__onViewportChange = this.__onViewportChange.bind(this);
-
     this.state = {
       hoveredObject: null,
-      viewport: {
-        width: "100%",
-        height: 900,
-        latitude: 63.42050427064208,
-        longitude: 10.355430273040675,
-        zoom: 13.5,
-        bearing: 0,
-        pitch: 60,
-        maxPitch: 89
-      }
+      lastZoomOrder: 0
     };
   }
 
@@ -64,25 +52,6 @@ class LambdaMap extends React.Component {
       prefix = "Import preview station";
 
     return prefix + " (" + station.name + ")";
-  }
-
-  __onViewportChange(data) {
-    if (data.pitch > 60) data.pitch = 60;
-    this.setState({ viewport: data });
-  }
-
-  _goToNYC() {
-    //TODO: Somehow use this to zoom to selected station
-    const viewport = {
-      ...this.state.viewport,
-      longitude: -74.1,
-      latitude: 40.7,
-      zoom: 14,
-      transitionDuration: 2500,
-      transitionInterpolator: new FlyToInterpolator(),
-      transitionEasing: d3.easeCubic
-    };
-    this.setState({ viewport });
   }
 
   render() {
@@ -122,12 +91,12 @@ class LambdaMap extends React.Component {
     });
 
     return (<ReactMapGL
-      {...this.state.viewport}
-      onViewportChange={this.__onViewportChange}
+      {...this.props.viewport}
+      onViewportChange={this.props.onViewportChange}
       mapboxApiAccessToken={MAPBOX_TOKEN}>
       <DeckGL
-        initialViewState={this.state.viewport}
-        {...this.state.viewport}
+        initialViewState={this.props.viewport}
+        {...this.props.viewport}
         layers={[geoJsonLayer]}
         getTooltip={info => info.object && this.getStationTooltip(info.object.properties)}
         onClick={this.props.onMapClicked}
@@ -138,7 +107,9 @@ class LambdaMap extends React.Component {
 
 LambdaMap.propTypes = {
   onMapClicked: PropTypes.func.isRequired,
-  stations: PropTypes.array.isRequired
+  stations: PropTypes.array.isRequired,
+  onViewportChange: PropTypes.func.isRequired,
+  viewport: PropTypes.object.isRequired
 }
 
 export default LambdaMap;

@@ -19,6 +19,7 @@ class App extends React.Component {
         super(props);
 
         this.onMapClicked = this.onMapClicked.bind(this);
+        this.onViewportChange = this.onViewportChange.bind(this);
 
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
@@ -29,8 +30,8 @@ class App extends React.Component {
         this.onImportSaved = this.onImportSaved.bind(this);
         this.onImportCancelled = this.onImportCancelled.bind(this);
         this.onImportPreview = this.onImportPreview.bind(this);
-        
-        this.zoomToStation = this.zoomToStation.bind(this);
+
+        this.initiateMapTransition = this.initiateMapTransition.bind(this);
 
         this.state = {
             menuItems: [
@@ -74,7 +75,17 @@ class App extends React.Component {
                     frequency: 22000,
                     height: 300
                 }
-            ]
+            ],
+            viewport: {
+                width: "100%",
+                height: 900,
+                latitude: 63.42050427064208,
+                longitude: 10.355430273040675,
+                zoom: 13.5,
+                bearing: 0,
+                pitch: 60,
+                maxPitch: 89
+            }
         };
     }
 
@@ -201,8 +212,15 @@ class App extends React.Component {
         }));
     }
 
-    zoomToStation(station){
-        
+    initiateMapTransition(transition) {
+        this.setState(state => ({
+            viewport: {...state.viewport, ...transition}
+        }));
+    }
+
+    onViewportChange(data) {
+        if (data.pitch > 60) data.pitch = 60;
+        this.setState({ viewport: data });
     }
 
     render() {
@@ -222,9 +240,9 @@ class App extends React.Component {
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
                 <Sidebar style={{ marginTop: "60px", width: "800px" }}>
-                    <StationList stations={this.state.stations} onStationClicked={this.zoomToStation} />
+                    <StationList stations={this.state.stations} onMapTransitionRequested={this.initiateMapTransition} />
                 </Sidebar>}
-            <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} />
+            <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} viewport={this.state.viewport} onViewportChange={this.onViewportChange} />
         </div>)
     }
 }
