@@ -99,6 +99,8 @@ class ImportStationsDialog extends React.Component {
                             if(isNaN(p.height)) throw "Invalid height at line " + i;
                             if(isNaN(p.lngLat[0])) throw "Invalid lng at line " + i;
                             if(isNaN(p.lngLat[1])) throw "Invalid lat at line " + i;
+                            if(p.lngLat[0] < 0 || p.lngLat[0] > 180) throw "Longitude out of bounds at line " + i;
+                            if(p.lngLat[1] < 0 || p.lngLat[1] > 180) throw "Latitude out of bounds at line " + i;
                         }))
     
                         this.setState({
