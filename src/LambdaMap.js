@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
+import { MVTLayer } from '@deck.gl/geo-layers';
 import circle from '@turf/circle';
 import './LambdaMap.css';
 import ReactMapGL from 'react-map-gl';
@@ -73,6 +74,10 @@ class LambdaMap extends React.Component {
       color: [255, 255, 255]
     });
 
+    const infrastructureLayer = new MVTLayer({
+      data: "https://openinframap.org/tiles/{z}/{x}/{y}.pbf"
+    });
+
     const geoJsonLayer = new GeoJsonLayer({
       id: 'geojson-layer',
       data,
@@ -97,7 +102,7 @@ class LambdaMap extends React.Component {
       <DeckGL
         initialViewState={this.props.viewport}
         {...this.props.viewport}
-        layers={[geoJsonLayer]}
+        layers={[geoJsonLayer, infrastructureLayer]}
         getTooltip={info => info.object && this.getStationTooltip(info.object.properties)}
         onClick={this.props.onMapClicked}
         getCursor={() => 'crosshair'} />
