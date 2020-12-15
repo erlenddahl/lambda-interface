@@ -2,6 +2,7 @@ import React from 'react';
 import LambdaMap from './LambdaMap';
 import EditStationDialog from './EditStationDialog'
 import CalculatorSetup from './CalculatorSetup'
+import LayerPicker from './LayerPicker'
 import StationList from './StationList'
 import Sidebar from './Sidebar'
 import MainMenu from './MainMenu'
@@ -33,6 +34,8 @@ class App extends React.Component {
 
         this.initiateMapTransition = this.initiateMapTransition.bind(this);
 
+        this.onLayerVisibilityChange = this.onLayerVisibilityChange.bind(this);
+
         this.state = {
             menuItems: [
                 {
@@ -57,6 +60,20 @@ class App extends React.Component {
                     cmd: "calculate"
                 }
             ],
+            layers: {
+                terrain: {
+                    name: "Terrain",
+                    visible: false
+                },
+                openinframap: {
+                    name: "Infrastructure (openinframap.org)",
+                    visible: false
+                },
+                mystations: {
+                    name: "My stations",
+                    visible: true
+                }
+            },
             activeCommand: "edit",
             selectedStation: null,
             clickedPoint: null,
@@ -214,7 +231,7 @@ class App extends React.Component {
 
     initiateMapTransition(transition) {
         this.setState(state => ({
-            viewport: {...state.viewport, ...transition}
+            viewport: { ...state.viewport, ...transition }
         }));
     }
 
@@ -223,8 +240,18 @@ class App extends React.Component {
         this.setState({ viewport: data });
     }
 
+    onLayerVisibilityChange(layerKey, visibility){
+        this.setState(state => {
+            const layers = state.layers;
+            layers[layerKey].visible = visibility;
+            return {
+                layers: layers
+            }
+        });
+    }
+
     render() {
-        return (<div style={{width: "100%", height: "100%"}}>
+        return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             {this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
@@ -242,7 +269,11 @@ class App extends React.Component {
                 <Sidebar style={{ marginTop: "60px", width: "800px" }}>
                     <StationList stations={this.state.stations} onMapTransitionRequested={this.initiateMapTransition} />
                 </Sidebar>}
-            <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} viewport={this.state.viewport} onViewportChange={this.onViewportChange} />
+            <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} viewport={this.state.viewport} onViewportChange={this.onViewportChange} layers={this.state.layers}>
+                <div style={{ position: 'absolute', right: 0 }}>
+                    <LayerPicker layers={this.state.layers} onVisibilityChange={this.onLayerVisibilityChange} />
+                </div>
+            </LambdaMap>
         </div>)
     }
 }

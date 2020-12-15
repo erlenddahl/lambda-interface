@@ -62,38 +62,41 @@ class LambdaMap extends React.Component {
       "features": this.props.stations.map(p => ({ "type": "Feature", "properties": p, "geometry": { "type": "Polygon", "coordinates": circle([p.lngLat[0], p.lngLat[1]], 0.01).geometry.coordinates } }))
     };
 
-    new TerrainLayer({
-      id: 'terrain',
-      minZoom: 0,
-      maxZoom: 23,
-      strategy: 'no-overlap',
-      elevationDecoder: ELEVATION_DECODER,
-      elevationData: TERRAIN_IMAGE,
-      texture: SURFACE_IMAGE,
-      wireframe: false,
-      color: [255, 255, 255]
-    });
-
-    const infrastructureLayer = new MVTLayer({
-      data: "https://openinframap.org/tiles/{z}/{x}/{y}.pbf"
-    });
-
-    const geoJsonLayer = new GeoJsonLayer({
-      id: 'geojson-layer',
-      data,
-      pickable: true,
-      stroked: false,
-      filled: true,
-      extruded: true,
-      lineWidthScale: 20,
-      lineWidthMinPixels: 2,
-      getFillColor: p => this.getStationColor(p.properties),
-      getRadius: 10,
-      getLineWidth: 1,
-      getElevation: p => p.properties.height,
-      autoHighlight: true,
-      highlightColor: [0, 0, 0, 255]
-    });
+    const layers = [
+      new TerrainLayer({
+        id: 'terrain',
+        minZoom: 0,
+        maxZoom: 23,
+        strategy: 'no-overlap',
+        elevationDecoder: ELEVATION_DECODER,
+        elevationData: TERRAIN_IMAGE,
+        texture: SURFACE_IMAGE,
+        wireframe: false,
+        color: [255, 255, 255],
+        visible: this.props.layers["terrain"].visible
+      }),
+      new MVTLayer({
+        data: "https://openinframap.org/map.json",
+        visible: this.props.layers["openinframap"].visible
+      }),
+      new GeoJsonLayer({
+        id: 'geojson-layer',
+        data,
+        pickable: true,
+        stroked: false,
+        filled: true,
+        extruded: true,
+        lineWidthScale: 20,
+        lineWidthMinPixels: 2,
+        getFillColor: p => this.getStationColor(p.properties),
+        getRadius: 10,
+        getLineWidth: 1,
+        getElevation: p => p.properties.height,
+        autoHighlight: true,
+        highlightColor: [0, 0, 0, 255],
+        visible: this.props.layers["mystations"].visible
+      })
+    ]
 
     return (<ReactMapGL
       {...this.props.viewport}
@@ -102,10 +105,11 @@ class LambdaMap extends React.Component {
       <DeckGL
         initialViewState={this.props.viewport}
         {...this.props.viewport}
-        layers={[geoJsonLayer, infrastructureLayer]}
+        layers={layers}
         getTooltip={info => info.object && this.getStationTooltip(info.object.properties)}
         onClick={this.props.onMapClicked}
         getCursor={() => 'crosshair'} />
+        {this.props.children}
     </ReactMapGL>);
   }
 }
@@ -114,7 +118,9 @@ LambdaMap.propTypes = {
   onMapClicked: PropTypes.func.isRequired,
   stations: PropTypes.array.isRequired,
   onViewportChange: PropTypes.func.isRequired,
-  viewport: PropTypes.object.isRequired
+  viewport: PropTypes.object.isRequired,
+  layers: PropTypes.object.isRequired,
+  children: PropTypes.element
 }
 
 export default LambdaMap;
