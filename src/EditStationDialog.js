@@ -2,6 +2,7 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
+import InputGroup from 'react-bootstrap/InputGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -67,7 +68,12 @@ class EditStationDialog extends React.Component {
                             {({ field }) => (
                                 <FormGroup controlId="frequency">
                                     <FormLabel>Frequency:</FormLabel>
-                                    <FormControl type="number" {...field} />
+                                    <InputGroup>
+                                        <FormControl type="number" {...field} />
+                                        <InputGroup.Append>
+                                            <InputGroup.Text>Hz</InputGroup.Text>
+                                        </InputGroup.Append>
+                                    </InputGroup>
                                     <ErrorMessage name="frequency" component="div" />
                                 </FormGroup>
                             )}
@@ -76,7 +82,12 @@ class EditStationDialog extends React.Component {
                             {({ field }) => (
                                 <FormGroup controlId="height">
                                     <FormLabel>Height:</FormLabel>
-                                    <FormControl type="number" {...field} />
+                                    <InputGroup>
+                                        <FormControl type="number" {...field} />
+                                        <InputGroup.Append>
+                                            <InputGroup.Text>m</InputGroup.Text>
+                                        </InputGroup.Append>
+                                    </InputGroup>
                                     <ErrorMessage name="height" component="div" />
                                 </FormGroup>
                             )}

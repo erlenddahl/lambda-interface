@@ -41,8 +41,8 @@ class StationList extends React.Component {
         return <tr key={station.id} onClick={() => this.props.onMapTransitionRequested(this._zoomToStation(station))}>
             <td>{station.id}</td>
             <td>{station.name}</td>
-            <td>{station.frequency}</td>
-            <td>{station.height}</td>
+            <td>{station.frequency} Hz</td>
+            <td>{station.height} m</td>
             <td title={station.lngLat[0]}>{station.lngLat[0].toFixed(5)}</td>
             <td title={station.lngLat[1]}>{station.lngLat[1].toFixed(5)}</td>
         </tr>
