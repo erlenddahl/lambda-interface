@@ -260,9 +260,16 @@ class App extends React.Component {
         this.setState(state => {
             const layers = state.layers;
             layers[layerKey].visible = visibility;
-            return {
+
+            const newState = {
                 layers: layers
+            };
+
+            if(layerKey == "terrain" && !visibility && state.viewport.pitch > 60){
+                newState.viewport = {...state.viewport, pitch: 60};
             }
+
+            return newState;
         });
     }
 
