@@ -71,7 +71,7 @@ class EditStationDialog extends React.Component {
                                     <InputGroup>
                                         <FormControl type="number" {...field} />
                                         <InputGroup.Append>
-                                            <InputGroup.Text>Hz</InputGroup.Text>
+                                            <InputGroup.Text style={{width: "45px"}}>Hz</InputGroup.Text>
                                         </InputGroup.Append>
                                     </InputGroup>
                                     <ErrorMessage name="frequency" component="div" />
@@ -85,7 +85,7 @@ class EditStationDialog extends React.Component {
                                     <InputGroup>
                                         <FormControl type="number" {...field} />
                                         <InputGroup.Append>
-                                            <InputGroup.Text>m</InputGroup.Text>
+                                            <InputGroup.Text style={{width: "45px"}}>m</InputGroup.Text>
                                         </InputGroup.Append>
                                     </InputGroup>
                                     <ErrorMessage name="height" component="div" />
