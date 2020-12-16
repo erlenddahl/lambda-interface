@@ -236,7 +236,7 @@ class App extends React.Component {
     }
 
     onViewportChange(data) {
-        if (data.pitch > 60) data.pitch = 60;
+        if (data.pitch > 60 && !this.state.layers.terrain.visible) data.pitch = 60;
         this.setState({ viewport: data });
     }
 
