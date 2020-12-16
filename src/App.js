@@ -63,15 +63,29 @@ class App extends React.Component {
             layers: {
                 terrain: {
                     name: "Terrain",
-                    visible: false
+                    visible: false,
+                    enabled: true
                 },
                 openinframap: {
                     name: "Infrastructure (openinframap.org)",
                     visible: false
                 },
+                cellcoverage: {
+                    name: "Cell coverage",
+                    visible: false
+                },
+                aadt: {
+                    name: "Traffic",
+                    visible: false
+                },
+                roadnetwork: {
+                    name: "Road network",
+                    visible: false
+                },
                 mystations: {
                     name: "My stations",
-                    visible: true
+                    visible: true,
+                    enabled: true
                 }
             },
             activeCommand: "edit",
@@ -241,6 +255,8 @@ class App extends React.Component {
     }
 
     onLayerVisibilityChange(layerKey, visibility){
+        if(!this.state.layers[layerKey].enabled) return;
+
         this.setState(state => {
             const layers = state.layers;
             layers[layerKey].visible = visibility;

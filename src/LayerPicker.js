@@ -15,7 +15,7 @@ class LayerPicker extends React.Component {
     render() {
         return (<div className="layer-picker">
             {Object.keys(this.props.layers).map(p => ({key: p, ...this.props.layers[p]})).map(p => 
-                <div key={p.key} onClick={() => this.props.onVisibilityChange(p.key, !p.visible)}>
+                <div key={p.key} onClick={() => this.props.onVisibilityChange(p.key, !p.visible)} className={p.enabled ? "" : "disabled"}>
                     <FontAwesomeIcon icon={p.visible ? faCheckSquare : faSquare} className="mr-1"></FontAwesomeIcon>
                     <span>{p.name}</span>
                 </div>
