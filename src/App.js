@@ -80,7 +80,8 @@ class App extends React.Component {
                 },
                 roadnetwork: {
                     name: "Road network",
-                    visible: false
+                    visible: false,
+                    enabled: true
                 },
                 mystations: {
                     name: "My stations",

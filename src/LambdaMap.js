@@ -73,11 +73,16 @@ class LambdaMap extends React.Component {
         texture: SURFACE_IMAGE,
         wireframe: false,
         color: [255, 255, 255],
-        visible: this.props.layers["terrain"].visible
+        visible: this.props.layers.terrain.visible
       }),
       new MVTLayer({
         data: "https://openinframap.org/map.json",
-        visible: this.props.layers["openinframap"].visible
+        visible: this.props.layers.openinframap.visible
+      }),
+      new MVTLayer({
+        id: "nvdb-roadlinks",
+        data: "http://mobilitet.sintef.no/maps/roadnetwork/{z}/{x}/{y}/tile.mvt",
+        visible: this.props.layers.roadnetwork.visible
       }),
       new GeoJsonLayer({
         id: 'geojson-layer',
@@ -94,9 +99,9 @@ class LambdaMap extends React.Component {
         getElevation: p => p.properties.height,
         autoHighlight: true,
         highlightColor: [0, 0, 0, 255],
-        visible: this.props.layers["mystations"].visible
+        visible: this.props.layers.mystations.visible
       })
-    ]
+    ];
 
     return (<ReactMapGL
       {...this.props.viewport}
