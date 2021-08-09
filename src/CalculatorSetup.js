@@ -10,13 +10,14 @@ class CalculatorSetup extends React.Component {
 
     render() {
         return <div className="calculator-setup" style={this.props.style}>
-            <Alert variant="info">Nothing here yet. When implemented, this panel will allow you to start various calculations.</Alert>
+            <Alert variant="info">{this.props.selectedStations.length} stations selected for calculations.</Alert>
         </div>
     }
 }
 
 CalculatorSetup.propTypes = {
-    style: PropTypes.object
+    style: PropTypes.object,
+    selectedStations: PropTypes.array
 };
 
 export default CalculatorSetup;

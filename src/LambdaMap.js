@@ -38,6 +38,7 @@ class LambdaMap extends React.Component {
     if (station.state == "new") return [0, 160, 0, 255];
     if (station.state == "edited") return [100, 100, 100, 100];
     if (station.state == "preview") return [255, 247, 0, 255];
+    if (station.state == "selected") return [5, 247, 255, 255];
 
     return [160, 0, 0, 255];
   }
@@ -51,6 +52,8 @@ class LambdaMap extends React.Component {
       prefix = "Currently edited station";
     if (station.state == "preview")
       prefix = "Import preview station";
+    if (station.state == "selected")
+      prefix = "Selected for calculation";
 
     return prefix + " (" + station.name + ")";
   }

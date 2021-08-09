@@ -91,6 +91,7 @@ class App extends React.Component {
             },
             activeCommand: "edit",
             selectedStation: null,
+            selectedStations: [],
             clickedPoint: null,
             stations: [
                 {
@@ -122,6 +123,26 @@ class App extends React.Component {
     }
 
     onMapClicked(info) {
+        if (this.state.activeCommand == "calculate"){
+            if(!info.object) return;
+
+            const newValue = info.object.properties.state !== "selected" ? "selected" : null;
+
+            this.setState((state) => {
+                const newState = {
+                    stations: state.stations.map(p => {
+                        if (p.id == info.object.properties.id) {
+                            p.state = newValue;
+                        }
+                        return p;
+                    })
+                };
+                newState.selectedStations = newState.stations.filter(p => p.state == "selected");
+                return newState;
+            });
+
+            return;
+        }
 
         if (this.state.activeCommand != "edit") return;
 
@@ -255,7 +276,7 @@ class App extends React.Component {
         this.setState({ viewport: data });
     }
 
-    onLayerVisibilityChange(layerKey, visibility){
+    onLayerVisibilityChange(layerKey, visibility) {
         if(!this.state.layers[layerKey].enabled) return;
 
         this.setState(state => {
@@ -275,6 +296,7 @@ class App extends React.Component {
     }
 
     render() {
+        console.log(this.state.stations.map(p => p.state));
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             {this.state.selectedStation &&
@@ -287,7 +309,7 @@ class App extends React.Component {
                 </Sidebar>}
             {this.state.activeCommand == "calculate" &&
                 <Sidebar style={{ marginTop: "60px", width: "600px" }}>
-                    <CalculatorSetup />
+                    <CalculatorSetup selectedStations={this.state.selectedStations} />
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
                 <Sidebar style={{ marginTop: "60px", width: "800px" }}>
