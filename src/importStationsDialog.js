@@ -10,8 +10,6 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import Papa from 'papaparse';
 
-import { WithOnChangeHandler } from 'formik-form-callbacks';
-
 class ImportStationsDialog extends React.Component {
 
     constructor(props) {
@@ -166,10 +164,6 @@ class ImportStationsDialog extends React.Component {
                                 </FormGroup>
                             )}
                         </Field>
-
-                        <WithOnChangeHandler>
-                            {({ values, errors }) => this.onFormValueChanged(values, errors)}
-                        </WithOnChangeHandler>
 
                         {this.state.parsedStations && <Alert variant="info">Previewing {this.state.parsedStations} parsed stations on the map.</Alert>}
                         {this.state.parseError && <Alert variant="danger">Parse error: {this.state.parseError}</Alert>}
