@@ -81,7 +81,7 @@ class EditStationDialog extends React.Component {
                         <Field name="height">
                             {({ field }) => (
                                 <FormGroup controlId="height">
-                                    <FormLabel>Height:</FormLabel>
+                                    <FormLabel>Height above terrain:</FormLabel>
                                     <InputGroup>
                                         <FormControl type="number" {...field} />
                                         <InputGroup.Append>
