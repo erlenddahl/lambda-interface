@@ -296,7 +296,6 @@ class App extends React.Component {
     }
 
     render() {
-        console.log(this.state.stations.map(p => p.state));
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             {this.state.selectedStation &&
