@@ -20,7 +20,7 @@ class EditStationDialog extends React.Component {
         this.validation = yup.object().shape({
             id: yup.string().required(),
             name: yup.string().required(),
-            frequency: yup.number().required().positive().integer(),
+            transmitPower: yup.number().required().positive().integer(),
             height: yup.number().required().positive().required()
         });
     }
@@ -64,17 +64,17 @@ class EditStationDialog extends React.Component {
                                 </FormGroup>
                             )}
                         </Field>
-                        <Field name="frequency">
+                        <Field name="transmitPower">
                             {({ field }) => (
-                                <FormGroup controlId="frequency">
-                                    <FormLabel>Frequency:</FormLabel>
+                                <FormGroup controlId="transmitPower">
+                                    <FormLabel>Total transmit power:</FormLabel>
                                     <InputGroup>
                                         <FormControl type="number" {...field} />
                                         <InputGroup.Append>
-                                            <InputGroup.Text style={{width: "45px"}}>Hz</InputGroup.Text>
+                                            <InputGroup.Text style={{width: "45px"}}>Db</InputGroup.Text>
                                         </InputGroup.Append>
                                     </InputGroup>
-                                    <ErrorMessage name="frequency" component="div" />
+                                    <ErrorMessage name="transmitPower" component="div" />
                                 </FormGroup>
                             )}
                         </Field>

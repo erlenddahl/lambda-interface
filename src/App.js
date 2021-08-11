@@ -98,14 +98,14 @@ class App extends React.Component {
                     id: "1254",
                     name: "Stasjon 1",
                     lngLat: [10.355430273040675, 63.42050427064208],
-                    frequency: 22000,
+                    transmitPower: 62,
                     height: 300
                 },
                 {
                     id: "1255",
                     name: "Alfabra",
                     lngLat: [10.355430273040675, 63.41050427064208],
-                    frequency: 22000,
+                    transmitPower: 71,
                     height: 300
                 }
             ],
