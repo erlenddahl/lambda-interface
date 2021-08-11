@@ -307,7 +307,7 @@ class App extends React.Component {
                     <ImportStationsDialog onPreview={this.onImportPreview} onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
                 </Sidebar>}
             {this.state.activeCommand == "calculate" &&
-                <Sidebar style={{ marginTop: "60px", width: "600px" }}>
+                <Sidebar style={{ marginTop: "60px", width: "900px" }}>
                     <CalculatorSetup selectedStations={this.state.selectedStations} />
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
