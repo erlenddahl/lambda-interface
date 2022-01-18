@@ -99,14 +99,16 @@ class App extends React.Component {
                     name: "Stasjon 1",
                     lngLat: [10.355430273040675, 63.42050427064208],
                     transmitPower: 62,
-                    height: 300
+                    height: 300,
+                    antennaType: "mobileNetwork"
                 },
                 {
                     id: "1255",
                     name: "Alfabra",
                     lngLat: [10.355430273040675, 63.41050427064208],
                     transmitPower: 71,
-                    height: 300
+                    height: 300,
+                    antennaType: "mobileNetwork"
                 }
             ],
             viewport: {
