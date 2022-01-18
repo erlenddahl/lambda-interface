@@ -7,21 +7,8 @@ import circle from '@turf/circle';
 import './LambdaMap.css';
 import ReactMapGL from 'react-map-gl';
 
-import { TerrainLayer } from '@deck.gl/geo-layers';
-
 // Set your mapbox token here
 const MAPBOX_TOKEN = "pk.eyJ1IjoiZXJsZW5kZGFobCIsImEiOiJjamwyMjh6eWsxbTE4M3JxdGF3MHplb2l1In0.t2NyiwBoC_OjujWzYu9-rQ";
-
-const TERRAIN_IMAGE = `https://api.mapbox.com/v4/mapbox.terrain-rgb/{z}/{x}/{y}.png?access_token=${MAPBOX_TOKEN}`;
-const SURFACE_IMAGE = `https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.png?access_token=${MAPBOX_TOKEN}`;
-
-// https://docs.mapbox.com/help/troubleshooting/access-elevation-data/#mapbox-terrain-rgb
-const ELEVATION_DECODER = {
-  rScaler: 6553.6,
-  gScaler: 25.6,
-  bScaler: 0.1,
-  offset: -10000
-};
 
 class LambdaMap extends React.Component {
 
@@ -66,18 +53,6 @@ class LambdaMap extends React.Component {
     };
 
     const layers = [
-      new TerrainLayer({
-        id: 'terrain',
-        minZoom: 0,
-        maxZoom: 23,
-        strategy: 'no-overlap',
-        elevationDecoder: ELEVATION_DECODER,
-        elevationData: TERRAIN_IMAGE,
-        texture: SURFACE_IMAGE,
-        wireframe: false,
-        color: [255, 255, 255],
-        visible: this.props.layers.terrain.visible
-      }),
       new MVTLayer({
         data: "https://openinframap.org/map.json",
         visible: this.props.layers.openinframap.visible
@@ -85,6 +60,8 @@ class LambdaMap extends React.Component {
       new MVTLayer({
         id: "nvdb-roadlinks",
         data: "http://mobilitet.sintef.no/maps/roadnetwork/{z}/{x}/{y}/tile.mvt",
+        getLineColor: [100, 100, 100],
+        getLineWidth: 5,
         visible: this.props.layers.roadnetwork.visible
       }),
       new GeoJsonLayer({

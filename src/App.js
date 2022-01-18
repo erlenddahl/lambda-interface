@@ -115,9 +115,7 @@ class App extends React.Component {
                 latitude: 63.42050427064208,
                 longitude: 10.355430273040675,
                 zoom: 13.5,
-                bearing: 0,
-                pitch: 60,
-                maxPitch: 89
+                bearing: 0
             }
         };
     }
