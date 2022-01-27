@@ -202,7 +202,7 @@ class App extends React.Component {
         values.state = null;
         this.setState((state) => ({
             selectedStation: null,
-            stations: this.resetStationList(state.stations.map(p => p.state == "edited" ? values : p))
+            stations: this.resetStationList(state.stations.map(p => p.state == "edited" || p.state == "new" ? values : p))
         }));
     }
 
