@@ -165,6 +165,7 @@ class App extends React.Component {
                     name: "New station",
                     lngLat: info.coordinate,
                     frequency: 22000,
+                    transmitPower: 62,
                     height: 300,
                     state: "new"
                 };
