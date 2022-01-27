@@ -163,15 +163,15 @@ class App extends React.Component {
                 selectedStation = {
                     id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
                     name: "New station",
-                    lngLat: info.lngLat,
+                    lngLat: info.coordinate,
                     frequency: 22000,
                     height: 300,
                     state: "new"
                 };
         }
 
-        if (!wasCreatedNow && !wasExistingActivated) {
-            selectedStation.lngLat = info.lngLat;
+        if (!wasExistingActivated) {
+            selectedStation.lngLat = info.coordinate;
         }
 
         this.setState((state) => {
@@ -206,7 +206,6 @@ class App extends React.Component {
     }
 
     onEditCancelled() {
-
         this.setState((state) => ({
             selectedStation: null,
             stations: this.resetStationList(state.stations)
