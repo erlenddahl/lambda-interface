@@ -20,8 +20,8 @@ class EditStationDialog extends React.Component {
         this.validation = yup.object().shape({
             id: yup.string().required(),
             name: yup.string().required(),
-            transmitPower: yup.number().required().positive().integer(),
-            height: yup.number().required().positive().required()
+            transmitPower: yup.number().positive().integer().required(),
+            height: yup.number().positive().required()
         });
     }
 
@@ -44,29 +44,29 @@ class EditStationDialog extends React.Component {
                 validationSchema={this.validation}
                 onSubmit={this.onSave}
             >
-                {({ isSubmitting }) => (
-                    <Form>
+                {({ isSubmitting, handleSubmit }) => (
+                    <Form onSubmit={handleSubmit}>
                         <Field name="id">
                             {({ field }) => (
-                                <FormGroup controlId="id">
+                                <FormGroup controlId={field.name}>
                                     <FormLabel>Id:</FormLabel>
                                     <FormControl type="text" {...field} />
-                                    <ErrorMessage name="id" component="div" />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
                             )}
                         </Field>
                         <Field name="name">
                             {({ field }) => (
-                                <FormGroup controlId="name">
+                                <FormGroup controlId={field.name}>
                                     <FormLabel>Name:</FormLabel>
                                     <FormControl type="text" {...field} />
-                                    <ErrorMessage name="name" component="div" />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
                             )}
                         </Field>
                         <Field name="transmitPower">
                             {({ field }) => (
-                                <FormGroup controlId="transmitPower">
+                                <FormGroup controlId={field.name}>
                                     <FormLabel>Total transmit power:</FormLabel>
                                     <InputGroup>
                                         <FormControl type="number" {...field} />
@@ -74,13 +74,13 @@ class EditStationDialog extends React.Component {
                                             <InputGroup.Text style={{width: "45px"}}>Db</InputGroup.Text>
                                         </InputGroup.Append>
                                     </InputGroup>
-                                    <ErrorMessage name="transmitPower" component="div" />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
                             )}
                         </Field>
                         <Field name="height">
                             {({ field }) => (
-                                <FormGroup controlId="height">
+                                <FormGroup controlId={field.name}>
                                     <FormLabel>Height above terrain:</FormLabel>
                                     <InputGroup>
                                         <FormControl type="number" {...field} />
@@ -88,11 +88,12 @@ class EditStationDialog extends React.Component {
                                             <InputGroup.Text style={{width: "45px"}}>m</InputGroup.Text>
                                         </InputGroup.Append>
                                     </InputGroup>
-                                    <ErrorMessage name="height" component="div" />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
                             )}
                         </Field>
-                        <Button disabled={isSubmitting} type="submit">{this.props.isEditing ? "Save changes" : "Create station"}</Button>
+                        
+                        <Button className="mt-4" disabled={isSubmitting} type="submit">{this.props.isEditing ? "Save changes" : "Create station"}</Button>
                         <Button variant="secondary" disabled={isSubmitting} onClick={this.props.onCancel}>Cancel</Button>
                         {this.props.isEditing && <Button variant="danger" disabled={isSubmitting} onClick={this.props.onDelete}>Delete station</Button>}
                     </Form>
