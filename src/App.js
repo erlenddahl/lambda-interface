@@ -61,11 +61,6 @@ class App extends React.Component {
                 }
             ],
             layers: {
-                terrain: {
-                    name: "Terrain",
-                    visible: false,
-                    enabled: true
-                },
                 openinframap: {
                     name: "Infrastructure (openinframap.org)",
                     visible: false
