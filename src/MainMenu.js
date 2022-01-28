@@ -15,7 +15,7 @@ class MainMenu extends React.Component {
         return <div className="main-menu" style={this.props.style}>
             {this.props.items.map(p =>
                 <Button variant={p.active ? "primary" : "outline-primary"} key={p.text} onClick={() => this.props.onMenuItemClicked(p)}>
-                    <FontAwesomeIcon icon={p.icon} size="lg" className="mr-1"></FontAwesomeIcon>
+                    <FontAwesomeIcon icon={p.icon} size="lg"></FontAwesomeIcon>&nbsp;&nbsp;
                     <span className="text">{p.text}</span>
                 </Button>
             )}
