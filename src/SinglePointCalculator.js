@@ -6,7 +6,7 @@ import moment from 'moment';
 import ConsoleInformationPanel from './ConsoleInformationPanel.js';
 import CalcHelper from "./Calculations/CalcHelper.js";
 
-class CalculatorSetup extends React.Component {
+class SinglePointCalculator extends React.Component {
 
     constructor(props) {
         super(props);
@@ -68,7 +68,7 @@ class CalculatorSetup extends React.Component {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                        "baseStations": this.props.selectedStations.map(p => helper.toBaseStationObject(p)),
+                        "baseStations": [this.props.selectedStation].map(p => helper.toBaseStationObject(p)),
                         "minimumAllowableSignalValue": -150
                     })
             };
@@ -86,8 +86,11 @@ class CalculatorSetup extends React.Component {
 
     render() {
         return <div className="calculator-setup" style={this.props.style}>
-            <Alert variant="info">{this.props.selectedStations.length} stations selected for calculations.</Alert>
-            <Button onClick={this.onCalculationClicked} disabled={this.state.isBusy || !this.props.selectedStations.length}>Calculate</Button>
+            {!this.props.selectedStation && <Alert variant="info">Click a station to select it for calculations, then click somewhere on the map to calculate path loss from the selected station to this point.</Alert>}
+
+            {this.props.selectedStation && <Alert variant="info">Selected station: {this.props.selectedStation.name} ({this.props.selectedStation.id})</Alert>}
+            
+            <Button onClick={this.onCalculationClicked} disabled={this.state.isBusy || !this.props.selectedStation}>Calculate</Button>
 
             {this.state.jobs.length > 0 && (<table style={{width: "100%"}}>
                 <thead>
@@ -120,9 +123,9 @@ class CalculatorSetup extends React.Component {
     }
 }
 
-CalculatorSetup.propTypes = {
+SinglePointCalculator.propTypes = {
     style: PropTypes.object,
-    selectedStations: PropTypes.array
+    selectedStation: PropTypes.object
 };
 
-export default CalculatorSetup;
+export default SinglePointCalculator;

@@ -54,7 +54,8 @@ class StationInfoDialog extends React.Component {
                 </InputGroup>
             </FormGroup>
 
-            <Button className="mt-4" variant="secondary" onClick={this.props.onEditRequested}>Edit this station</Button>
+            <Button className="mt-4" onClick={this.props.onEditRequested}>Calculate path loss for single point</Button>
+            <Button onClick={this.props.onEditRequested}>Edit this station</Button>
         </div>
     }
 }

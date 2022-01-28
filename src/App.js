@@ -1,6 +1,7 @@
 import React from 'react';
 import LambdaMap from './LambdaMap';
 import EditStationDialog from './EditStationDialog'
+import SinglePointCalculator from './SinglePointCalculator'
 import CalculatorSetup from './CalculatorSetup'
 import LayerPicker from './LayerPicker'
 import StationList from './StationList'
@@ -63,7 +64,12 @@ class App extends React.Component {
                 },
                 {
                     icon: faAbacus,
-                    text: "Calculate",
+                    text: "Calculate single point",
+                    cmd: "calculate-point"
+                },
+                {
+                    icon: faAbacus,
+                    text: "Calculate road network",
                     cmd: "calculate"
                 }
             ],
@@ -353,6 +359,10 @@ class App extends React.Component {
             {this.state.activeCommand == "import" &&
                 <Sidebar style={{ marginTop: "60px", width: "600px" }}>
                     <ImportStationsDialog onPreview={this.onImportPreview} onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
+                </Sidebar>}
+            {this.state.activeCommand == "calculate-point" &&
+                <Sidebar style={{ marginTop: "60px", width: "900px" }}>
+                    <SinglePointCalculator selectedStation={this.state.selectedStation} />
                 </Sidebar>}
             {this.state.activeCommand == "calculate" &&
                 <Sidebar style={{ marginTop: "60px", width: "900px" }}>
