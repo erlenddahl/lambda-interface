@@ -150,11 +150,11 @@ class App extends React.Component {
                 
                 // Clicked a station with nothing already selected -- create a clone of this station for editing
                 if(!c.previouslySelected && c.selected){
-                    this.mapHelper.startEdit(c.selected);
+                    this.mapHelper.startEditExisting(c.selected);
                 
                 // Clicked an empty spot with nothing already selected -- create a new station here.
                 }else if(!c.previouslySelected && !c.selected){
-                    this.mapHelper.stations.push(new BaseStation({
+                    this.mapHelper.startEditNew(new BaseStation({
                         id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
                         name: "New station",
                         lngLat: c.lngLat,

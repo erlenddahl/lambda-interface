@@ -42,19 +42,25 @@ export default class MapHelper{
         return this;
     }
 
-    startEdit(station){
+    startEditExisting(station){
+
         this.editedStation = station;
         this.editClone = station.clone({ original: station, isPreview: true, isEditClone: true, isSelected: true });
         this.stations.push(this.editClone);
         station.deselect().setEdited(true);
     }
 
+    startEditNew(station){
+        this.editedStation = station;
+        this.stations.push(station);
+    }
+
     cancelEdit(){
         this.editedStation = null;
         this.editClone = null;
-        _.each(this.stations, p => p.reset());
         this.removePreviews();
         this.resetSelections();
+        _.each(this.stations, p => p.reset());
         return this;
     }
 
@@ -62,6 +68,7 @@ export default class MapHelper{
         for(var key in newValues){
             this.editedStation[key] = newValues[key];
         }
+        this.editedStation.reset();
         return this.cancelEdit();
     }
 

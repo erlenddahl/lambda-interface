@@ -7,6 +7,7 @@ export default class BaseStation{
 
     reset(){
         this.isEditClone = false;
+        this.isPreview = false;
         this.original = null;
         this.deselect();
         this.setEdited(false);
