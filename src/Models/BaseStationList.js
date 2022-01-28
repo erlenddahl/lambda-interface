@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { SELECTION_MODE } from "../Helpers/Constants.js";
 
-export default class MapHelper{
+export default class BaseStationList{
 
     constructor(stations){
         this.stations = stations;

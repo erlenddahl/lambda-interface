@@ -16,7 +16,7 @@ import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList, faInfoCircle
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import ImportStationsDialog from './ImportStationsDialog';
-import MapHelper from './Mapping/MapHelper';
+import BaseStationList from './Models/BaseStationList';
 import BaseStation from './Models/BaseStation';
 
 class App extends React.Component {
@@ -24,7 +24,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.mapHelper = new MapHelper([
+        this.baseStations = new BaseStationList([
             {
                 id: "1254",
                 name: "Stasjon 1",
@@ -124,7 +124,7 @@ class App extends React.Component {
             selectedStation: null,
             selectedStations: [],
             clickedPoint: null,
-            stations: this.mapHelper.stations,
+            stations: this.baseStations.stations,
             viewport: {
                 width: "100%",
                 height: "100%",
@@ -138,7 +138,7 @@ class App extends React.Component {
 
     onMapClicked(info) {
         
-        const c = this.mapHelper.handleClick(info);
+        const c = this.baseStations.handleClick(info);
 
         switch(this.state.activeCommand){
             case "info":
@@ -150,11 +150,11 @@ class App extends React.Component {
                 
                 // Clicked a station with nothing already selected -- create a clone of this station for editing
                 if(!c.previouslySelected && c.selected){
-                    this.mapHelper.startEditExisting(c.selected);
+                    this.baseStations.startEditExisting(c.selected);
                 
                 // Clicked an empty spot with nothing already selected -- create a new station here.
                 }else if(!c.previouslySelected && !c.selected){
-                    this.mapHelper.startEditNew(new BaseStation({
+                    this.baseStations.startEditNew(new BaseStation({
                         id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
                         name: "New station",
                         lngLat: c.lngLat,
@@ -165,10 +165,10 @@ class App extends React.Component {
                         isSelected: true
                     }));
 
-                // Clicked somewhere with a station already selected
+                // Clicked somewhere with a station already selected -- move it to the new location
                 }else if(c.previouslySelected){
                     c.previouslySelected.lngLat = c.lngLat;
-                    this.mapHelper.resetSelections();
+                    this.baseStations.resetSelections();
                     c.previouslySelected.select();
                 }
 
@@ -186,12 +186,12 @@ class App extends React.Component {
     }
 
     onEditSaved(values) {
-        this.mapHelper.applyEdit(values);
+        this.baseStations.applyEdit(values);
         this.refreshState();
     }
 
     onEditCancelled() {
-        this.mapHelper.cancelEdit();
+        this.baseStations.cancelEdit();
         this.refreshState();
     }
 
@@ -199,8 +199,8 @@ class App extends React.Component {
 
         if (!this.state.selectedStation.isEditClone) return;
 
-        this.mapHelper.remove(this.state.selectedStation.original);
-        this.mapHelper.cancelEdit();
+        this.baseStations.remove(this.state.selectedStation.original);
+        this.baseStations.cancelEdit();
 
         this.refreshState();
     }
@@ -216,15 +216,15 @@ class App extends React.Component {
 
         if (this.state.selectedStation && item.cmd != "edit") this.onEditCancelled();
         if (_.some(this.state.stations, p => p.state == "preview") && item.cmd != "import"){
-            this.mapHelper.removePreviews();
+            this.baseStations.removePreviews();
         }
 
-        this.mapHelper.setSelectionMode(item.selectionMode || SELECTION_MODE.SINGLE);
+        this.baseStations.setSelectionMode(item.selectionMode || SELECTION_MODE.SINGLE);
         this.refreshState();
     }
 
     refreshState(){
-        this.setState(this.mapHelper.getState());
+        this.setState(this.baseStations.getState());
     }
 
     onImportSaved() {
