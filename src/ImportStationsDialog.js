@@ -16,7 +16,6 @@ class ImportStationsDialog extends React.Component {
         super(props);
 
         this.onSave = this.onSave.bind(this);
-        this.onFormValueChanged = this.onFormValueChanged.bind(this);
 
         this.validation = yup.object().shape({
             delimiter: yup.string().required(),
@@ -30,93 +29,76 @@ class ImportStationsDialog extends React.Component {
                 delimiter: ";",
                 decimalSign: ",",
                 hasHeaders: true,
-                csv: "id;name;frequency;height;lat;lng\r\n" + 
-                     "181199;Station name;25000;250;63,42050427064208;10,365430273040675"
+                csv: "id;name;antennaType;transmitPower;height;lat;lng\n" + 
+                     "181199;Station name;mobileNetwork;62;250;63,42050427064208;10,365430273040675"
             }
         }
     }
 
     onSave(values, { setSubmitting }) {
-        setSubmitting(false);
+        this.attemptCsvParse(values, setSubmitting);
         this.props.onSave(values);
     }
 
     parseNumberWithSign(v, decimalSign, error){
         if(v == null) throw error;
+        let value = null;
         if(decimalSign == ".")
-            return parseFloat(v.replaceAll(",", ""));
+            value = Number(v.replaceAll(",", ""));
         else
-            return parseFloat(v.replaceAll(".", "").replaceAll(",", "."));
+            value = Number(v.replaceAll(".", "").replaceAll(",", "."));
+
+        if(isNaN(value)) throw error;
+
+        return value;
     }
 
-    onFormValueChanged(values, errors){
+    attemptCsvParse(values, setSubmitting){
+        try{
+            const csv = Papa.parse(values.csv, {
+                delimiter: values.delimiter,
+                header: values.hasHeaders
+            });
 
-        if(this.formValues){
-            var isChanged = false;
-            for(var key in values)
-                if(this.formValues.values[key] != values[key]){
-                    isChanged = true;
-                    break;
-                }
+            const previewStations = csv.data.map((p, i) => ({
+                id: p.id,
+                name: p.name,
+                transmitPower: this.parseNumberWithSign(p.transmitPower, values.decimalSign, "Invalid transmit power at line " + i),
+                antennaType: p.antennaType,
+                height: this.parseNumberWithSign(p.height, values.decimalSign, "Invalid height at line " + i),
+                lngLat: [this.parseNumberWithSign(p.lng, values.decimalSign, "Invalid lng at line " + i), this.parseNumberWithSign(p.lat, values.decimalSign, "Invalid lat at line " + i)],
+                color: [100, 100, 100, 100],
+                state: "preview"
+            }));
 
-            if(!isChanged) return;
+            const headerOffset = values.hasHeaders ? 1 : 0;
+            previewStations.map((p, i) => {
+                if(!p.id && p.id != 0) throw "Invalid id at line " + (i + headerOffset);
+                if(!p.name) throw "Invalid name at line " + (i + headerOffset);
+                if(p.antennaType.toLowerCase() != "mobilenetwork" && p.antennaType.toLowerCase() != "itsg5") throw "Invalid antenna type at line " + (i + headerOffset);
+                if(isNaN(p.transmitPower)) throw "Invalid transmit power at line " + (i + headerOffset);
+                if(isNaN(p.height)) throw "Invalid height at line " + (i + headerOffset);
+                if(isNaN(p.lngLat[0])) throw "Invalid lng at line " + (i + headerOffset);
+                if(isNaN(p.lngLat[1])) throw "Invalid lat at line " + (i + headerOffset);
+                if(p.lngLat[0] < 0 || p.lngLat[0] > 180) throw "Longitude out of bounds at line " + (i + headerOffset);
+                if(p.lngLat[1] < 0 || p.lngLat[1] > 180) throw "Latitude out of bounds at line " + (i + headerOffset);
+            });
+
+            this.setState({
+                parsedStations: previewStations.length,
+                parseError: null
+            });
+
+            this.props.onPreview(previewStations);
+        }catch(err){
+            this.setState({
+                parsedStations: null,
+                parseError: JSON.stringify(err)
+            });
+            this.props.onPreview([]);
         }
 
-        if(this.formValues && this.formValues.timer){
-            clearTimeout(this.formValues.timer);
-        }
-
-        this.formValues = {
-            values, 
-            errors, 
-            hasErrors: Object.keys(errors).length > 0,
-            timer: setTimeout(() => {
-                if(!this.formValues.hasErrors){
-                    // Now, here is an actual valid form change.
-
-                    try{
-                        const csv = Papa.parse(values.csv, {
-                            delimiter: values.delimiter,
-                            header: values.hasHeaders
-                        });
-    
-                        const previewStations = csv.data.map((p, i) => ({
-                            id: p.id,
-                            name: p.name,
-                            frequency: this.parseNumberWithSign(p.frequency, values.decimalSign, "Invalid frequency at line " + i),
-                            height: this.parseNumberWithSign(p.height, values.decimalSign, "Invalid height at line " + i),
-                            lngLat: [this.parseNumberWithSign(p.lng, values.decimalSign, "Invalid lng at line " + i), this.parseNumberWithSign(p.lat, values.decimalSign, "Invalid lat at line " + i)],
-                            color: [100, 100, 100, 100],
-                            state: "preview"
-                        }));
-
-                        if(previewStations.map((p, i) => {
-                            if(!p.id && p.id != 0) throw "Invalid id at line " + i;
-                            if(!p.name) throw "Invalid name at line " + i;
-                            if(isNaN(p.frequency)) throw "Invalid frequency at line " + i;
-                            if(isNaN(p.height)) throw "Invalid height at line " + i;
-                            if(isNaN(p.lngLat[0])) throw "Invalid lng at line " + i;
-                            if(isNaN(p.lngLat[1])) throw "Invalid lat at line " + i;
-                            if(p.lngLat[0] < 0 || p.lngLat[0] > 180) throw "Longitude out of bounds at line " + i;
-                            if(p.lngLat[1] < 0 || p.lngLat[1] > 180) throw "Latitude out of bounds at line " + i;
-                        }))
-    
-                        this.setState({
-                            parsedStations: previewStations.length,
-                            parseError: null
-                        });
-
-                        this.props.onPreview(previewStations);
-                    }catch(err){
-                        this.setState({
-                            parsedStations: null,
-                            parseError: JSON.stringify(err)
-                        });
-                        this.props.onPreview([]);
-                    }
-                }
-            }, 500)
-        };
+        setSubmitting(false);
     }
 
     render() {
@@ -125,50 +107,52 @@ class ImportStationsDialog extends React.Component {
             <Formik
                 initialValues={this.state.defaultValues}
                 validationSchema={this.validation}
-                onSubmit={this.onSave}
+                onSubmit={this.onSave} 
+                validateOnChange={true}
             >
-                {({ isSubmitting }) => (
-                    <Form>
+                {({ isSubmitting, handleSubmit, values, setSubmitting }) => (
+                    <Form onSubmit={handleSubmit}>
                         <Field name="delimiter">
                             {({ field }) => (
-                                <FormGroup controlId="delimiter">
+                                <FormGroup controlId={field.name}>
                                     <FormLabel>Delimiter:</FormLabel>
                                     <FormControl type="text" {...field} />
-                                    <ErrorMessage name="delimiter" component="div" />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
                             )}
                         </Field>
                         <Field name="decimalSign">
                             {({ field }) => (
-                                <FormGroup controlId="decimalSign">
+                                <FormGroup controlId={field.name}>
                                     <FormLabel>Decimal sign:</FormLabel>
                                     <FormControl type="text" {...field} />
-                                    <ErrorMessage name="decimalSign" component="div" />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
                             )}
                         </Field>
                         <Field name="hasHeaders">
                             {({ field }) => (
-                                <FormGroup controlId="hasHeaders">
+                                <FormGroup controlId={field.name}>
                                     <FormCheck label="Has headers" type="checkbox" {...field} checked={field.value} />
-                                    <ErrorMessage name="hasHeaders" component="div" />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
                             )}
                         </Field>
                         <Field name="csv">
                             {({ field }) => (
-                                <FormGroup controlId="csv">
+                                <FormGroup controlId={field.name}>
                                     <FormLabel>Station csv:</FormLabel>
-                                    <FormControl as="textarea" {...field} />
-                                    <ErrorMessage name="csv" component="div" />
+                                    <FormControl as="textarea" style={{whiteSpace: "pre"}} {...field} />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
                             )}
                         </Field>
 
-                        {this.state.parsedStations && <Alert variant="info">Previewing {this.state.parsedStations} parsed stations on the map.</Alert>}
-                        {this.state.parseError && <Alert variant="danger">Parse error: {this.state.parseError}</Alert>}
+                        {this.state.parsedStations && <Alert className="mt-4" variant="info">Previewing {this.state.parsedStations} parsed stations on the map (yellow).</Alert>}
+                        {this.state.parseError && <Alert className="mt-4" variant="danger">Parse error: {this.state.parseError}</Alert>}
 
-                        <Button className="w-100 mb-2" disabled={isSubmitting || this.state.parseError} type="submit">{(this.state.parseError || !this.state.parsedStations) ? "[Nothing to import]" : "Import " + this.state.parsedStations + " stations"}</Button>
+                        <Button className="w-100 mt-4 mb-2" variant="info" disabled={isSubmitting} onClick={() => this.attemptCsvParse(values, setSubmitting)}>Preview</Button>
+                        <Button className="w-100 mb-2" disabled={isSubmitting} type="submit">Import</Button>
                         <Button className="w-100 mb-2" variant="secondary" disabled={isSubmitting} onClick={this.props.onCancel}>Cancel</Button>
                     </Form>
                 )}
