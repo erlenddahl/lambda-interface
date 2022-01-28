@@ -141,20 +141,26 @@ class App extends React.Component {
 
         if (this.state.activeCommand != "edit") return;
 
-        let selectedStation = this.state.selectedStation;
 
         let wasCreatedNow = false;
         let wasExistingActivated = false;
+        let selectedStation = this.state.selectedStation;
 
+        // If an existing station is clicked, but none was selected previously (a new edit session is started)
         if (info.object && !selectedStation) {
             wasExistingActivated = true;
         }
 
+        // If no stations was selected previously, we are creating a new one.
         if (!selectedStation) {
             wasCreatedNow = true;
-            if (wasExistingActivated)
+
+            // If a station was clicked, the currently selected station should be a new "edit clone" of this one.
+            if (wasExistingActivated){
                 selectedStation = { ...info.object.properties, state: "new", isEditClone: true };
-            else
+
+            // Otherwise, we are creating an entirely new station.
+            }else
                 selectedStation = {
                     id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
                     name: "New station",
@@ -162,10 +168,13 @@ class App extends React.Component {
                     frequency: 22000,
                     transmitPower: 62,
                     height: 300,
-                    state: "new"
+                    state: "new",
+                    isEdited: true
                 };
         }
 
+        // If a new station was not clicked, set the coordinates of the selected station to the clicked coordinates.
+        // This will move the edit copy, creating a visualization of a moved station.
         if (!wasExistingActivated) {
             selectedStation.lngLat = info.coordinate;
         }
@@ -179,6 +188,7 @@ class App extends React.Component {
                 stations: state.stations.map(p => {
                     if (wasExistingActivated && p.id == info.object.properties.id) {
                         p.state = "edited";
+                        p.isEdited = true;
                     }
                     return p;
                 }).concat(newlyCreated)
@@ -194,11 +204,21 @@ class App extends React.Component {
     }
 
     onEditSaved(values) {
+        
+        values = {...values};
         values.state = null;
-        this.setState((state) => ({
-            selectedStation: null,
-            stations: this.resetStationList(state.stations.map(p => p.state == "edited" || p.state == "new" ? values : p))
-        }));
+        values.isEditClone = false;
+        values.isEdited = false;
+
+        this.setState((state) => {
+            console.log(JSON.parse(JSON.stringify(state.stations)));
+            const ns = {
+                selectedStation: null,
+                stations: this.resetStationList(state.stations.map(p => p.isEdited ? values : p))
+            };
+            console.log(ns);
+            return ns;
+        });
     }
 
     onEditCancelled() {
