@@ -9,17 +9,39 @@ import StationInfoDialog from './StationInfoDialog';
 import Sidebar from './Sidebar'
 import MainMenu from './MainMenu'
 import _ from 'lodash';
+import { SELECTION_MODE } from './Helpers/Constants';
 
 import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList, faInfoCircle } from '@fortawesome/pro-solid-svg-icons'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import ImportStationsDialog from './ImportStationsDialog';
+import MapHelper from './Mapping/MapHelper';
+import BaseStation from './Models/BaseStation';
 
 class App extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.mapHelper = new MapHelper([
+            {
+                id: "1254",
+                name: "Stasjon 1",
+                lngLat: [10.355430273040675, 63.42050427064208],
+                transmitPower: 62,
+                height: 300,
+                antennaType: "mobileNetwork"
+            },
+            {
+                id: "1255",
+                name: "Alfabra",
+                lngLat: [10.355430273040675, 63.41050427064208],
+                transmitPower: 71,
+                height: 300,
+                antennaType: "mobileNetwork"
+            }
+        ].map(p => new BaseStation(p)));
 
         this.onMapClicked = this.onMapClicked.bind(this);
         this.onViewportChange = this.onViewportChange.bind(this);
@@ -70,7 +92,8 @@ class App extends React.Component {
                 {
                     icon: faAbacus,
                     text: "Calculate road network",
-                    cmd: "calculate"
+                    cmd: "calculate",
+                    selectionMode: SELECTION_MODE.MULTIPLE
                 }
             ],
             layers: {
@@ -101,24 +124,7 @@ class App extends React.Component {
             selectedStation: null,
             selectedStations: [],
             clickedPoint: null,
-            stations: [
-                {
-                    id: "1254",
-                    name: "Stasjon 1",
-                    lngLat: [10.355430273040675, 63.42050427064208],
-                    transmitPower: 62,
-                    height: 300,
-                    antennaType: "mobileNetwork"
-                },
-                {
-                    id: "1255",
-                    name: "Alfabra",
-                    lngLat: [10.355430273040675, 63.41050427064208],
-                    transmitPower: 71,
-                    height: 300,
-                    antennaType: "mobileNetwork"
-                }
-            ],
+            stations: this.mapHelper.stations,
             viewport: {
                 width: "100%",
                 height: "100%",
@@ -131,100 +137,45 @@ class App extends React.Component {
     }
 
     onMapClicked(info) {
-        if (this.state.activeCommand == "calculate"){
-            if(!info.object) return;
+        
+        const c = this.mapHelper.handleClick(info);
 
-            const newValue = info.object.properties.state !== "selected" ? "selected" : null;
+        switch(this.state.activeCommand){
+            case "info":
+            case "calculate":
+            case "calculate-point":
+                // No special logic, just selection/deselection
+                break;
+            case "edit":
+                
+                // Clicked a station with nothing already selected -- create a clone of this station for editing
+                if(!c.previouslySelected && c.selected){
+                    this.mapHelper.startEdit(c.selected);
+                
+                // Clicked an empty spot with nothing already selected -- create a new station here.
+                }else if(!c.previouslySelected && !c.selected){
+                    this.mapHelper.stations.push(new BaseStation({
+                        id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
+                        name: "New station",
+                        lngLat: c.lngLat,
+                        frequency: 22000,
+                        transmitPower: 62,
+                        height: 300,
+                        isPreview: true,
+                        isSelected: true
+                    }));
 
-            this.setState((state) => {
-                const newState = {
-                    stations: state.stations.map(p => {
-                        if (p.id == info.object.properties.id) {
-                            p.state = newValue;
-                        }
-                        return p;
-                    })
-                };
-                newState.selectedStations = newState.stations.filter(p => p.state == "selected");
-                return newState;
-            });
+                // Clicked somewhere with a station already selected
+                }else if(c.previouslySelected){
+                    c.previouslySelected.lngLat = c.lngLat;
+                    this.mapHelper.resetSelections();
+                    c.previouslySelected.select();
+                }
 
-            return;
+                break;
         }
 
-        if (this.state.activeCommand != "info" && this.state.activeCommand != "edit") return;
-
-        let wasCreatedNow = false;
-        let wasExistingActivated = false;
-        let selectedStation = this.state.selectedStation;
-
-        // If we are in info mode, we don't want to keep track of already selected stations
-        if(this.state.activeCommand == "info"){
-            this.resetSelections();
-            selectedStation = null;
-        }
-
-        // If an existing station is clicked, but none was selected previously (a new edit session is started)
-        if (info.object && !selectedStation) {
-            wasExistingActivated = true;
-        }
-
-        // If no stations was selected previously, we are creating a new one.
-        if (!selectedStation) {
-            wasCreatedNow = true;
-
-            // If a station was clicked, the currently selected station should be a new "edit clone" of this one.
-            if (wasExistingActivated){
-                selectedStation = { ...info.object.properties, state: "new", isEditClone: true };
-
-            // Otherwise, we are creating an entirely new station -- but only if we are in edit mode.
-            }else if(this.state.activeCommand == "edit"){
-                selectedStation = {
-                    id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
-                    name: "New station",
-                    lngLat: info.coordinate,
-                    frequency: 22000,
-                    transmitPower: 62,
-                    height: 300,
-                    state: "new",
-                    isEdited: true
-                };
-            }
-        }
-
-        // If we are in info mode, we will end up here with no station selected if an empty spot was clicked
-        if(!selectedStation){
-            return this.resetSelections();
-        }
-
-        // If a new station was not clicked, set the coordinates of the selected station to the clicked coordinates.
-        // This will move the edit copy, creating a visualization of a moved station.
-        if (!wasExistingActivated) {
-            selectedStation.lngLat = info.coordinate;
-        }
-
-        this.setState((state) => {
-
-            const newlyCreated = wasCreatedNow ? [selectedStation] : [];
-
-            return {
-                selectedStation: selectedStation,
-                stations: state.stations.map(p => {
-                    if (wasExistingActivated && p.id == info.object.properties.id) {
-                        p.state = "edited";
-                        p.isEdited = true;
-                    }
-                    return p;
-                }).concat(newlyCreated)
-            };
-        });
-    }
-
-    resetSelections(){
-        return this.setState(state => ({
-            stations: this.resetStationList(state.stations),
-            selectedStation: null
-        }));
+        this.refreshState();
     }
 
     resetStationList(stations) {
@@ -235,38 +186,23 @@ class App extends React.Component {
     }
 
     onEditSaved(values) {
-        
-        values = {...values};
-        values.state = null;
-        values.isEditClone = false;
-        values.isEdited = false;
-
-        this.setState((state) => {
-            console.log(JSON.parse(JSON.stringify(state.stations)));
-            const ns = {
-                selectedStation: null,
-                stations: this.resetStationList(state.stations.map(p => p.isEdited ? values : p))
-            };
-            console.log(ns);
-            return ns;
-        });
+        this.mapHelper.applyEdit(values);
+        this.refreshState();
     }
 
     onEditCancelled() {
-        this.setState((state) => ({
-            selectedStation: null,
-            stations: this.resetStationList(state.stations)
-        }));
+        this.mapHelper.cancelEdit();
+        this.refreshState();
     }
 
     onEditDelete() {
 
         if (!this.state.selectedStation.isEditClone) return;
 
-        this.setState((state) => ({
-            selectedStation: null,
-            stations: this.resetStationList(state.stations.filter(p => p.state != "edited"))
-        }));
+        this.mapHelper.remove(this.state.selectedStation.original);
+        this.mapHelper.cancelEdit();
+
+        this.refreshState();
     }
 
     onMenuItemClicked(item) {
@@ -279,7 +215,16 @@ class App extends React.Component {
         }));
 
         if (this.state.selectedStation && item.cmd != "edit") this.onEditCancelled();
-        if (_.some(this.state.stations, p => p.state == "preview") && item.cmd != "import") this.removePreviewedStations();
+        if (_.some(this.state.stations, p => p.state == "preview") && item.cmd != "import"){
+            this.mapHelper.removePreviews();
+        }
+
+        this.mapHelper.setSelectionMode(item.selectionMode || SELECTION_MODE.SINGLE);
+        this.refreshState();
+    }
+
+    refreshState(){
+        this.setState(this.mapHelper.getState());
     }
 
     onImportSaved() {
@@ -292,12 +237,6 @@ class App extends React.Component {
             })
         }));
         this.onMenuItemClicked(this.state.menuItems[0]);
-    }
-
-    removePreviewedStations() {
-        this.setState(state => ({
-            stations: state.stations.filter(p => p.state != "preview")
-        }));
     }
 
     onImportCancelled() {

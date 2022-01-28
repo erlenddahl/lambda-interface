@@ -22,12 +22,7 @@ class LambdaMap extends React.Component {
   }
 
   getStationColor(station) {
-    if (station.state == "new") return [0, 160, 0, 255];
-    if (station.state == "edited") return [100, 100, 100, 100];
-    if (station.state == "preview") return [255, 247, 0, 255];
-    if (station.state == "selected") return [5, 247, 255, 255];
-
-    return [160, 0, 0, 255];
+    return station.getColor();
   }
 
   getStationTooltip(station) {

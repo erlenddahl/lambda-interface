@@ -34,6 +34,7 @@ class EditStationDialog extends React.Component {
         if (!this.props.selectedStation) return null;
         return <div className="station-editor sidebar-block">
             <h2>{this.props.isEditing ? "Edit station" : "New station"}</h2>
+            
             <FormGroup>
                 <FormLabel>Location:</FormLabel>
                 <FormControl type="text" value={this.props.selectedStation.lngLat[0].toFixed(8) + ", " + this.props.selectedStation.lngLat[1].toFixed(8)} readOnly></FormControl>
@@ -42,6 +43,7 @@ class EditStationDialog extends React.Component {
             <Formik
                 initialValues={this.props.selectedStation}
                 validationSchema={this.validation}
+                enableReinitialize={true}
                 onSubmit={this.onSave}
             >
                 {({ isSubmitting, handleSubmit }) => (
