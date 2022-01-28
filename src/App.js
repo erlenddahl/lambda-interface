@@ -4,11 +4,12 @@ import EditStationDialog from './EditStationDialog'
 import CalculatorSetup from './CalculatorSetup'
 import LayerPicker from './LayerPicker'
 import StationList from './StationList'
+import StationInfoDialog from './StationInfoDialog';
 import Sidebar from './Sidebar'
 import MainMenu from './MainMenu'
 import _ from 'lodash';
 
-import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList } from '@fortawesome/pro-solid-svg-icons'
+import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList, faInfoCircle } from '@fortawesome/pro-solid-svg-icons'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -22,6 +23,7 @@ class App extends React.Component {
         this.onMapClicked = this.onMapClicked.bind(this);
         this.onViewportChange = this.onViewportChange.bind(this);
 
+        this.onEditRequested = this.onEditRequested.bind(this);
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
         this.onEditDelete = this.onEditDelete.bind(this);
@@ -39,10 +41,15 @@ class App extends React.Component {
         this.state = {
             menuItems: [
                 {
+                    icon: faInfoCircle,
+                    text: "Info",
+                    cmd: "info",
+                    active: true
+                },
+                {
                     icon: faMapMarkerEdit,
                     text: "Edit",
-                    cmd: "edit",
-                    active: true
+                    cmd: "edit"
                 },
                 {
                     icon: faCloudUpload,
@@ -84,7 +91,7 @@ class App extends React.Component {
                     enabled: true
                 }
             },
-            activeCommand: "edit",
+            activeCommand: "info",
             selectedStation: null,
             selectedStations: [],
             clickedPoint: null,
@@ -139,12 +146,17 @@ class App extends React.Component {
             return;
         }
 
-        if (this.state.activeCommand != "edit") return;
-
+        if (this.state.activeCommand != "info" && this.state.activeCommand != "edit") return;
 
         let wasCreatedNow = false;
         let wasExistingActivated = false;
         let selectedStation = this.state.selectedStation;
+
+        // If we are in info mode, we don't want to keep track of already selected stations
+        if(this.state.activeCommand == "info"){
+            this.resetSelections();
+            selectedStation = null;
+        }
 
         // If an existing station is clicked, but none was selected previously (a new edit session is started)
         if (info.object && !selectedStation) {
@@ -159,8 +171,8 @@ class App extends React.Component {
             if (wasExistingActivated){
                 selectedStation = { ...info.object.properties, state: "new", isEditClone: true };
 
-            // Otherwise, we are creating an entirely new station.
-            }else
+            // Otherwise, we are creating an entirely new station -- but only if we are in edit mode.
+            }else if(this.state.activeCommand == "edit"){
                 selectedStation = {
                     id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
                     name: "New station",
@@ -171,6 +183,12 @@ class App extends React.Component {
                     state: "new",
                     isEdited: true
                 };
+            }
+        }
+
+        // If we are in info mode, we will end up here with no station selected if an empty spot was clicked
+        if(!selectedStation){
+            return this.resetSelections();
         }
 
         // If a new station was not clicked, set the coordinates of the selected station to the clicked coordinates.
@@ -194,6 +212,13 @@ class App extends React.Component {
                 }).concat(newlyCreated)
             };
         });
+    }
+
+    resetSelections(){
+        return this.setState(state => ({
+            stations: this.resetStationList(state.stations),
+            selectedStation: null
+        }));
     }
 
     resetStationList(stations) {
@@ -280,6 +305,10 @@ class App extends React.Component {
         }));
     }
 
+    onEditRequested() {
+        this.onMenuItemClicked(_.find(this.state.menuItems, p => p.cmd == "edit"));
+    }
+
     initiateMapTransition(transition) {
         this.setState(state => ({
             viewport: { ...state.viewport, ...transition }
@@ -313,7 +342,11 @@ class App extends React.Component {
     render() {
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
-            {this.state.selectedStation &&
+            {this.state.activeCommand == "info" && this.state.selectedStation &&
+                <Sidebar style={{ marginTop: "60px" }}>
+                    <StationInfoDialog selectedStation={this.state.selectedStation} onEditRequested={this.onEditRequested} />
+                </Sidebar>}
+            {this.state.activeCommand == "edit" && this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.selectedStation.isEditClone} />
                 </Sidebar>}
