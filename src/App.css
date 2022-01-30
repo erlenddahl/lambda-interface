@@ -25,3 +25,17 @@ html, body, #root{
     background-color: white;
     z-index: 1;
 }
+
+.popup-container{
+    position: absolute;
+    top: 100px;
+    bottom: 100px;
+    left: 200px;
+    right: 200px;
+    margin: auto;
+    background-color: white;
+    border: 1px solid blue;
+    border-radius: 10px;
+    z-index: 5;
+    padding: 10px;
+}
