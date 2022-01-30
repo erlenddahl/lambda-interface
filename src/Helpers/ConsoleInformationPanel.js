@@ -11,19 +11,23 @@ class ConsoleInformationPanel extends React.Component {
 
         if(!this.props.data) return <div></div>;
 
-        const info = Object.keys(this.props.data.Info).map(p => ({
+        const d = this.props.data;
+        const info = d.Info || d.info;
+        const progress = d.Progress || d.progress;
+
+        const infos = Object.keys(info).map(p => ({
             label: p, 
-            value: this.props.data.Info[p]
+            value: info[p]
         }));
         
-        const progress = Object.keys(this.props.data.Progress).map(p => ({
+        const progresses = Object.keys(progress).map(p => ({
             label: p, 
-            value: this.props.data.Progress[p]
+            value: progress[p]
         }));
 
         return <div style={{fontSize: "12px", fontFamily: "monospace"}}>
             <div>
-                {info.map(p => (
+                {infos.map(p => (
                     <div key={p.label}>
                         <span style={{fontWeight: "bold"}}>{p.label}: </span>
                         <span>{p.value}</span>
@@ -31,7 +35,7 @@ class ConsoleInformationPanel extends React.Component {
                 ))}
             </div>
             <div>
-                {progress.map(p => (
+                {progresses.map(p => (
                     <div key={p.label}>
                         <span style={{fontWeight: "bold"}}>{p.label}: </span>
                         <span>{p.value.Visualization}</span>
