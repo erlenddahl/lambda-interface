@@ -5,14 +5,13 @@ import SinglePointCalculator from './SinglePointCalculator'
 import CalculatorSetup from './CalculatorSetup'
 import LayerPicker from './LayerPicker'
 import StationList from './StationList'
-import StationInfoDialog from './StationInfoDialog';
 import Sidebar from './Sidebar';
 import MainMenu from './MainMenu';
 import ContextMenu from './ContextMenu.js';
 import _ from 'lodash';
 import { SELECTION_MODE } from './Helpers/Constants';
 
-import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList, faInfoCircle } from '@fortawesome/pro-solid-svg-icons'
+import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList } from '@fortawesome/pro-solid-svg-icons'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -46,9 +45,11 @@ class App extends React.Component {
 
         this.onMapClicked = this.onMapClicked.bind(this);
         this.onViewportChange = this.onViewportChange.bind(this);
+        
+        this.hideContextMenu = this.hideContextMenu.bind(this);
+        this.onMoveStationRequested = this.onMoveStationRequested.bind(this);
+        this.onCreateNewStationRequested = this.onCreateNewStationRequested.bind(this);
 
-        this.onPointCalculationRequested = this.onPointCalculationRequested.bind(this);
-        this.onEditRequested = this.onEditRequested.bind(this);
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
         this.onEditDelete = this.onEditDelete.bind(this);
@@ -71,15 +72,10 @@ class App extends React.Component {
             },
             menuItems: [
                 {
-                    icon: faInfoCircle,
-                    text: "Info",
-                    cmd: "info",
-                    active: true
-                },
-                {
                     icon: faMapMarkerEdit,
-                    text: "Edit",
-                    cmd: "edit"
+                    text: "Info/Edit",
+                    cmd: "edit",
+                    active: true
                 },
                 {
                     icon: faCloudUpload,
@@ -90,11 +86,6 @@ class App extends React.Component {
                     icon: faClipboardList,
                     text: "List",
                     cmd: "list"
-                },
-                {
-                    icon: faAbacus,
-                    text: "Calculate single point",
-                    cmd: "calculate-point"
                 },
                 {
                     icon: faAbacus,
@@ -127,7 +118,7 @@ class App extends React.Component {
                     enabled: true
                 }
             },
-            activeCommand: "info",
+            activeCommand: "edit",
             selectedStation: null,
             selectedStations: [],
             clickedPoint: null,
@@ -151,36 +142,21 @@ class App extends React.Component {
         switch(this.state.activeCommand){
             case "info":
             case "calculate":
-            case "calculate-point":
                 // No special logic, just selection/deselection
                 break;
             case "edit":
                 
-                showContextMenu = false;
-                
-                // Clicked a station with nothing already selected -- create a clone of this station for editing
-                if(!c.previouslySelected && c.selected){
+                // Clicked a station create a clone of this station for editing
+                if(c.selected){
                     this.baseStations.startEditExisting(c.selected);
-                
-                // Clicked an empty spot with nothing already selected -- create a new station here.
-                }else if(!c.previouslySelected && !c.selected){
-                    this.baseStations.startEditNew(new BaseStation({
-                        id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
-                        name: "New station",
-                        lngLat: c.lngLat,
-                        frequency: 22000,
-                        transmitPower: 62,
-                        height: 300,
-                        isPreview: true,
-                        isSelected: true
-                    }));
+                    showContextMenu = false;
 
-                // Clicked somewhere with a station already selected -- move it to the new location
-                }else if(c.previouslySelected){
-                    c.previouslySelected.lngLat = c.lngLat;
-                    this.baseStations.resetSelections();
+                // Clicked outside of a station -- keep the selection
+                }else if(c.previouslySelected && !c.selected){
                     c.previouslySelected.select();
                 }
+                
+                // In other cases, a context menu is shown from which the user can create a new station or move an existing station.
 
                 break;
         }
@@ -193,11 +169,37 @@ class App extends React.Component {
                 coordinate: info.coordinate,
                 left: info.x + "px",
                 top: info.y + "px",
-                shown: showContextMenu
+                shown: showContextMenu,
+                clickData: c
             }
         }));
     }
 
+    onMoveStationRequested(){
+        const c = this.state.contextmenu.clickData;
+
+        c.previouslySelected.lngLat = c.lngLat;
+        this.baseStations.resetSelections();
+        c.previouslySelected.select();
+        
+        this.hideContextMenu();
+        this.refreshState();
+    }
+
+    onCreateNewStationRequested(coordinate){
+        this.baseStations.startEditNew(new BaseStation({
+            id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
+            name: "New station",
+            lngLat: coordinate,
+            frequency: 22000,
+            transmitPower: 62,
+            height: 300,
+            isPreview: true,
+            isSelected: true
+        }));
+
+        this.hideContextMenu();
+        this.refreshState();
     }
 
     onEditSaved(values) {
@@ -265,16 +267,6 @@ class App extends React.Component {
         }));
     }
 
-    onEditRequested() {
-        this.onMenuItemClicked(_.find(this.state.menuItems, p => p.cmd == "edit"));
-        this.baseStations.startEditExisting(this.baseStations.getSelectedItem());
-        this.refreshState();
-    }
-
-    onPointCalculationRequested() {
-        this.onMenuItemClicked(_.find(this.state.menuItems, p => p.cmd == "calculate-point"));
-    }
-
     initiateMapTransition(transition) {
         this.setState(state => ({
             viewport: { ...state.viewport, ...transition }
@@ -283,7 +275,13 @@ class App extends React.Component {
 
     onViewportChange(data) {
         this.setState({ 
-            viewport: data,
+            viewport: data
+        });
+        this.hideContextMenu();
+    }
+
+    hideContextMenu(){
+        this.setState({ 
             contextmenu: {...this.state.contextmenu, shown: false}
         });
     }
@@ -310,11 +308,7 @@ class App extends React.Component {
     render() {
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
-            <ContextMenu {...this.state.contextmenu} selectedStation={this.state.selectedStation}></ContextMenu>
-            {this.state.activeCommand == "info" && this.state.selectedStation &&
-                <Sidebar style={{ marginTop: "60px" }}>
-                    <StationInfoDialog selectedStation={this.state.selectedStation} onEditRequested={this.onEditRequested} onPointCalculationRequested={this.onPointCalculationRequested} />
-                </Sidebar>}
+            <ContextMenu {...this.state.contextmenu} station={this.state.selectedStation} onMoveStationRequested={this.onMoveStationRequested} onNewStationRequested={this.onCreateNewStationRequested} onHideMenuRequested={this.hideContextMenu}></ContextMenu>
             {this.state.activeCommand == "edit" && this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.selectedStation.isEditClone} />
