@@ -95,7 +95,7 @@ class EditStationDialog extends React.Component {
                             )}
                         </Field>
                         
-                        <Button className="mt-4" disabled={isSubmitting} type="submit">{this.props.isEditing ? "Save changes" : "Create station"}</Button>
+                        <Button className="mt-4" disabled={isSubmitting} type="submit">{this.props.isEditing ? "Save changes" : "Save station"}</Button>
                         <Button variant="secondary" disabled={isSubmitting} onClick={this.props.onCancel}>Cancel</Button>
                         {this.props.isEditing && <Button variant="danger" disabled={isSubmitting} onClick={this.props.onDelete}>Delete station</Button>}
                     </Form>
