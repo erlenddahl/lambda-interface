@@ -24,6 +24,15 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
+        //TODO: Move import to popup within List
+        //TODO: Mutual selections in List/Map
+        //TODO: Add export button in List
+        //TODO: Implement point calculation, show results as nice graph
+        //TODO: Improve network calculation results display
+        //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
+        //TODO: Add antenna type
+        //TODO: Handle multiple antennas at the same location
+
         this.baseStations = new BaseStationList([
             {
                 id: "1254",
@@ -142,7 +151,7 @@ class App extends React.Component {
         switch(this.state.activeCommand){
             case "info":
             case "calculate":
-                // No special logic, just selection/deselection
+                showContextMenu = false;
                 break;
             case "edit":
                 
