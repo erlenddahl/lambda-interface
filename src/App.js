@@ -198,11 +198,6 @@ class App extends React.Component {
         }));
     }
 
-    resetStationList(stations) {
-        return stations.filter(p => p.state != "preview" && p.state != "new").map(p => {
-            p.state = null;
-            return p;
-        });
     }
 
     onEditSaved(values) {
