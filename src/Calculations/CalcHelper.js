@@ -8,12 +8,16 @@ export default class CalcHelper{
         this.proj = proj4(wgs84, utm33);
     }
 
+    toUtm(wgs84Array){
+        var xy = this.proj.forward(wgs84Array);
+        return { x: xy[0], y: xy[1] };
+    }
+
     toBaseStationObject(bs, maxRadius = 50000){
-        var xy = this.proj.forward(bs.lngLat);
+        var utm = this.toUtm(bs.lngLat);
         return {
             "name": bs.name,
-            "x": xy[0],
-            "y": xy[1],
+            "center": utm,
             "heightAboveTerrain": bs.height, 
             "totalTransmissionLevel": bs.transmitPower,
             "maxRadius": maxRadius

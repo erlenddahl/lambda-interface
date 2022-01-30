@@ -16,7 +16,7 @@ class ContextMenu extends React.Component {
             
             {!this.props.station && <Button variant="success" className="mt-4 w-100" onClick={() => this.props.onNewStationRequested(this.props.coordinate)}>Create new station at this location</Button>}
             {this.props.station && <Button className="mt-2 w-100" onClick={() => this.props.onMoveStationRequested()}>Move station to this location</Button>}
-            {this.props.station && this.props.station.isEditClone && <Button className="mt-2 w-100" onClick={() => this.props.onCalculationRequested(this.props.coordinate)}>Calculate path loss from {this.props.station.name}</Button>}
+            {this.props.station && this.props.station.isEditClone && <Button className="mt-2 w-100" onClick={() => this.props.onCalculationRequested(this.props.station, this.props.coordinate)}>Calculate path loss from {this.props.station.name}</Button>}
             <Button variant="secondary" className="mt-2 w-100" onClick={() => this.props.onHideMenuRequested()}>Hide menu</Button>
         </div>
     }

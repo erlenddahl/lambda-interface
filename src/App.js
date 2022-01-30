@@ -18,6 +18,7 @@ import './App.css';
 import ImportStationsDialog from './Controls/ImportStationsDialog';
 import BaseStationList from './Models/BaseStationList';
 import BaseStation from './Models/BaseStation';
+import PopupContainer from './Controls/PopupContainer';
 
 class App extends React.Component {
 
@@ -56,6 +57,7 @@ class App extends React.Component {
         this.onViewportChange = this.onViewportChange.bind(this);
         
         this.hideContextMenu = this.hideContextMenu.bind(this);
+        this.onPointCalculationRequested = this.onPointCalculationRequested.bind(this);
         this.onMoveStationRequested = this.onMoveStationRequested.bind(this);
         this.onCreateNewStationRequested = this.onCreateNewStationRequested.bind(this);
 
@@ -289,6 +291,12 @@ class App extends React.Component {
         this.hideContextMenu();
     }
 
+    onPointCalculationRequested(station, coordinate){
+        this.setState({
+            singlePointCalculation: { station, coordinate }
+        });
+    }
+
     hideContextMenu(){
         this.setState({ 
             contextmenu: {...this.state.contextmenu, shown: false}
@@ -317,7 +325,10 @@ class App extends React.Component {
     render() {
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
-            <ContextMenu {...this.state.contextmenu} station={this.state.selectedStation} onMoveStationRequested={this.onMoveStationRequested} onNewStationRequested={this.onCreateNewStationRequested} onHideMenuRequested={this.hideContextMenu}></ContextMenu>
+            <ContextMenu {...this.state.contextmenu} station={this.state.selectedStation} onCalculationRequested={this.onPointCalculationRequested} onMoveStationRequested={this.onMoveStationRequested} onNewStationRequested={this.onCreateNewStationRequested} onHideMenuRequested={this.hideContextMenu}></ContextMenu>
+            {this.state.singlePointCalculation && <PopupContainer>
+                <SinglePointCalculator {...this.state.singlePointCalculation}></SinglePointCalculator>
+            </PopupContainer>}
             {this.state.activeCommand == "edit" && this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.selectedStation.isEditClone} />
