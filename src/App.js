@@ -252,6 +252,8 @@ class App extends React.Component {
 
     onEditRequested() {
         this.onMenuItemClicked(_.find(this.state.menuItems, p => p.cmd == "edit"));
+        this.baseStations.startEditExisting(this.baseStations.getSelectedItem());
+        this.refreshState();
     }
 
     initiateMapTransition(transition) {

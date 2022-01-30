@@ -22,7 +22,12 @@ export default class BaseStationList{
         if(mode != SELECTION_MODE.SINGLE && mode != SELECTION_MODE.MULTIPLE) throw "Invalid selection mode: '" + mode + "'";
 
         this.selectionMode = mode;
-        this.resetSelections();
+        
+        if(mode == SELECTION_MODE.MULTIPLE){
+            var selectedItems = this.getSelectedItems();
+            for(var i = 1; i < selectedItems.length; i++)
+                selectedItems[i].deselect();
+        }
     }
 
     getSelectedItem(){
