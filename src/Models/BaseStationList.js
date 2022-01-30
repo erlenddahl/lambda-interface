@@ -49,6 +49,8 @@ export default class BaseStationList{
 
     startEditExisting(station){
 
+        this.cancelEdit();
+
         this.editedStation = station;
         this.editClone = station.clone({ original: station, isPreview: true, isEditClone: true, isSelected: true });
         this.stations.push(this.editClone);
