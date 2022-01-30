@@ -3,8 +3,8 @@ import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/Alert';
 import moment from 'moment';
-import ConsoleInformationPanel from './ConsoleInformationPanel.js';
-import CalcHelper from "./Calculations/CalcHelper.js";
+import ConsoleInformationPanel from '../Helpers/ConsoleInformationPanel.js';
+import CalcHelper from "../Calculations/CalcHelper.js";
 
 class CalculatorSetup extends React.Component {
 

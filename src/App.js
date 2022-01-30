@@ -1,12 +1,12 @@
 import React from 'react';
 import LambdaMap from './LambdaMap';
-import EditStationDialog from './EditStationDialog'
+import EditStationDialog from './Controls/EditStationDialog'
 import SinglePointCalculator from './SinglePointCalculator'
-import CalculatorSetup from './CalculatorSetup'
-import LayerPicker from './LayerPicker'
-import StationList from './StationList'
-import Sidebar from './Sidebar';
-import MainMenu from './MainMenu';
+import CalculatorSetup from './Controls/CalculatorSetup'
+import LayerPicker from './Controls/LayerPicker'
+import StationList from './Controls/StationList'
+import Sidebar from './Controls/Sidebar.js';
+import MainMenu from './Controls/MainMenu.js';
 import ContextMenu from './ContextMenu.js';
 import _ from 'lodash';
 import { SELECTION_MODE } from './Helpers/Constants';
@@ -15,7 +15,7 @@ import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList } from '@fort
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import ImportStationsDialog from './ImportStationsDialog';
+import ImportStationsDialog from './Controls/ImportStationsDialog';
 import BaseStationList from './Models/BaseStationList';
 import BaseStation from './Models/BaseStation';
 
