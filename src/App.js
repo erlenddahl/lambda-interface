@@ -6,8 +6,9 @@ import CalculatorSetup from './CalculatorSetup'
 import LayerPicker from './LayerPicker'
 import StationList from './StationList'
 import StationInfoDialog from './StationInfoDialog';
-import Sidebar from './Sidebar'
-import MainMenu from './MainMenu'
+import Sidebar from './Sidebar';
+import MainMenu from './MainMenu';
+import ContextMenu from './ContextMenu.js';
 import _ from 'lodash';
 import { SELECTION_MODE } from './Helpers/Constants';
 
@@ -46,6 +47,7 @@ class App extends React.Component {
         this.onMapClicked = this.onMapClicked.bind(this);
         this.onViewportChange = this.onViewportChange.bind(this);
 
+        this.onPointCalculationRequested = this.onPointCalculationRequested.bind(this);
         this.onEditRequested = this.onEditRequested.bind(this);
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
@@ -62,6 +64,11 @@ class App extends React.Component {
         this.onLayerVisibilityChange = this.onLayerVisibilityChange.bind(this);
 
         this.state = {
+            contextmenu: {
+                shown: false,
+                left: "100px",
+                top: "100px"
+            },
             menuItems: [
                 {
                     icon: faInfoCircle,
@@ -137,8 +144,9 @@ class App extends React.Component {
     }
 
     onMapClicked(info) {
-        
+
         const c = this.baseStations.handleClick(info);
+        let showContextMenu = !c.selected;
 
         switch(this.state.activeCommand){
             case "info":
@@ -147,6 +155,8 @@ class App extends React.Component {
                 // No special logic, just selection/deselection
                 break;
             case "edit":
+                
+                showContextMenu = false;
                 
                 // Clicked a station with nothing already selected -- create a clone of this station for editing
                 if(!c.previouslySelected && c.selected){
@@ -176,6 +186,16 @@ class App extends React.Component {
         }
 
         this.refreshState();
+        
+        this.setState(state => ({
+            contextmenu: {
+                ...state.contextmenu,
+                coordinate: info.coordinate,
+                left: info.x + "px",
+                top: info.y + "px",
+                shown: showContextMenu
+            }
+        }));
     }
 
     resetStationList(stations) {
@@ -256,6 +276,10 @@ class App extends React.Component {
         this.refreshState();
     }
 
+    onPointCalculationRequested() {
+        this.onMenuItemClicked(_.find(this.state.menuItems, p => p.cmd == "calculate-point"));
+    }
+
     initiateMapTransition(transition) {
         this.setState(state => ({
             viewport: { ...state.viewport, ...transition }
@@ -263,7 +287,10 @@ class App extends React.Component {
     }
 
     onViewportChange(data) {
-        this.setState({ viewport: data });
+        this.setState({ 
+            viewport: data,
+            contextmenu: {...this.state.contextmenu, shown: false}
+        });
     }
 
     onLayerVisibilityChange(layerKey, visibility) {
@@ -288,9 +315,10 @@ class App extends React.Component {
     render() {
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
+            <ContextMenu {...this.state.contextmenu} selectedStation={this.state.selectedStation}></ContextMenu>
             {this.state.activeCommand == "info" && this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
-                    <StationInfoDialog selectedStation={this.state.selectedStation} onEditRequested={this.onEditRequested} />
+                    <StationInfoDialog selectedStation={this.state.selectedStation} onEditRequested={this.onEditRequested} onPointCalculationRequested={this.onPointCalculationRequested} />
                 </Sidebar>}
             {this.state.activeCommand == "edit" && this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
