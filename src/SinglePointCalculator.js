@@ -5,6 +5,7 @@ import Alert from 'react-bootstrap/Alert';
 //import moment from 'moment';
 import ConsoleInformationPanel from './Helpers/ConsoleInformationPanel.js';
 import CalcHelper from "./Calculations/CalcHelper.js";
+import ReactFrappeChart from "react-frappe-charts";
 
 class SinglePointCalculator extends React.Component {
 
@@ -50,14 +51,34 @@ class SinglePointCalculator extends React.Component {
     }
 
     render() {
+        
+        const r = this.state.results;
+
         return <div className="calculator-setup" style={this.props.style}>
             <Alert variant="info">Selected station: {this.props.station.name} ({this.props.station.id})</Alert>
             
             <Button onClick={this.onCalculationClicked} disabled={this.state.isBusy || !this.props.station}>Calculate</Button>
 
-            {this.state.results && <div>
-                {JSON.stringify(this.state.results.rssi)}
-                <ConsoleInformationPanel data={this.state.results.snapshot}></ConsoleInformationPanel>
+            {r && <div>
+                <ReactFrappeChart
+                    type="line"
+                    axisOptions={{ xAxisMode: "tick", yAxisMode: "tick", xIsSeries: true }}
+                    lineOptions={{ hideDots: 1 }}
+                    height={250}
+                    data={{
+                        labels: r.rssi.map((_, i) => i),
+                        datasets: [{ 
+                            name: "RSSI",
+                            chartType: "line",
+                            values: r.rssi 
+                        }, { 
+                            name: "Terrain height",
+                            chartType: "line",
+                            values: r.vector.map(p => p.z) 
+                        }],
+                    }}
+                />
+                <ConsoleInformationPanel data={r.snapshot}></ConsoleInformationPanel>
             </div>}
         </div>
     }
