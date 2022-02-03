@@ -24,8 +24,9 @@ class CalculatorSetup extends React.Component {
         this.helper = new CalcHelper();
     }
     
-    componentDidMount() {
-        this.refreshJobStatuses();
+    async componentDidMount() {
+        await this.loadJobs();
+        await this.refreshJobStatuses();
     }
 
     componentWillUnmount() {
@@ -61,23 +62,28 @@ class CalculatorSetup extends React.Component {
         }));
     }
 
-    async onCalculationClicked(){
-        this.setState({ isBusy: true });
+    async loadJobs(){
 
+        this.setBusy(true);
 
         try{
             const requestOptions = {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
             };
-            const response = await fetch(this.apiUrl, requestOptions);
+            const response = await fetch(this.apiUrl + "/jobs", requestOptions);
             const data = await response.json();
+            const jobs = data.map(p => ({ data: { Id: p } }));
+            console.log(data, jobs);
 
-            this.updateJobState(data);
+            this.setState(s => ({ jobs: (s.jobs || []).concat(jobs) }));
 
         }catch(ex){
             console.log(ex);
         }
 
-        this.setState({ isBusy: false });
+        this.setBusy(false);
+    }
 
     async generateConfig(){
 
