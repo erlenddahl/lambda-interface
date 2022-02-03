@@ -20,6 +20,7 @@ export default class CalcHelper{
             "center": utm,
             "heightAboveTerrain": bs.height, 
             "totalTransmissionLevel": bs.transmitPower,
+            "antennaType": "MobileNetwork",
             "maxRadius": maxRadius
         };
     }
