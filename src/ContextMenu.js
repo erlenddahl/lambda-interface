@@ -24,8 +24,8 @@ class ContextMenu extends React.Component {
 
 ContextMenu.propTypes = {
     shown: PropTypes.bool,
-    left: PropTypes.number,
-    top: PropTypes.number,
+    left: PropTypes.string,
+    top: PropTypes.string,
     coordinate: PropTypes.array,
     station: PropTypes.object,
     onNewStationRequested: PropTypes.func,
