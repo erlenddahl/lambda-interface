@@ -295,6 +295,7 @@ class App extends React.Component {
         this.setState({
             singlePointCalculation: { station, coordinate }
         });
+        this.hideContextMenu();
     }
 
     hideContextMenu(){
