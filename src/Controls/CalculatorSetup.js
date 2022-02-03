@@ -160,7 +160,7 @@ class CalculatorSetup extends React.Component {
                         <tr>
                             <td>{moment(p.data.Enqueued).format('MMMM Do YYYY, HH:mm:ss')}</td>
                             <td>{p.status}</td>
-                            <td>{p.status != "InQueue" && (<Button onClick={() => this.setState({showDetails: p})}>Show details</Button>)}</td>
+                            <td>{p.status != "InQueue" && (<Button onClick={() => this.setState(s => ({showDetails: p == s.showDetails ? null : p }))}>Show details</Button>)}</td>
                         </tr>
                     </React.Fragment>
                 )}
