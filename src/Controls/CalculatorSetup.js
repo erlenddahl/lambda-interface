@@ -112,7 +112,30 @@ class CalculatorSetup extends React.Component {
                 })
         };
     }
+
+    async onCalculationClicked(){
+        this.setBusy(true);
+
+        try{
             const response = await fetch(this.apiUrl, this.getCalculationRequestOptions());
+            const data = await response.json();
+
+            if(data.error){
+                this.setState({ calculationError: data.error, isBusy: false });
+                return;
+            }
+
+            this.updateJobState(data);
+
+        }catch(ex){
+            this.setState({ calculationError: ex.message });
+        }
+
+        this.setBusy(false);
+    }
+
+    setBusy(value){
+        this.setState({ isBusy: value });
     }
 
     render() {
@@ -121,7 +144,9 @@ class CalculatorSetup extends React.Component {
             <Button onClick={this.onCalculationClicked} disabled={this.state.isBusy || !this.props.selectedStations.length}>Calculate</Button>
             <Button className="mx-2" variant="secondary" onClick={this.generateConfig} disabled={this.state.isBusy || !this.props.selectedStations.length}>Generate config for offline calculation</Button>
 
-            {this.state.jobs.length > 0 && (<table style={{width: "100%"}}>
+            {this.state.calculationError && <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>}
+
+            {this.state.jobs.length > 0 && (<table style={{width: "100%"}} className="mt-4">
                 <thead>
                     <tr>
                         <th>Created</th>
@@ -144,7 +169,7 @@ class CalculatorSetup extends React.Component {
 
             {this.state.showDetails != null && (<div>
                 {this.state.showDetails.data.RunException && 
-                    <Alert variant="danger">{this.state.showDetails.data.RunException}</Alert>
+                    <Alert className="mt-4" variant="danger">{this.state.showDetails.data.RunException}</Alert>
                 }
                 <ConsoleInformationPanel data={this.state.showDetails.data.Snapshot}></ConsoleInformationPanel>
             </div>)}
