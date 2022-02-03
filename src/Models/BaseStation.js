@@ -13,6 +13,10 @@ export default class BaseStation{
         this.setEdited(false);
     }
 
+    getCoordinateString(decimals=8){
+        return this.lngLat[0].toFixed(decimals) + ", " + this.lngLat[1].toFixed(decimals);
+    }
+
     toggleSelect(){
         this.isSelected = !this.isSelected;
         return this;

@@ -328,7 +328,7 @@ class App extends React.Component {
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             <ContextMenu {...this.state.contextmenu} station={this.state.selectedStation} onCalculationRequested={this.onPointCalculationRequested} onMoveStationRequested={this.onMoveStationRequested} onNewStationRequested={this.onCreateNewStationRequested} onHideMenuRequested={this.hideContextMenu}></ContextMenu>
             {this.state.singlePointCalculation && <PopupContainer>
-                <SinglePointCalculator {...this.state.singlePointCalculation}></SinglePointCalculator>
+                <SinglePointCalculator {...this.state.singlePointCalculation} closeRequested={() => this.setState({ singlePointCalculation: null })}></SinglePointCalculator>
             </PopupContainer>}
             {this.state.activeCommand == "edit" && this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>

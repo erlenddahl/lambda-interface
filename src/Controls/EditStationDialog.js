@@ -37,7 +37,7 @@ class EditStationDialog extends React.Component {
             
             <FormGroup>
                 <FormLabel>Location:</FormLabel>
-                <FormControl type="text" value={this.props.selectedStation.lngLat[0].toFixed(8) + ", " + this.props.selectedStation.lngLat[1].toFixed(8)} readOnly></FormControl>
+                <FormControl type="text" value={this.props.selectedStation.getCoordinateString()} readOnly></FormControl>
             </FormGroup>
 
             <Formik
