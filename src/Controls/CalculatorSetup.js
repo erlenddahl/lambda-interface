@@ -19,6 +19,9 @@ class CalculatorSetup extends React.Component {
         this.apiUrl = "https://localhost:44332/roadnetwork";
 
         this.onCalculationClicked = this.onCalculationClicked.bind(this);
+        this.generateConfig = this.generateConfig.bind(this);
+        
+        this.helper = new CalcHelper();
     }
     
     componentDidMount() {
@@ -61,16 +64,9 @@ class CalculatorSetup extends React.Component {
     async onCalculationClicked(){
         this.setState({ isBusy: true });
 
-        const helper = new CalcHelper();
 
         try{
             const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                        "baseStations": this.props.selectedStations.map(p => helper.toBaseStationObject(p)),
-                        "minimumAllowableSignalValue": -150
-                    })
             };
             const response = await fetch(this.apiUrl, requestOptions);
             const data = await response.json();
@@ -82,12 +78,42 @@ class CalculatorSetup extends React.Component {
         }
 
         this.setState({ isBusy: false });
+
+    async generateConfig(){
+
+        this.setBusy(true);
+
+        try{
+            const response = await fetch(this.apiUrl + "/generateConfig", this.getCalculationRequestOptions());
+            const data = await response.json();
+            
+            alert(JSON.stringify(data, null, 4));
+
+        }catch(ex){
+            this.setState({ calculationError: ex.message });
+        }
+
+        this.setBusy(false);
+    }
+
+    getCalculationRequestOptions(){
+        return {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                    "baseStations": this.props.selectedStations.map(p => this.helper.toBaseStationObject(p)),
+                    "minimumAllowableSignalValue": -125
+                })
+        };
+    }
+            const response = await fetch(this.apiUrl, this.getCalculationRequestOptions());
     }
 
     render() {
         return <div className="calculator-setup" style={this.props.style}>
             <Alert variant="info">{this.props.selectedStations.length} stations selected for calculations.</Alert>
             <Button onClick={this.onCalculationClicked} disabled={this.state.isBusy || !this.props.selectedStations.length}>Calculate</Button>
+            <Button className="mx-2" variant="secondary" onClick={this.generateConfig} disabled={this.state.isBusy || !this.props.selectedStations.length}>Generate config for offline calculation</Button>
 
             {this.state.jobs.length > 0 && (<table style={{width: "100%"}}>
                 <thead>
