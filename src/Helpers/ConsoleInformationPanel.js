@@ -36,9 +36,12 @@ class ConsoleInformationPanel extends React.Component {
             </div>
             <div>
                 {progresses.map(p => (
-                    <div key={p.label}>
-                        <span style={{fontWeight: "bold"}}>{p.label}: </span>
-                        <span>{p.value.Visualization}</span>
+                    <div key={p.label} style={{display: "flex", padding: "2px"}}>
+                        <div style={{fontWeight: "bold"}}>{p.label}: </div>
+                        <div style={{flex: 1, marginLeft: "10px", marginRight: "10px", backgroundColor: "rgb(232, 232, 232)", padding: "2px"}}>
+                            <div style={{backgroundColor: "rgb(87, 155, 73)", width: p.value.Percentage + "%", height: "100%"}}></div>
+                        </div>
+                        <div>{p.value.Visualization.split("% :: ")[1]}</div>
                     </div>
                 ))}
             </div>
