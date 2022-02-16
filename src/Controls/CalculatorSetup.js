@@ -74,7 +74,6 @@ class CalculatorSetup extends React.Component {
             const response = await fetch(this.apiUrl + "/jobs", requestOptions);
             const data = await response.json();
             const jobs = data.map(p => p);
-            console.log(data, jobs);
 
             this.setState(s => ({ jobs: (s.jobs || []).concat(jobs) }));
 
@@ -94,6 +93,38 @@ class CalculatorSetup extends React.Component {
             const data = await response.json();
             
             alert(JSON.stringify(data, null, 4));
+
+        }catch(ex){
+            this.setState({ calculationError: ex.message });
+        }
+
+        this.setBusy(false);
+    }
+
+    async showResults(job){
+
+        this.setBusy(true);
+
+        try{
+            const requestOptions = {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            };
+            const response = await fetch(this.apiUrl + "/results?key=" + job.data.Id, requestOptions);
+            const data = await response.json();
+            const geoJson = {
+                "type": "FeatureCollection",
+                "features": data.links.map(p => ({ 
+                    "type": "Feature", 
+                    "properties": {...p, isLink: true}, 
+                    "geometry": { 
+                        "type": "LineString", 
+                        "coordinates": p.Points.map(c => this.helper.toWgsArr([c[0], c[1]]))
+                    } 
+                }))
+            };
+
+            this.props.onAddGeoJsonLayer("results-geojson-" + job.data.Id, geoJson);
 
         }catch(ex){
             this.setState({ calculationError: ex.message });
@@ -160,7 +191,10 @@ class CalculatorSetup extends React.Component {
                         <tr>
                             <td>{moment(p.data.Enqueued).format('MMMM Do YYYY, HH:mm:ss')}</td>
                             <td>{p.status}</td>
-                            <td>{p.status != "InQueue" && (<Button onClick={() => this.setState(s => ({showDetails: p == s.showDetails ? null : p }))}>Show details</Button>)}</td>
+                            <td>
+                                {p.status != "InQueue" && (<Button onClick={() => this.setState(s => ({showDetails: p == s.showDetails ? null : p }))}>Show details</Button>)}
+                                {p.status == "Finished" && (<Button className="mx-2" onClick={() => this.showResults(p)}>Show results on map</Button>)}
+                            </td>
                         </tr>
                     </React.Fragment>
                 )}
@@ -179,7 +213,8 @@ class CalculatorSetup extends React.Component {
 
 CalculatorSetup.propTypes = {
     style: PropTypes.object,
-    selectedStations: PropTypes.array
+    selectedStations: PropTypes.array,
+    onAddGeoJsonLayer: PropTypes.func
 };
 
 export default CalculatorSetup;

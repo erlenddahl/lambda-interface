@@ -13,6 +13,11 @@ export default class CalcHelper{
         return { x: xy[0], y: xy[1] };
     }
 
+    toWgsArr(utmArray){
+        var xy = this.proj.inverse(utmArray);
+        return xy;
+    }
+
     toBaseStationObject(bs, maxRadius = 50000){
         var utm = this.toUtm(bs.lngLat);
         return {

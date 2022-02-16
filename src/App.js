@@ -55,6 +55,7 @@ class App extends React.Component {
 
         this.onMapClicked = this.onMapClicked.bind(this);
         this.onViewportChange = this.onViewportChange.bind(this);
+        this.addGeoJsonLayer = this.addGeoJsonLayer.bind(this);
         
         this.hideContextMenu = this.hideContextMenu.bind(this);
         this.onPointCalculationRequested = this.onPointCalculationRequested.bind(this);
@@ -127,6 +128,11 @@ class App extends React.Component {
                     name: "My stations",
                     visible: true,
                     enabled: true
+                },
+                results: {
+                    name: "Results",
+                    visible: false,
+                    enabled: false
                 }
             },
             activeCommand: "edit",
@@ -145,7 +151,23 @@ class App extends React.Component {
         };
     }
 
+    addGeoJsonLayer(name, geoJson){
+        const layers = this.state.layers;
+        layers.results.visible = true;
+        layers.results.enabled = true;
+
+        this.setState({
+            resultsLayer: {
+                name: name,
+                geoJson: geoJson
+            }, 
+            layers: layers
+        });
+    }
+
     onMapClicked(info) {
+
+        if(info?.object?.isLink == true) return;
 
         const c = this.baseStations.handleClick(info);
         let showContextMenu = !c.selected;
@@ -344,13 +366,13 @@ class App extends React.Component {
                 </Sidebar>}
             {this.state.activeCommand == "calculate" &&
                 <Sidebar style={{ marginTop: "60px", width: "900px" }}>
-                    <CalculatorSetup selectedStations={this.state.selectedStations} />
+                    <CalculatorSetup selectedStations={this.state.selectedStations} onAddGeoJsonLayer={this.addGeoJsonLayer} />
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
                 <Sidebar style={{ marginTop: "60px", width: "800px" }}>
                     <StationList stations={this.state.stations} onMapTransitionRequested={this.initiateMapTransition} />
                 </Sidebar>}
-            <LambdaMap stations={this.state.stations} onMapClicked={this.onMapClicked} viewport={this.state.viewport} onViewportChange={this.onViewportChange} layers={this.state.layers}>
+            <LambdaMap stations={this.state.stations} resultsLayer={this.state.resultsLayer} onMapClicked={this.onMapClicked} viewport={this.state.viewport} onViewportChange={this.onViewportChange} layers={this.state.layers}>
                 <div style={{ position: 'absolute', right: 0 }}>
                     <LayerPicker layers={this.state.layers} onVisibilityChange={this.onLayerVisibilityChange} />
                 </div>

@@ -15,14 +15,43 @@ class LambdaMap extends React.Component {
   constructor(props) {
     super(props);
 
+    this._colors = [[58,181,74], [64, 214, 67], [84, 229, 88], [149, 236, 79], [191, 255, 96], [238, 255, 0], [255, 235, 1], [255, 217, 54], [255, 198, 29], [255, 175, 54], [255, 118, 55], [255, 52, 58], [236, 28, 28]];
+    
     this.state = {
       hoveredObject: null,
       lastZoomOrder: 0
     };
   }
 
+  getLinkColor(min, max, current){
+    return this._colors[this.getLinkColorIndex(min, max, current)];
+  }
+
+  getLinkColorIndex(min, max, current){
+
+    if(current <= min) return this._colors.length - 1;
+    if(current >= max) return 0;
+
+    current -= min;
+    max -= min;
+
+    const ratio = (this._colors.length - 1) / max;
+    const value = current * ratio;
+
+    return Math.round(this._colors.length - value - 1);
+  }
+
   getStationColor(station) {
     return station.getColor();
+  }
+  
+  getTooltip(data){
+    if(data.isLink) return this.getLinkTooltip(data);
+    return this.getStationTooltip(data);
+  }
+
+  getLinkTooltip(data){
+    return "Average RSSI: " + data.Average.toFixed(2) + ", Min: " + data.Min.toFixed(2) + ", Max: " + data.Max.toFixed(2) + ", LCIx: " + this.getLinkColorIndex(-60, -125, data.Max);
   }
 
   getStationTooltip(station) {
@@ -42,7 +71,7 @@ class LambdaMap extends React.Component {
 
   render() {
 
-    const data = {
+    const baseStationGeoJson = {
       "type": "FeatureCollection",
       "features": this.props.stations.map(p => ({ "type": "Feature", "properties": p, "geometry": { "type": "Polygon", "coordinates": circle([p.lngLat[0], p.lngLat[1]], 0.01).geometry.coordinates } }))
     };
@@ -61,7 +90,7 @@ class LambdaMap extends React.Component {
       }),
       new GeoJsonLayer({
         id: 'geojson-layer',
-        data,
+        data: baseStationGeoJson,
         pickable: true,
         stroked: false,
         filled: true,
@@ -78,6 +107,21 @@ class LambdaMap extends React.Component {
       })
     ];
 
+    if(this.props.layers.results.visible && this.props.resultsLayer?.geoJson){
+      layers.push(new GeoJsonLayer({
+        id: 'geojson-link-layer',
+        data: this.props.resultsLayer.geoJson,
+        pickable: true,
+        stroked: false,
+        filled: true,
+        lineWidthScale: 8,
+        getLineColor: p => this.getLinkColor(-125, -60, p.properties.Max),
+        autoHighlight: true,
+        highlightColor: [0, 0, 0, 255],
+        visible: this.props.layers.mystations.visible
+      }));
+    }
+
     return (<ReactMapGL
       {...this.props.viewport}
       onViewportChange={this.props.onViewportChange}
@@ -86,7 +130,7 @@ class LambdaMap extends React.Component {
         initialViewState={this.props.viewport}
         {...this.props.viewport}
         layers={layers}
-        getTooltip={info => info.object && this.getStationTooltip(info.object.properties)}
+        getTooltip={info => info.object && this.getTooltip(info.object.properties)}
         onClick={this.props.onMapClicked}
         getCursor={() => 'crosshair'} />
         {this.props.children}
@@ -100,7 +144,8 @@ LambdaMap.propTypes = {
   onViewportChange: PropTypes.func.isRequired,
   viewport: PropTypes.object.isRequired,
   layers: PropTypes.object.isRequired,
-  children: PropTypes.element
+  children: PropTypes.element,
+  resultsLayer: PropTypes.object
 }
 
 export default LambdaMap;
