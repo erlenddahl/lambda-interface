@@ -73,7 +73,7 @@ class CalculatorSetup extends React.Component {
             };
             const response = await fetch(this.apiUrl + "/jobs", requestOptions);
             const data = await response.json();
-            const jobs = data.map(p => ({ data: { Id: p } }));
+            const jobs = data.map(p => p);
             console.log(data, jobs);
 
             this.setState(s => ({ jobs: (s.jobs || []).concat(jobs) }));
@@ -135,7 +135,7 @@ class CalculatorSetup extends React.Component {
     }
 
     setBusy(value){
-        this.setState({ isBusy: value });
+        this.setState(s => ({ isBusy: value, calculationError: value ? null : s.calculationError }));
     }
 
     render() {
@@ -151,7 +151,7 @@ class CalculatorSetup extends React.Component {
                     <tr>
                         <th>Created</th>
                         <th>Status</th>
-                        <th>Details</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
