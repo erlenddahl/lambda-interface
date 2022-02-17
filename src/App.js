@@ -153,8 +153,8 @@ class App extends React.Component {
 
     addGeoJsonLayer(name, geoJson){
         const layers = this.state.layers;
-        layers.results.visible = true;
-        layers.results.enabled = true;
+        layers.results.visible = !!name;
+        layers.results.enabled = !!name;
 
         this.setState({
             resultsLayer: {
