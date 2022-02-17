@@ -366,7 +366,7 @@ class App extends React.Component {
                 </Sidebar>}
             {this.state.activeCommand == "calculate" &&
                 <Sidebar style={{ marginTop: "60px", width: "900px" }}>
-                    <CalculatorSetup selectedStations={this.state.selectedStations} onAddGeoJsonLayer={this.addGeoJsonLayer} />
+                    <CalculatorSetup selectedStations={this.state.selectedStations} onAddGeoJsonLayer={this.addGeoJsonLayer} currentGeoJsonLayerName={this.state.resultsLayer?.name} />
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
                 <Sidebar style={{ marginTop: "60px", width: "800px" }}>

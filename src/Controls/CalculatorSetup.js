@@ -101,7 +101,12 @@ class CalculatorSetup extends React.Component {
         this.setBusy(false);
     }
 
-    async showResults(job){
+    async toggleResults(job){
+
+        if(this.props.currentGeoJsonLayerName == this.getLayerName(job)){
+            this.props.onAddGeoJsonLayer(null, null);
+            return;
+        }
 
         this.setBusy(true);
 
@@ -124,13 +129,17 @@ class CalculatorSetup extends React.Component {
                 }))
             };
 
-            this.props.onAddGeoJsonLayer("results-geojson-" + job.data.Id, geoJson);
+            this.props.onAddGeoJsonLayer(this.getLayerName(job), geoJson);
 
         }catch(ex){
             this.setState({ calculationError: ex.message });
         }
 
         this.setBusy(false);
+    }
+
+    getLayerName(job){
+        return "results-geojson-" + job.data.Id;
     }
 
     getCalculationRequestOptions(){
@@ -171,10 +180,13 @@ class CalculatorSetup extends React.Component {
 
     render() {
         return <div className="calculator-setup" style={this.props.style}>
-            <Alert variant="info">{this.props.selectedStations.length} stations selected for calculations.</Alert>
+
+            <h3 className="my-3">New calculation</h3>
+            <Alert variant="info">{this.props.selectedStations.length} stations selected for calculations. {!this.props.selectedStations.length && <span>Click a station on the map to select it.</span>}</Alert>
             <Button onClick={this.onCalculationClicked} disabled={this.state.isBusy || !this.props.selectedStations.length}>Calculate</Button>
             <Button className="mx-2" variant="secondary" onClick={this.generateConfig} disabled={this.state.isBusy || !this.props.selectedStations.length}>Generate config for offline calculation</Button>
 
+            <h3 className="my-3 mt-5">Calculation log</h3>
             {this.state.calculationError && <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>}
 
             {this.state.jobs.length > 0 && (<table style={{width: "100%"}} className="mt-4">
@@ -192,21 +204,22 @@ class CalculatorSetup extends React.Component {
                             <td>{moment(p.data.Enqueued).format('MMMM Do YYYY, HH:mm:ss')}</td>
                             <td>{p.status}</td>
                             <td>
-                                {p.status != "InQueue" && (<Button onClick={() => this.setState(s => ({showDetails: p == s.showDetails ? null : p }))}>Show details</Button>)}
-                                {p.status == "Finished" && (<Button className="mx-2" onClick={() => this.showResults(p)}>Show results on map</Button>)}
+                                {!this.state.isBusy && p.status != "InQueue" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.setState(s => ({showDetails: p == s.showDetails ? null : p }))}>{this.state.showDetails == p ? "Hide details" : "Show details"}</a>)}
+                                {!this.state.isBusy && p.status == "Finished" && (<a disabled={this.state.isBusy} href="#" className="mx-2" onClick={() => this.toggleResults(p)}>{this.props.currentGeoJsonLayerName == this.getLayerName(p) ? "Hide results from map" : "Show results on map"}</a>)}
+                                {this.state.isBusy && <span>Loading data ...</span>}
                             </td>
                         </tr>
+
+                        {this.state.showDetails == p && (<tr><td colSpan="3">
+                            {p.data.RunException && 
+                                <Alert className="mt-4" variant="danger">{p.data.RunException}</Alert>
+                            }
+                            <ConsoleInformationPanel data={p.data.Snapshot}></ConsoleInformationPanel>
+                            </td></tr>)}
                     </React.Fragment>
                 )}
                 </tbody>
             </table>)}
-
-            {this.state.showDetails != null && (<div>
-                {this.state.showDetails.data.RunException && 
-                    <Alert className="mt-4" variant="danger">{this.state.showDetails.data.RunException}</Alert>
-                }
-                <ConsoleInformationPanel data={this.state.showDetails.data.Snapshot}></ConsoleInformationPanel>
-            </div>)}
         </div>
     }
 }
@@ -214,7 +227,8 @@ class CalculatorSetup extends React.Component {
 CalculatorSetup.propTypes = {
     style: PropTypes.object,
     selectedStations: PropTypes.array,
-    onAddGeoJsonLayer: PropTypes.func
+    onAddGeoJsonLayer: PropTypes.func,
+    currentGeoJsonLayerName: PropTypes.string
 };
 
 export default CalculatorSetup;

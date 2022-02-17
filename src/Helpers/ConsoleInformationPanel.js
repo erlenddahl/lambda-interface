@@ -25,7 +25,7 @@ class ConsoleInformationPanel extends React.Component {
             value: progress[p]
         }));
 
-        return <div style={{fontSize: "12px", fontFamily: "monospace"}}>
+        return <div style={{fontSize: "12px", fontFamily: "monospace", backgroundColor: "#e1e1e1", padding: "5px", marginLeft: "20px", border: "1px solid gray"}}>
             <div>
                 {infos.map(p => (
                     <div key={p.label}>
