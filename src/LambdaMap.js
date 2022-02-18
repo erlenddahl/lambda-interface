@@ -6,9 +6,7 @@ import { MVTLayer } from '@deck.gl/geo-layers';
 import circle from '@turf/circle';
 import './LambdaMap.css';
 import ReactMapGL from 'react-map-gl';
-
-// Set your mapbox token here
-const MAPBOX_TOKEN = "pk.eyJ1IjoiZXJsZW5kZGFobCIsImEiOiJjamwyMjh6eWsxbTE4M3JxdGF3MHplb2l1In0.t2NyiwBoC_OjujWzYu9-rQ";
+import { MAPBOX_TOKEN } from './Helpers/Constants';
 
 class LambdaMap extends React.Component {
 

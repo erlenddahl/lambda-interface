@@ -8,6 +8,7 @@ import ReactFrappeChart from "react-frappe-charts";
 import { faSpinner } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Card } from 'react-bootstrap';
+import { API_URL } from './Helpers/Constants.js';
 
 class SinglePointCalculator extends React.Component {
 
@@ -21,7 +22,7 @@ class SinglePointCalculator extends React.Component {
             results: null
         };
 
-        this.apiUrl = "https://localhost:44332/singlepoint";
+        this.apiUrl = API_URL;
 
         this.onCalculationClicked = this.onCalculationClicked.bind(this);
     }

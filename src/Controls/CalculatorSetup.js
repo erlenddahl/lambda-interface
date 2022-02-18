@@ -5,6 +5,7 @@ import Alert from 'react-bootstrap/Alert';
 import moment from 'moment';
 import ConsoleInformationPanel from '../Helpers/ConsoleInformationPanel.js';
 import CalcHelper from "../Calculations/CalcHelper.js";
+import { API_URL } from '../Helpers/Constants.js';
 
 class CalculatorSetup extends React.Component {
 
@@ -16,7 +17,7 @@ class CalculatorSetup extends React.Component {
             jobs: []
         };
 
-        this.apiUrl = "https://localhost:44332/roadnetwork";
+        this.apiUrl = API_URL;
 
         this.onCalculationClicked = this.onCalculationClicked.bind(this);
         this.generateConfig = this.generateConfig.bind(this);
