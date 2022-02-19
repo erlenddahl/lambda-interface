@@ -66,6 +66,18 @@ class EditStationDialog extends React.Component {
                                 </FormGroup>
                             )}
                         </Field>
+                        <Field name="antennaType">
+                            {({ field }) => (
+                                <FormGroup controlId={field.name}>
+                                    <FormLabel>Antenna type:</FormLabel>
+                                    <FormControl as="select" {...field}>
+                                        <option value="MobileNetwork">Mobile network</option>
+                                        <option value="ItsG5">ITS G5</option>
+                                    </FormControl>
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
+                                </FormGroup>
+                            )}
+                        </Field>
                         <Field name="transmitPower">
                             {({ field }) => (
                                 <FormGroup controlId={field.name}>

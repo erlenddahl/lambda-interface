@@ -28,10 +28,7 @@ class App extends React.Component {
         //TODO: Move import to popup within List
         //TODO: Mutual selections in List/Map
         //TODO: Add export button in List
-        //TODO: Implement point calculation, show results as nice graph
-        //TODO: Improve network calculation results display
         //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
-        //TODO: Add antenna type
         //TODO: Handle multiple antennas at the same location
 
         this.baseStations = new BaseStationList([
@@ -41,7 +38,7 @@ class App extends React.Component {
                 lngLat: [10.355430273040675, 63.42050427064208],
                 transmitPower: 62,
                 height: 300,
-                antennaType: "mobileNetwork"
+                antennaType: "MobileNetwork"
             },
             {
                 id: "1255",
@@ -49,7 +46,7 @@ class App extends React.Component {
                 lngLat: [10.355430273040675, 63.41050427064208],
                 transmitPower: 71,
                 height: 300,
-                antennaType: "mobileNetwork"
+                antennaType: "MobileNetwork"
             }
         ].map(p => new BaseStation(p)));
 
@@ -228,7 +225,8 @@ class App extends React.Component {
             transmitPower: 62,
             height: 300,
             isPreview: true,
-            isSelected: true
+            isSelected: true,
+            antennaType: "MobileNetwork"
         }));
 
         this.hideContextMenu();
