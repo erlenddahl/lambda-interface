@@ -7,7 +7,7 @@ import CalcHelper from "./Calculations/CalcHelper.js";
 import ReactFrappeChart from "react-frappe-charts";
 import { faSpinner } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Card } from 'react-bootstrap';
+import { Alert, Card } from 'react-bootstrap';
 import { API_URL } from './Helpers/Constants.js';
 
 class SinglePointCalculator extends React.Component {
@@ -28,7 +28,7 @@ class SinglePointCalculator extends React.Component {
     }
 
     async onCalculationClicked(){
-        this.setState({ results: null, isBusy: true });
+        this.setState({ results: null, isBusy: true, calculationError: null });
 
         try{
             const requestOptions = {
@@ -42,6 +42,8 @@ class SinglePointCalculator extends React.Component {
             const response = await fetch(this.apiUrl, requestOptions);
             const data = await response.json();
 
+            if(data.error) throw data.error;
+
             data.distance = data.vector.length;
             data.labels = data.rssi.map((_, i) => i);
             data.altitudes = data.vector.map(p => p.z);
@@ -51,6 +53,7 @@ class SinglePointCalculator extends React.Component {
 
         }catch(ex){
             console.log(ex);
+            this.setState({calculationError: ex?.message || ex});
         }
 
         this.setState({ isBusy: false });
@@ -83,6 +86,13 @@ class SinglePointCalculator extends React.Component {
     render() {
         
         const r = this.state.results || {};
+
+        if(this.state.calculationError){
+            return (<div className="calculator-setup" style={this.props.style}>
+                <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>
+                <Button className="lower-right" onClick={this.props.closeRequested}>Close</Button>
+            </div>)
+        }
 
         return <div className="calculator-setup" style={this.props.style}>
 
