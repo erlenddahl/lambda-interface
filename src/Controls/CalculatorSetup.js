@@ -17,7 +17,7 @@ class CalculatorSetup extends React.Component {
             jobs: []
         };
 
-        this.apiUrl = API_URL;
+        this.apiUrl = API_URL + "/RoadNetwork";
 
         this.onCalculationClicked = this.onCalculationClicked.bind(this);
         this.generateConfig = this.generateConfig.bind(this);

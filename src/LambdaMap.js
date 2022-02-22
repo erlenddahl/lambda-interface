@@ -81,7 +81,7 @@ class LambdaMap extends React.Component {
       }),
       new MVTLayer({
         id: "nvdb-roadlinks",
-        data: "http://mobilitet.sintef.no/maps/roadnetwork/{z}/{x}/{y}/tile.mvt",
+        data: "https://mobilitet.sintef.no/maps/roadnetwork/{z}/{x}/{y}/tile.mvt",
         getLineColor: [100, 100, 100],
         getLineWidth: 5,
         visible: this.props.layers.roadnetwork.visible

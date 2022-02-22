@@ -22,7 +22,7 @@ class SinglePointCalculator extends React.Component {
             results: null
         };
 
-        this.apiUrl = API_URL;
+        this.apiUrl = API_URL + "/SinglePoint";
 
         this.onCalculationClicked = this.onCalculationClicked.bind(this);
     }
