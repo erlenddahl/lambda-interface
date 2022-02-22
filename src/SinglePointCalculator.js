@@ -44,6 +44,7 @@ class SinglePointCalculator extends React.Component {
 
             if(data.error) throw data.error;
 
+            data.transmitPower = this.props.station.transmitPower;
             data.distance = data.vector.length;
             data.labels = data.rssi.map((_, i) => i);
             data.altitudes = data.vector.map(p => p.z);
@@ -53,10 +54,24 @@ class SinglePointCalculator extends React.Component {
 
         }catch(ex){
             console.log(ex);
-            this.setState({calculationError: ex?.message || ex});
+            this.setState({calculationError: ex?.message || ex, results: null});
         }
 
         this.setState({ isBusy: false });
+    }
+
+    exportCsv(){
+
+        let csv = "distance;path loss;rssi<br />";
+        const r = this.state.results;
+
+        for(var i = 0; i < r.distance; i++){
+            csv += r.labels[i] + ";" + (r.rssi[i] + r.transmitPower) + ";" + r.rssi[i] + "<br />";
+        }
+
+        this.props.popupRequested({
+            contents: csv
+        });
     }
 
     getCurrentCalcId(){
@@ -185,7 +200,11 @@ class SinglePointCalculator extends React.Component {
                 </div>)}
 
                 <Button className="lower-left" variant="secondary" onClick={() => this.setState(s => ({ showDetails: !s.showDetails }))}>Details</Button>
-                <Button className="lower-right" onClick={this.props.closeRequested}>Close</Button>
+                
+                <div className="lower-right">
+                    <Button className="mx-2" variant="info" onClick={() => this.exportCsv()}>Export as CSV</Button>
+                    <Button onClick={this.props.closeRequested}>Close</Button>
+                </div>
             </div>}
         </div>
     }
@@ -195,7 +214,8 @@ SinglePointCalculator.propTypes = {
     style: PropTypes.object,
     station: PropTypes.object,
     coordinate: PropTypes.array,
-    closeRequested: PropTypes.func
+    closeRequested: PropTypes.func,
+    popupRequested: PropTypes.func
 };
 
 export default SinglePointCalculator;

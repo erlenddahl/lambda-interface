@@ -19,6 +19,7 @@ import ImportStationsDialog from './Controls/ImportStationsDialog';
 import BaseStationList from './Models/BaseStationList';
 import BaseStation from './Models/BaseStation';
 import PopupContainer from './Controls/PopupContainer';
+import { Button } from 'react-bootstrap';
 
 class App extends React.Component {
 
@@ -348,7 +349,15 @@ class App extends React.Component {
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             <ContextMenu {...this.state.contextmenu} station={this.state.selectedStation} onCalculationRequested={this.onPointCalculationRequested} onMoveStationRequested={this.onMoveStationRequested} onNewStationRequested={this.onCreateNewStationRequested} onHideMenuRequested={this.hideContextMenu}></ContextMenu>
             {this.state.singlePointCalculation && <PopupContainer>
-                <SinglePointCalculator {...this.state.singlePointCalculation} closeRequested={() => this.setState({ singlePointCalculation: null })}></SinglePointCalculator>
+                <SinglePointCalculator {...this.state.singlePointCalculation} popupRequested={d => this.setState({ copyPopup: d })} closeRequested={() => this.setState({ singlePointCalculation: null })}></SinglePointCalculator>
+            </PopupContainer>}
+            {this.state.copyPopup && <PopupContainer>
+                <div>
+                    <div style={{ border: "1px solid black", margin: "10px", padding: "5px", overflow: "scroll", maxHeight: "500px", whiteSpace: "pre-line" }} dangerouslySetInnerHTML={{ __html: this.state.copyPopup.contents }}>
+                    </div>
+                    
+                    <Button className="lower-right" onClick={() => this.setState({copyPopup: null})}>Close</Button>
+                </div>
             </PopupContainer>}
             {this.state.activeCommand == "edit" && this.state.selectedStation &&
                 <Sidebar style={{ marginTop: "60px" }}>
