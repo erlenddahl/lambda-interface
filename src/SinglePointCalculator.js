@@ -36,7 +36,8 @@ class SinglePointCalculator extends React.Component {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                         "baseStation": this._helper.toBaseStationObject(this.props.station),
-                        "targetCoordinates": this._helper.toUtm(this.props.coordinate)
+                        "targetCoordinates": this._helper.toUtm(this.props.coordinate),
+                        "receiverHeightAboveTerrain": 2
                     })
             };
             const response = await fetch(this.apiUrl, requestOptions);
@@ -62,11 +63,11 @@ class SinglePointCalculator extends React.Component {
 
     exportCsv(){
 
-        let csv = "distance;path loss;rssi<br />";
+        let csv = "distance from antenna;terrain height;path loss;rssi<br />";
         const r = this.state.results;
 
         for(var i = 0; i < r.distance; i++){
-            csv += r.labels[i] + ";" + (r.rssi[i] + r.transmitPower) + ";" + r.rssi[i] + "<br />";
+            csv += r.labels[i] + ";" + r.altitudes[i] + ";" + (r.transmitPower - r.rssi[i]) + ";" + r.rssi[i] + "<br />";
         }
 
         this.props.popupRequested({
