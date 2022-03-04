@@ -46,7 +46,7 @@ class CalculationParameters extends React.Component {
                         <Field name="receiverHeightAboveTerrain">
                             {({ field }) => (
                                 <FormGroup controlId={field.name}>
-                                    <FormLabel>Name:</FormLabel>
+                                    <FormLabel>Receiver height above terrain:</FormLabel>
                                     <FormControl type="text" {...field} />
                                     <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
