@@ -21,6 +21,7 @@ class EditStationDialog extends React.Component {
             id: yup.string().required(),
             name: yup.string().required(),
             transmitPower: yup.number().positive().integer().required(),
+            maxRadius: yup.number().positive().integer().required(),
             height: yup.number().positive().required()
         });
     }
@@ -96,6 +97,20 @@ class EditStationDialog extends React.Component {
                             {({ field }) => (
                                 <FormGroup controlId={field.name}>
                                     <FormLabel>Height above terrain:</FormLabel>
+                                    <InputGroup>
+                                        <FormControl type="number" {...field} />
+                                        <InputGroup.Append>
+                                            <InputGroup.Text style={{width: "45px"}}>m</InputGroup.Text>
+                                        </InputGroup.Append>
+                                    </InputGroup>
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
+                                </FormGroup>
+                            )}
+                        </Field>
+                        <Field name="maxRadius">
+                            {({ field }) => (
+                                <FormGroup controlId={field.name}>
+                                    <FormLabel>Maximum radius:</FormLabel>
                                     <InputGroup>
                                         <FormControl type="number" {...field} />
                                         <InputGroup.Append>

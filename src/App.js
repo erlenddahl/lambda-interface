@@ -39,6 +39,7 @@ class App extends React.Component {
                 lngLat: [10.355430273040675, 63.42050427064208],
                 transmitPower: 62,
                 height: 300,
+                maxRadius: 100000,
                 antennaType: "MobileNetwork"
             },
             {
@@ -47,6 +48,7 @@ class App extends React.Component {
                 lngLat: [10.355430273040675, 63.41050427064208],
                 transmitPower: 71,
                 height: 300,
+                maxRadius: 100000,
                 antennaType: "MobileNetwork"
             }
         ].map(p => new BaseStation(p)));
@@ -225,6 +227,7 @@ class App extends React.Component {
             frequency: 22000,
             transmitPower: 62,
             height: 300,
+            maxRadius: 100000,
             isPreview: true,
             isSelected: true,
             antennaType: "MobileNetwork"

@@ -18,7 +18,7 @@ export default class CalcHelper{
         return xy;
     }
 
-    toBaseStationObject(bs, maxRadius = 50000){
+    toBaseStationObject(bs){
         var utm = this.toUtm(bs.lngLat);
         return {
             "name": bs.name,
@@ -26,7 +26,7 @@ export default class CalcHelper{
             "heightAboveTerrain": bs.height, 
             "totalTransmissionLevel": bs.transmitPower,
             "antennaType": bs.antennaType,
-            "maxRadius": maxRadius
+            "maxRadius": bs.maxRadius
         };
     }
 
