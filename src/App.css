@@ -74,3 +74,7 @@ html, body, #root{
 .calculator-summary .card-header{
     font-weight: bold;
 }
+
+.calculator-setup{
+    padding-bottom: 100px;
+}
