@@ -29,5 +29,4 @@ export default class CalcHelper{
             "maxRadius": bs.maxRadius
         };
     }
-
 }

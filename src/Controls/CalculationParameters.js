@@ -13,13 +13,15 @@ class CalculationParameters extends React.Component {
 
         this.validation = yup.object().shape({
             minimumAllowableSignalValue: yup.number().integer().required(),
-            receiverHeightAboveTerrain: yup.number().required()
+            receiverHeightAboveTerrain: yup.number().required(),
+            linkCalculationPointFrequency: yup.number().required()
         });
 
         this.initialValues = {
             minimumAllowableSignalValue: -125,
             receiverHeightAboveTerrain: 2,
-            mobileNetworkRegressionType: "All"
+            mobileNetworkRegressionType: "All",
+            linkCalculationPointFrequency: 20
         };
     }
 
@@ -47,6 +49,15 @@ class CalculationParameters extends React.Component {
                             {({ field }) => (
                                 <FormGroup controlId={field.name}>
                                     <FormLabel>Receiver height above terrain:</FormLabel>
+                                    <FormControl type="text" {...field} />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
+                                </FormGroup>
+                            )}
+                        </Field>
+                        <Field name="linkCalculationPointFrequency">
+                            {({ field }) => (
+                                <FormGroup controlId={field.name}>
+                                    <FormLabel>Link calculation point frequency:</FormLabel>
                                     <FormControl type="text" {...field} />
                                     <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>

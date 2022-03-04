@@ -156,7 +156,8 @@ class CalculatorSetup extends React.Component {
                     "baseStations": this.props.selectedStations.map(p => this.helper.toBaseStationObject(p)),
                     "minimumAllowableSignalValue": this.parameterValues.minimumAllowableSignalValue,
                     "mobileNetworkRegressionType": this.parameterValues.mobileNetworkRegressionType,
-                    "ReceiverHeightAboveTerrain": this.parameterValues.receiverHeightAboveTerrain
+                    "receiverHeightAboveTerrain": this.parameterValues.receiverHeightAboveTerrain,
+                    "linkCalculationPointFrequency": this.parameterValues.linkCalculationPointFrequency
                 })
         };
     }
