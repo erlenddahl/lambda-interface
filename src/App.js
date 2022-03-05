@@ -66,7 +66,7 @@ class App extends React.Component {
         this.onCreateNewStationRequested = this.onCreateNewStationRequested.bind(this);
         
         this.onCsvImportRequested = this.onCsvImportRequested.bind(this);
-        this.onCsvExportRequested = this.onCsvExportRequested.bind(this);
+        this.openCsvPopup = this.openCsvPopup.bind(this);
 
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
@@ -321,10 +321,6 @@ class App extends React.Component {
         this.setState({showStationImportDialog: true});
     }
 
-    onCsvExportRequested(){
-        
-    }
-
     onLayerVisibilityChange(layerKey, visibility) {
         if(!this.state.layers[layerKey].enabled) return;
 
@@ -344,12 +340,16 @@ class App extends React.Component {
         });
     }
 
+    openCsvPopup(data){
+        this.setState({ copyPopup: data });
+    }
+
     render() {
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
             <ContextMenu {...this.state.contextmenu} station={this.state.selectedStation} onCalculationRequested={this.onPointCalculationRequested} onMoveStationRequested={this.onMoveStationRequested} onNewStationRequested={this.onCreateNewStationRequested} onHideMenuRequested={this.hideContextMenu}></ContextMenu>
             {this.state.singlePointCalculation && <PopupContainer>
-                <SinglePointCalculator {...this.state.singlePointCalculation} popupRequested={d => this.setState({ copyPopup: d })} closeRequested={() => this.setState({ singlePointCalculation: null })}></SinglePointCalculator>
+                <SinglePointCalculator {...this.state.singlePointCalculation} popupRequested={this.openCsvPopup} closeRequested={() => this.setState({ singlePointCalculation: null })}></SinglePointCalculator>
             </PopupContainer>}
             {this.state.showStationImportDialog && <PopupContainer>
                 <ImportStationsDialog onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
@@ -366,17 +366,13 @@ class App extends React.Component {
                 <Sidebar style={{ marginTop: "60px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.selectedStation.isEditClone} />
                 </Sidebar>}
-            {this.state.activeCommand == "calculate-point" &&
-                <Sidebar style={{ marginTop: "60px", width: "900px" }}>
-                    <SinglePointCalculator selectedStation={this.state.selectedStation} />
-                </Sidebar>}
             {this.state.activeCommand == "calculate" &&
                 <Sidebar style={{ marginTop: "60px", width: "900px" }}>
                     <CalculatorSetup selectedStations={this.state.selectedStations} onAddGeoJsonLayer={this.addGeoJsonLayer} currentGeoJsonLayerName={this.state.resultsLayer?.name} />
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
                 <Sidebar style={{ marginTop: "60px", width: "800px" }}>
-                    <StationList stations={this.state.stations} onMapTransitionRequested={this.initiateMapTransition} onImportRequested={this.onCsvImportRequested} onExportRequested={this.onCsvExportRequested} />
+                    <StationList stations={this.state.stations} onMapTransitionRequested={this.initiateMapTransition} onImportRequested={this.onCsvImportRequested} onPopupRequested={this.openCsvPopup} />
                 </Sidebar>}
             <LambdaMap stations={this.state.stations} resultsLayer={this.state.resultsLayer} onMapClicked={this.onMapClicked} viewport={this.state.viewport} onViewportChange={this.onViewportChange} layers={this.state.layers}>
                 <div style={{ position: 'absolute', right: 0 }}>
