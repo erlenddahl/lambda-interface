@@ -29,8 +29,8 @@ class ImportStationsDialog extends React.Component {
                 delimiter: ";",
                 decimalSign: ",",
                 hasHeaders: true,
-                csv: "id;name;antennaType;transmitPower;height;lat;lng\n" + 
-                     "181199;Station name;mobileNetwork;62;250;63,42050427064208;10,365430273040675"
+                csv: "id;name;antennaType;transmitPower;height;maxRadius;lat;lng\n" + 
+                     "181199;Station name;MobileNetwork;62;250;50000;63,42050427064208;10,365430273040675"
             }
         }
     }
@@ -66,6 +66,7 @@ class ImportStationsDialog extends React.Component {
                 transmitPower: this.parseNumberWithSign(p.transmitPower, values.decimalSign, "Invalid transmit power at line " + i),
                 antennaType: p.antennaType,
                 height: this.parseNumberWithSign(p.height, values.decimalSign, "Invalid height at line " + i),
+                maxRadius: this.parseNumberWithSign(p.maxRadius, values.decimalSign, "Invalid max radius at line " + i),
                 lngLat: [this.parseNumberWithSign(p.lng, values.decimalSign, "Invalid lng at line " + i), this.parseNumberWithSign(p.lat, values.decimalSign, "Invalid lat at line " + i)],
                 color: [100, 100, 100, 100],
                 state: "preview"
@@ -78,6 +79,7 @@ class ImportStationsDialog extends React.Component {
                 if(p.antennaType.toLowerCase() != "mobilenetwork" && p.antennaType.toLowerCase() != "itsg5") throw "Invalid antenna type at line " + (i + headerOffset);
                 if(isNaN(p.transmitPower)) throw "Invalid transmit power at line " + (i + headerOffset);
                 if(isNaN(p.height)) throw "Invalid height at line " + (i + headerOffset);
+                if(isNaN(p.maxRadius)) throw "Invalid max radius at line " + (i + headerOffset);
                 if(isNaN(p.lngLat[0])) throw "Invalid lng at line " + (i + headerOffset);
                 if(isNaN(p.lngLat[1])) throw "Invalid lat at line " + (i + headerOffset);
                 if(p.lngLat[0] < 0 || p.lngLat[0] > 180) throw "Longitude out of bounds at line " + (i + headerOffset);
@@ -151,9 +153,11 @@ class ImportStationsDialog extends React.Component {
                         {this.state.parsedStations && <Alert className="mt-4" variant="info">Previewing {this.state.parsedStations} parsed stations on the map (yellow).</Alert>}
                         {this.state.parseError && <Alert className="mt-4" variant="danger">Parse error: {this.state.parseError}</Alert>}
 
-                        <Button className="w-100 mt-4 mb-2" variant="info" disabled={isSubmitting} onClick={() => this.attemptCsvParse(values, setSubmitting)}>Preview</Button>
-                        <Button className="w-100 mb-2" disabled={isSubmitting} type="submit">Import</Button>
-                        <Button className="w-100 mb-2" variant="secondary" disabled={isSubmitting} onClick={this.props.onCancel}>Cancel</Button>
+                        <div className="mt-4 lower-right">
+                            <Button className="mx-2" variant="info" disabled={isSubmitting} onClick={() => this.attemptCsvParse(values, setSubmitting)}>Preview</Button>
+                            <Button disabled={isSubmitting} type="submit">Import</Button>
+                        </div>
+                        <Button className="mt-4 lower-left" variant="secondary" disabled={isSubmitting} onClick={this.props.onCancel}>Cancel</Button>
                     </Form>
                 )}
             </Formik>

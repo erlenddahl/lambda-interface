@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 
 import { FlyToInterpolator } from 'react-map-gl';
@@ -56,6 +57,9 @@ class StationList extends React.Component {
                 <thead>{this._renderHeaders()}</thead>
                 <tbody>{this.props.stations.map(this._renderStation)}</tbody>
             </Table>
+
+            <Button className="mt-4" onClick={this.props.onImportRequested}>Import CSV</Button>
+            <Button className="mt-4 mx-2" onClick={this.props.onExportRequested}>Export CSV</Button>
         </div>
     }
 }
@@ -63,7 +67,9 @@ class StationList extends React.Component {
 StationList.propTypes = {
     style: PropTypes.object,
     stations: PropTypes.array.isRequired,
-    onMapTransitionRequested: PropTypes.func.isRequired
+    onMapTransitionRequested: PropTypes.func.isRequired,
+    onImportRequested: PropTypes.func.isRequired,
+    onExportRequested: PropTypes.func.isRequired
 };
 
 export default StationList;

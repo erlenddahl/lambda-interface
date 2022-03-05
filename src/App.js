@@ -11,7 +11,7 @@ import ContextMenu from './ContextMenu.js';
 import _ from 'lodash';
 import { SELECTION_MODE } from './Helpers/Constants';
 
-import { faCloudUpload, faMapMarkerEdit, faAbacus, faClipboardList } from '@fortawesome/pro-solid-svg-icons'
+import { faMapMarkerEdit, faAbacus, faClipboardList } from '@fortawesome/pro-solid-svg-icons'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -26,11 +26,15 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        //TODO: Move import to popup within List
+        //TODO: Fix imported/previewed stations not working. Remove preview option since it's in a blocking popup?
         //TODO: Mutual selections in List/Map
         //TODO: Add export button in List
         //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
         //TODO: Handle multiple antennas at the same location
+        //TODO: Antenna angles (visualize on base station dot on map)
+        //TODO: Replace base station cylinder with simple dot that scales when zooming
+        //TODO: Use calculations parameters app-wide
+        //TODO: Save stations/parameters using local storage
 
         this.baseStations = new BaseStationList([
             {
@@ -61,6 +65,9 @@ class App extends React.Component {
         this.onPointCalculationRequested = this.onPointCalculationRequested.bind(this);
         this.onMoveStationRequested = this.onMoveStationRequested.bind(this);
         this.onCreateNewStationRequested = this.onCreateNewStationRequested.bind(this);
+        
+        this.onCsvImportRequested = this.onCsvImportRequested.bind(this);
+        this.onCsvExportRequested = this.onCsvExportRequested.bind(this);
 
         this.onEditSaved = this.onEditSaved.bind(this);
         this.onEditCancelled = this.onEditCancelled.bind(this);
@@ -88,11 +95,6 @@ class App extends React.Component {
                     text: "Info/Edit",
                     cmd: "edit",
                     active: true
-                },
-                {
-                    icon: faCloudUpload,
-                    text: "Import",
-                    cmd: "import"
                 },
                 {
                     icon: faClipboardList,
@@ -288,12 +290,12 @@ class App extends React.Component {
                 return p;
             })
         }));
-        this.onMenuItemClicked(this.state.menuItems[0]);
+        this.setState({showStationImportDialog: false});
     }
 
     onImportCancelled() {
-        this.removePreviewedStations();
-        this.onMenuItemClicked(this.state.menuItems[0]);
+        this.baseStations.removePreviews();
+        this.setState({showStationImportDialog: false});
     }
 
     onImportPreview(previewStations) {
@@ -328,6 +330,14 @@ class App extends React.Component {
         });
     }
 
+    onCsvImportRequested(){
+        this.setState({showStationImportDialog: true});
+    }
+
+    onCsvExportRequested(){
+        
+    }
+
     onLayerVisibilityChange(layerKey, visibility) {
         if(!this.state.layers[layerKey].enabled) return;
 
@@ -354,6 +364,9 @@ class App extends React.Component {
             {this.state.singlePointCalculation && <PopupContainer>
                 <SinglePointCalculator {...this.state.singlePointCalculation} popupRequested={d => this.setState({ copyPopup: d })} closeRequested={() => this.setState({ singlePointCalculation: null })}></SinglePointCalculator>
             </PopupContainer>}
+            {this.state.showStationImportDialog && <PopupContainer>
+                <ImportStationsDialog onPreview={this.onImportPreview} onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
+            </PopupContainer>}
             {this.state.copyPopup && <PopupContainer>
                 <div>
                     <div style={{ border: "1px solid black", margin: "10px", padding: "5px", overflow: "scroll", maxHeight: "500px", whiteSpace: "pre-line" }} dangerouslySetInnerHTML={{ __html: this.state.copyPopup.contents }}>
@@ -366,10 +379,6 @@ class App extends React.Component {
                 <Sidebar style={{ marginTop: "60px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.selectedStation.isEditClone} />
                 </Sidebar>}
-            {this.state.activeCommand == "import" &&
-                <Sidebar style={{ marginTop: "60px", width: "600px" }}>
-                    <ImportStationsDialog onPreview={this.onImportPreview} onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
-                </Sidebar>}
             {this.state.activeCommand == "calculate-point" &&
                 <Sidebar style={{ marginTop: "60px", width: "900px" }}>
                     <SinglePointCalculator selectedStation={this.state.selectedStation} />
@@ -380,7 +389,7 @@ class App extends React.Component {
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
                 <Sidebar style={{ marginTop: "60px", width: "800px" }}>
-                    <StationList stations={this.state.stations} onMapTransitionRequested={this.initiateMapTransition} />
+                    <StationList stations={this.state.stations} onMapTransitionRequested={this.initiateMapTransition} onImportRequested={this.onCsvImportRequested} onExportRequested={this.onCsvExportRequested} />
                 </Sidebar>}
             <LambdaMap stations={this.state.stations} resultsLayer={this.state.resultsLayer} onMapClicked={this.onMapClicked} viewport={this.state.viewport} onViewportChange={this.onViewportChange} layers={this.state.layers}>
                 <div style={{ position: 'absolute', right: 0 }}>
