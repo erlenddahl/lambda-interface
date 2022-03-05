@@ -26,7 +26,6 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        //TODO: Fix imported/previewed stations not working. Remove preview option since it's in a blocking popup?
         //TODO: Mutual selections in List/Map
         //TODO: Add export button in List
         //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
@@ -77,7 +76,6 @@ class App extends React.Component {
 
         this.onImportSaved = this.onImportSaved.bind(this);
         this.onImportCancelled = this.onImportCancelled.bind(this);
-        this.onImportPreview = this.onImportPreview.bind(this);
 
         this.initiateMapTransition = this.initiateMapTransition.bind(this);
 
@@ -226,7 +224,6 @@ class App extends React.Component {
             id: Math.floor((Math.random() * 1000000) + 100000).toFixed(0),
             name: "New station",
             lngLat: coordinate,
-            frequency: 22000,
             transmitPower: 62,
             height: 300,
             maxRadius: 100000,
@@ -281,27 +278,17 @@ class App extends React.Component {
         this.setState(this.baseStations.getState());
     }
 
-    onImportSaved() {
-        this.setState(state => ({
-            stations: state.stations.map(p => {
-                if (p.state == "preview") {
-                    p.state = null;
-                }
-                return p;
-            })
-        }));
-        this.setState({showStationImportDialog: false});
+    onImportSaved(stations) {
+        this.baseStations.stations = this.baseStations.stations.concat(stations.map(p => new BaseStation(p)));
+        this.setState({
+            stations: this.baseStations.stations,
+            showStationImportDialog: false
+        });
     }
 
     onImportCancelled() {
         this.baseStations.removePreviews();
         this.setState({showStationImportDialog: false});
-    }
-
-    onImportPreview(previewStations) {
-        this.setState(state => ({
-            stations: state.stations.filter(p => p.state != "preview").concat(previewStations)
-        }));
     }
 
     initiateMapTransition(transition) {
@@ -365,7 +352,7 @@ class App extends React.Component {
                 <SinglePointCalculator {...this.state.singlePointCalculation} popupRequested={d => this.setState({ copyPopup: d })} closeRequested={() => this.setState({ singlePointCalculation: null })}></SinglePointCalculator>
             </PopupContainer>}
             {this.state.showStationImportDialog && <PopupContainer>
-                <ImportStationsDialog onPreview={this.onImportPreview} onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
+                <ImportStationsDialog onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
             </PopupContainer>}
             {this.state.copyPopup && <PopupContainer>
                 <div>

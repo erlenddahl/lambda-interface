@@ -36,8 +36,11 @@ class ImportStationsDialog extends React.Component {
     }
 
     onSave(values, { setSubmitting }) {
-        this.attemptCsvParse(values, setSubmitting);
-        this.props.onSave(values);
+        const stations = this.attemptCsvParse(values, setSubmitting);
+
+        if(!stations) return;
+
+        this.props.onSave(stations);
     }
 
     parseNumberWithSign(v, decimalSign, error){
@@ -60,20 +63,18 @@ class ImportStationsDialog extends React.Component {
                 header: values.hasHeaders
             });
 
-            const previewStations = csv.data.map((p, i) => ({
+            const stations = csv.data.map((p, i) => ({
                 id: p.id,
                 name: p.name,
                 transmitPower: this.parseNumberWithSign(p.transmitPower, values.decimalSign, "Invalid transmit power at line " + i),
                 antennaType: p.antennaType,
                 height: this.parseNumberWithSign(p.height, values.decimalSign, "Invalid height at line " + i),
                 maxRadius: this.parseNumberWithSign(p.maxRadius, values.decimalSign, "Invalid max radius at line " + i),
-                lngLat: [this.parseNumberWithSign(p.lng, values.decimalSign, "Invalid lng at line " + i), this.parseNumberWithSign(p.lat, values.decimalSign, "Invalid lat at line " + i)],
-                color: [100, 100, 100, 100],
-                state: "preview"
+                lngLat: [this.parseNumberWithSign(p.lng, values.decimalSign, "Invalid lng at line " + i), this.parseNumberWithSign(p.lat, values.decimalSign, "Invalid lat at line " + i)]
             }));
 
             const headerOffset = values.hasHeaders ? 1 : 0;
-            previewStations.map((p, i) => {
+            stations.map((p, i) => {
                 if(!p.id && p.id != 0) throw "Invalid id at line " + (i + headerOffset);
                 if(!p.name) throw "Invalid name at line " + (i + headerOffset);
                 if(p.antennaType.toLowerCase() != "mobilenetwork" && p.antennaType.toLowerCase() != "itsg5") throw "Invalid antenna type at line " + (i + headerOffset);
@@ -87,20 +88,19 @@ class ImportStationsDialog extends React.Component {
             });
 
             this.setState({
-                parsedStations: previewStations.length,
                 parseError: null
             });
-
-            this.props.onPreview(previewStations);
+            
+            setSubmitting(false);
+            return stations;
         }catch(err){
             this.setState({
-                parsedStations: null,
                 parseError: JSON.stringify(err)
             });
-            this.props.onPreview([]);
         }
 
         setSubmitting(false);
+        return null;
     }
 
     render() {
@@ -112,7 +112,7 @@ class ImportStationsDialog extends React.Component {
                 onSubmit={this.onSave} 
                 validateOnChange={true}
             >
-                {({ isSubmitting, handleSubmit, values, setSubmitting }) => (
+                {({ isSubmitting, handleSubmit }) => (
                     <Form onSubmit={handleSubmit}>
                         <Field name="delimiter">
                             {({ field }) => (
@@ -150,11 +150,9 @@ class ImportStationsDialog extends React.Component {
                             )}
                         </Field>
 
-                        {this.state.parsedStations && <Alert className="mt-4" variant="info">Previewing {this.state.parsedStations} parsed stations on the map (yellow).</Alert>}
                         {this.state.parseError && <Alert className="mt-4" variant="danger">Parse error: {this.state.parseError}</Alert>}
 
                         <div className="mt-4 lower-right">
-                            <Button className="mx-2" variant="info" disabled={isSubmitting} onClick={() => this.attemptCsvParse(values, setSubmitting)}>Preview</Button>
                             <Button disabled={isSubmitting} type="submit">Import</Button>
                         </div>
                         <Button className="mt-4 lower-left" variant="secondary" disabled={isSubmitting} onClick={this.props.onCancel}>Cancel</Button>
@@ -167,8 +165,7 @@ class ImportStationsDialog extends React.Component {
 
 ImportStationsDialog.propTypes = {
     onSave: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired,
-    onPreview: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired
 };
 
 export default ImportStationsDialog;
