@@ -27,7 +27,6 @@ class App extends React.Component {
         super(props);
 
         //TODO: Mutual selections in List/Map
-        //TODO: Add export button in List
         //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
         //TODO: Handle multiple antennas at the same location
         //TODO: Antenna angles (visualize on base station dot on map)

@@ -47,9 +47,9 @@ class SinglePointCalculator extends React.Component {
 
             data.transmitPower = this.props.station.transmitPower;
             data.distance = data.vector.length;
-            data.labels = data.rssi.map((_, i) => i);
+            data.labels = data.rsrp.map((_, i) => i);
             data.altitudes = data.vector.map(p => p.z);
-            data.finalRssi = data.rssi[data.rssi.length - 1];
+            data.finalRsrp = data.rsrp[data.rsrp.length - 1];
             
             this.setState({ results: data });
 
@@ -63,11 +63,11 @@ class SinglePointCalculator extends React.Component {
 
     exportCsv(){
 
-        let csv = "distance from antenna;terrain height;path loss;rssi<br />";
+        let csv = "distance from antenna;terrain height;path loss;rsrp<br />";
         const r = this.state.results;
 
         for(var i = 0; i < r.distance; i++){
-            csv += r.labels[i] + ";" + r.altitudes[i] + ";" + (r.transmitPower - r.rssi[i]) + ";" + r.rssi[i] + "<br />";
+            csv += r.labels[i] + ";" + r.altitudes[i] + ";" + r.loss[i] + ";" + r.rsrp[i] + "<br />";
         }
 
         this.props.popupRequested({
@@ -143,10 +143,10 @@ class SinglePointCalculator extends React.Component {
                 </Card>
                 
                 <Card>
-                    <Card.Header>Final RSSI</Card.Header>
+                    <Card.Header>Final RSRP</Card.Header>
                     <Card.Body>
                         <Card.Text>
-                            {r.finalRssi?.toFixed(0)} dB
+                            {r.finalRsrp?.toFixed(0)} dB
                         </Card.Text>
                     </Card.Body>
                 </Card>
