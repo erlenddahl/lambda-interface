@@ -1,7 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
-//import moment from 'moment';
 import ConsoleInformationPanel from './Helpers/ConsoleInformationPanel.js';
 import CalcHelper from "./Calculations/CalcHelper.js";
 import ReactFrappeChart from "react-frappe-charts";
@@ -9,6 +8,7 @@ import { faSpinner } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Alert, Card } from 'react-bootstrap';
 import { API_URL } from './Helpers/Constants.js';
+import UserSettings from './Helpers/UserSettings';
 
 class SinglePointCalculator extends React.Component {
 
@@ -34,11 +34,10 @@ class SinglePointCalculator extends React.Component {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: JSON.stringify(this._helper.addCalculationParameters({
                         "baseStation": this._helper.toBaseStationObject(this.props.station),
-                        "targetCoordinates": this._helper.toUtm(this.props.coordinate),
-                        "receiverHeightAboveTerrain": 2
-                    })
+                        "targetCoordinates": this._helper.toUtm(this.props.coordinate)
+                    }, UserSettings.getCalculationParameters()))
             };
             const response = await fetch(this.apiUrl, requestOptions);
             const data = await response.json();

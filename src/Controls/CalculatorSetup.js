@@ -6,6 +6,7 @@ import JobTable from './JobTable.js';
 import CalcHelper from "../Calculations/CalcHelper.js";
 import CalculationParameters from "./CalculationParameters.js";
 import { API_URL } from '../Helpers/Constants.js';
+import UserSettings from '../Helpers/UserSettings.js';
 
 class CalculatorSetup extends React.Component {
 
@@ -142,7 +143,7 @@ class CalculatorSetup extends React.Component {
     }
 
     async generateConfig(){
-        if(this.parameterErrors && Object.keys(this.parameterErrors).length){
+        if(this.hasParameterErrors()){
             console.log("Calculation aborted -- parameters has errors");
             return;
         }
@@ -207,19 +208,19 @@ class CalculatorSetup extends React.Component {
         return {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                    "baseStations": this.props.selectedStations.map(p => this.helper.toBaseStationObject(p)),
-                    "minimumAllowableRsrp": this.parameterValues.minimumAllowableRsrp,
-                    "mobileRegression": this.parameterValues.mobileNetworkRegressionType,
-                    "receiverHeightAboveTerrain": this.parameterValues.receiverHeightAboveTerrain,
-                    "linkCalculationPointFrequency": this.parameterValues.linkCalculationPointFrequency
-                })
+            body: JSON.stringify(this.helper.addCalculationsParameters({
+                    "baseStations": this.props.selectedStations.map(p => this.helper.toBaseStationObject(p))
+                }, this.parameterValues))
         };
+    }
+
+    hasParameterErrors(){
+        return this.parameterErrors && Object.keys(this.parameterErrors).length;
     }
 
     async onCalculationClicked(){
 
-        if(this.parameterErrors && Object.keys(this.parameterErrors).length){
+        if(this.hasParameterErrors()){
             console.log("Calculation aborted -- parameters has errors");
             return;
         }
@@ -251,6 +252,10 @@ class CalculatorSetup extends React.Component {
     onCalculationParametersChanged(values, errors){
         this.parameterErrors = errors;
         this.parameterValues = values;
+
+        if(!this.hasParameterErrors()){
+            UserSettings.setCalculationParameters(this.parameterValues);
+        }
     }
 
     render() {

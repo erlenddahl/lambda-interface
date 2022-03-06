@@ -31,4 +31,13 @@ export default class CalcHelper{
             "maxRadius": bs.maxRadius
         };
     }
+    
+    addCalculationParameters(data, parameters){
+        data.minimumAllowableRsrp = parameters.minimumAllowableRsrp;
+        data.mobileRegression = parameters.mobileNetworkRegressionType;
+        data.receiverHeightAboveTerrain = parameters.receiverHeightAboveTerrain;
+        data.linkCalculationPointFrequency = parameters.linkCalculationPointFrequency;
+
+        return data;
+    }
 }

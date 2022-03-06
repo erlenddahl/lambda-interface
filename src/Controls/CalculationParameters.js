@@ -23,7 +23,7 @@ class CalculationParameters extends React.Component {
         return <div>
 
             <Formik
-                initialValues={UserSettings.calculationParameters}
+                initialValues={UserSettings.getCalculationParameters()}
                 validationSchema={this.validation}
                 enableReinitialize={true}
                 onSubmit={this.onSave}
@@ -64,8 +64,8 @@ class CalculationParameters extends React.Component {
                                     <FormControl as="select" {...field}>
                                         <option value="Dynamic">Dynamic -- use LOS or NLOS where appropriate</option>
                                         <option value="All">All -- use regression model calculated from all points</option>
-                                        <option value="LOS">LOS -- use regression model calculated from points with LOS</option>
-                                        <option value="NLOS">NLOS -- use regression model calculated from points without LOS</option>
+                                        <option value="LineOfSight">LOS -- use regression model calculated from points with LOS</option>
+                                        <option value="NoLineOfSight">NLOS -- use regression model calculated from points without LOS</option>
                                     </FormControl>
                                     <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
