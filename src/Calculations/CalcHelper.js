@@ -24,7 +24,9 @@ export default class CalcHelper{
             "name": bs.name,
             "center": utm,
             "heightAboveTerrain": bs.height, 
-            "totalTransmissionLevel": bs.transmitPower,
+            "power": bs.transmitPower,
+            "gainDefinition": bs.gainDefinition,
+            "cableLoss": 2,
             "antennaType": bs.antennaType,
             "maxRadius": bs.maxRadius
         };

@@ -21,6 +21,7 @@ class EditStationDialog extends React.Component {
             id: yup.string().required(),
             name: yup.string().required(),
             transmitPower: yup.number().positive().integer().required(),
+            gainDefinition: yup.string().required(),
             maxRadius: yup.number().positive().integer().required(),
             height: yup.number().positive().required()
         });
@@ -88,6 +89,17 @@ class EditStationDialog extends React.Component {
                                         <InputGroup.Append>
                                             <InputGroup.Text style={{width: "45px"}}>Db</InputGroup.Text>
                                         </InputGroup.Append>
+                                    </InputGroup>
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
+                                </FormGroup>
+                            )}
+                        </Field>
+                        <Field name="gainDefinition">
+                            {({ field }) => (
+                                <FormGroup controlId={field.name}>
+                                    <FormLabel>Gain:</FormLabel>
+                                    <InputGroup>
+                                        <FormControl type="text" {...field} />
                                     </InputGroup>
                                     <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
