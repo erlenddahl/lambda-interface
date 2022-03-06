@@ -49,7 +49,7 @@ class LambdaMap extends React.Component {
   }
 
   getLinkTooltip(data){
-    return "Average RSRP: " + data.Average.toFixed(2) + ", Min: " + data.Min.toFixed(2) + ", Max: " + data.Max.toFixed(2) + ", LCIx: " + this.getLinkColorIndex(-60, -125, data.Max);
+    return "Average RSRP: " + data.Average.toFixed(2) + ", Min: " + data.Min.toFixed(2) + ", Max: " + data.Max.toFixed(2);
   }
 
   getStationTooltip(station) {
