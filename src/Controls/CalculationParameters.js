@@ -16,20 +16,13 @@ class CalculationParameters extends React.Component {
             receiverHeightAboveTerrain: yup.number().required(),
             linkCalculationPointFrequency: yup.number().required()
         });
-
-        this.initialValues = {
-            minimumAllowableSignalValue: -125,
-            receiverHeightAboveTerrain: 2,
-            mobileNetworkRegressionType: "All",
-            linkCalculationPointFrequency: 20
-        };
     }
 
     render() {
         return <div>
 
             <Formik
-                initialValues={this.initialValues}
+                initialValues={UserSettings.calculationParameters}
                 validationSchema={this.validation}
                 enableReinitialize={true}
                 onSubmit={this.onSave}
