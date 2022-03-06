@@ -23,6 +23,7 @@ class CalculatorSetup extends React.Component {
         this.generateConfig = this.generateConfig.bind(this);
         this.toggleResults = this.toggleResults.bind(this);
         this.onDeleteRequested = this.onDeleteRequested.bind(this);
+        this.onAbortRequested = this.onAbortRequested.bind(this);
         this.onCalculationParametersChanged = this.onCalculationParametersChanged.bind(this);
         
         this.helper = new CalcHelper();
@@ -92,6 +93,26 @@ class CalculatorSetup extends React.Component {
         }
 
         this.setBusy(false);
+    }
+
+    async onAbortRequested(job){
+        try{
+            const requestOptions = {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            };
+            const response = await fetch(this.apiUrl + "/abort?key=" + job.data.Id, requestOptions);
+            const data = await response.json();
+            
+            if(data.error){
+                this.setState({ calculationError: data.error });
+            }
+
+            await this.loadJobs();
+
+        }catch(ex){
+            this.setState({ calculationError: ex.message });
+        }
     }
 
     async loadJobs(){
@@ -245,7 +266,7 @@ class CalculatorSetup extends React.Component {
             <h3 className="my-3 mt-5">Calculation log</h3>
             {this.state.calculationError && <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>}
 
-            <JobTable jobs={this.state.jobs} currentGeoJsonLayerName={this.props.currentGeoJsonLayerName} onResultToggleRequested={this.toggleResults} onDeleteRequested={this.onDeleteRequested}></JobTable>
+            <JobTable jobs={this.state.jobs} currentGeoJsonLayerName={this.props.currentGeoJsonLayerName} onResultToggleRequested={this.toggleResults} onDeleteRequested={this.onDeleteRequested} onAbortRequested={this.onAbortRequested}></JobTable>
         </div>
     }
 }

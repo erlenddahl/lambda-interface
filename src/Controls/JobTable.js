@@ -44,7 +44,8 @@ class JobTable extends React.Component {
                         <td>
                             {!this.state.isBusy && p.status != "InQueue" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.setState(s => ({showDetails: p == s.showDetails ? null : p }))}>{this.state.showDetails?.data.Id == p.data.Id ? "Hide details" : "Show details"}</a>)}
                             {!this.state.isBusy && p.status == "Finished" && (<a disabled={this.state.isBusy} href="#" className="mx-2" onClick={() => this.onResultToggleRequested(p)}>{this.props.currentGeoJsonLayerName == this.getLayerName(p) ? "Hide results from map" : "Show results on map"}</a>)}
-                            {!this.state.isBusy && p.status == "Finished" && (<a disabled={this.state.isBusy} href="#" className="mx-2" onClick={() => this.props.onDeleteRequested(p)}>Delete</a>)}
+                            {!this.state.isBusy && p.status != "Processing" && (<a disabled={this.state.isBusy} href="#" className="mx-2" onClick={() => this.props.onDeleteRequested(p)}>Delete</a>)}
+                            {!this.state.isBusy && p.status == "Processing" && (<a disabled={this.state.isBusy} href="#" className="mx-2" onClick={() => this.props.onAbortRequested(p)}>Abort</a>)}
                             {this.state.isBusy && <span>Loading data ...</span>}
                         </td>
                     </tr>
@@ -66,7 +67,8 @@ JobTable.propTypes = {
     jobs: PropTypes.array,
     currentGeoJsonLayerName: PropTypes.string,
     onResultToggleRequested: PropTypes.func,
-    onDeleteRequested: PropTypes.func
+    onDeleteRequested: PropTypes.func,
+    onAbortRequested: PropTypes.func
 };
 
 export default JobTable;
