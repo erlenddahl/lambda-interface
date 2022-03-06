@@ -41,11 +41,11 @@ class JobTable extends React.Component {
                     <tr>
                         <td>{moment(p.data.Enqueued).format('MMMM Do YYYY, HH:mm:ss')}</td>
                         <td>{p.status}</td>
-                        <td>
+                        <td className="link-container">
                             {!this.state.isBusy && p.status != "InQueue" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.setState(s => ({showDetails: p == s.showDetails ? null : p }))}>{this.state.showDetails?.data.Id == p.data.Id ? "Hide details" : "Show details"}</a>)}
-                            {!this.state.isBusy && p.status == "Finished" && (<a disabled={this.state.isBusy} href="#" className="mx-2" onClick={() => this.onResultToggleRequested(p)}>{this.props.currentGeoJsonLayerName == this.getLayerName(p) ? "Hide results from map" : "Show results on map"}</a>)}
-                            {!this.state.isBusy && p.status != "Processing" && (<a disabled={this.state.isBusy} href="#" className="mx-2" onClick={() => this.props.onDeleteRequested(p)}>Delete</a>)}
-                            {!this.state.isBusy && p.status == "Processing" && (<a disabled={this.state.isBusy} href="#" className="mx-2" onClick={() => this.props.onAbortRequested(p)}>Abort</a>)}
+                            {!this.state.isBusy && p.status == "Finished" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.onResultToggleRequested(p)}>{this.props.currentGeoJsonLayerName == this.getLayerName(p) ? "Hide results from map" : "Show results on map"}</a>)}
+                            {!this.state.isBusy && p.status != "Processing" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.props.onDeleteRequested(p)}>Delete</a>)}
+                            {!this.state.isBusy && p.status == "Processing" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.props.onAbortRequested(p)}>Abort</a>)}
                             {this.state.isBusy && <span>Loading data ...</span>}
                         </td>
                     </tr>
