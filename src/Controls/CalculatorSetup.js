@@ -208,7 +208,7 @@ class CalculatorSetup extends React.Component {
         return {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.helper.addCalculationsParameters({
+            body: JSON.stringify(this.helper.addCalculationParameters({
                     "baseStations": this.props.selectedStations.map(p => this.helper.toBaseStationObject(p))
                 }, this.parameterValues))
         };
