@@ -113,7 +113,7 @@ class LambdaMap extends React.Component {
         stroked: false,
         filled: true,
         lineWidthScale: 8,
-        getLineColor: p => this.getLinkColor(-125, -60, p.properties.Max),
+        getLineColor: p => this.getLinkColor(-110, -60, p.properties.Max),
         autoHighlight: true,
         highlightColor: [0, 0, 0, 255],
         visible: this.props.layers.mystations.visible
