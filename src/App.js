@@ -170,7 +170,8 @@ class App extends React.Component {
 
     onMapClicked(info) {
 
-        if(info?.object?.isLink == true) return;
+
+        if(info?.object?.properties?.isLink == true) return;
 
         const c = this.baseStations.handleClick(info);
         let showContextMenu = !c.selected;
