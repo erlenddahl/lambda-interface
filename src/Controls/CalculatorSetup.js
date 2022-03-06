@@ -88,6 +88,10 @@ class CalculatorSetup extends React.Component {
 
             await this.loadJobs();
 
+            if(this.props.currentGeoJsonLayerName == this.getLayerName(job)){
+                this.props.onAddGeoJsonLayer(null, null);
+            }
+
         }catch(ex){
             this.setState({ calculationError: ex.message });
         }
