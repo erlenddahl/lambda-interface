@@ -22,6 +22,7 @@ class CalculatorSetup extends React.Component {
         this.onCalculationClicked = this.onCalculationClicked.bind(this);
         this.generateConfig = this.generateConfig.bind(this);
         this.toggleResults = this.toggleResults.bind(this);
+        this.onDeleteRequested = this.onDeleteRequested.bind(this);
         this.onCalculationParametersChanged = this.onCalculationParametersChanged.bind(this);
         
         this.helper = new CalcHelper();
@@ -67,6 +68,30 @@ class CalculatorSetup extends React.Component {
         this.setState(state => ({
             jobs: state.jobs.filter(p => p.data.Id !== data.data.Id).concat(data).sort((a,b) => a.data.Enqueued.localeCompare(b.data.Enqueued))
         }));
+    }
+
+    async onDeleteRequested(job){
+        this.setBusy(true);
+
+        try{
+            const requestOptions = {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            };
+            const response = await fetch(this.apiUrl + "/delete?key=" + job.data.Id, requestOptions);
+            const data = await response.json();
+            
+            if(data.error){
+                this.setState({ calculationError: data.error });
+            }
+
+            await this.loadJobs();
+
+        }catch(ex){
+            this.setState({ calculationError: ex.message });
+        }
+
+        this.setBusy(false);
     }
 
     async loadJobs(){
@@ -220,7 +245,7 @@ class CalculatorSetup extends React.Component {
             <h3 className="my-3 mt-5">Calculation log</h3>
             {this.state.calculationError && <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>}
 
-            <JobTable jobs={this.state.jobs} currentGeoJsonLayerName={this.props.currentGeoJsonLayerName} onResultToggleRequested={this.toggleResults}></JobTable>
+            <JobTable jobs={this.state.jobs} currentGeoJsonLayerName={this.props.currentGeoJsonLayerName} onResultToggleRequested={this.toggleResults} onDeleteRequested={this.onDeleteRequested}></JobTable>
         </div>
     }
 }
