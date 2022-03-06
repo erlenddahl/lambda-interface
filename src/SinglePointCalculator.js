@@ -99,6 +99,27 @@ class SinglePointCalculator extends React.Component {
         this.checkCalculation();
     }
 
+    _renderChart(r, height){
+        return (<ReactFrappeChart
+            type="line"
+            axisOptions={{ xAxisMode: "tick", yAxisMode: "tick", xIsSeries: true }}
+            lineOptions={{ hideDots: 1 }}
+            height={height}
+            data={{
+                labels: r.labels,
+                datasets: [{ 
+                    name: "RSRP",
+                    chartType: "line",
+                    values: r.rsrp 
+                }, { 
+                    name: "Terrain height",
+                    chartType: "line",
+                    values: r.altitudes 
+                }],
+            }}
+        />);
+    }
+
     render() {
         
         const r = this.state.results || {};
@@ -157,47 +178,13 @@ class SinglePointCalculator extends React.Component {
             {!this.state.isBusy && r && <div>
                 
                 {this.state.showDetails && (<div>
-                    <ReactFrappeChart
-                        type="line"
-                        axisOptions={{ xAxisMode: "tick", yAxisMode: "tick", xIsSeries: true }}
-                        lineOptions={{ hideDots: 1 }}
-                        height={250}
-                        data={{
-                            labels: r.labels,
-                            datasets: [{ 
-                                name: "RSSI",
-                                chartType: "line",
-                                values: r.rssi 
-                            }, { 
-                                name: "Terrain height",
-                                chartType: "line",
-                                values: r.altitudes 
-                            }],
-                        }}
-                    />
+                    {this._renderChart(r, 250)}
                     <ConsoleInformationPanel data={r.snapshot}></ConsoleInformationPanel>
                 </div>)}
                 
                 
                 {!this.state.showDetails && (<div>
-                    <ReactFrappeChart
-                        type="line"
-                        axisOptions={{ xAxisMode: "tick", yAxisMode: "tick", xIsSeries: true }}
-                        lineOptions={{ hideDots: 1 }}
-                        height={380}
-                        data={{
-                            labels: r.labels,
-                            datasets: [{ 
-                                name: "RSSI",
-                                chartType: "line",
-                                values: r.rssi 
-                            }, { 
-                                name: "Terrain height",
-                                chartType: "line",
-                                values: r.altitudes 
-                            }],
-                        }}
-                    />
+                    {this._renderChart(r, 380)}
                 </div>)}
 
                 <Button className="lower-left" variant="secondary" onClick={() => this.setState(s => ({ showDetails: !s.showDetails }))}>Details</Button>
