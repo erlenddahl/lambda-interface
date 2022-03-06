@@ -48,7 +48,12 @@ class CalculatorSetup extends React.Component {
                 };
                 const response = await fetch(this.apiUrl + "?key=" + p.data.Id, requestOptions);
                 const data = await response.json();
-                if(!data.data) return;
+                if(!data.data){
+                    // This job has been finished, and will not return status data anymore.
+                    // Reload the job list to fetch the final item.
+                    await this.loadJobs();
+                    return; 
+                }
                 
                 this.updateJobState(data);
             }));
@@ -77,7 +82,7 @@ class CalculatorSetup extends React.Component {
             const data = await response.json();
             const jobs = data.map(p => p);
 
-            this.setState(s => ({ jobs: (s.jobs || []).concat(jobs) }));
+            this.setState({ jobs: jobs });
 
         }catch(ex){
             console.log(ex);

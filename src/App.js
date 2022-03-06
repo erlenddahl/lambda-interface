@@ -26,13 +26,15 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        //TODO: Mutual selections in List/Map
         //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
-        //TODO: Handle multiple antennas at the same location
         //TODO: Antenna angles (visualize on base station dot on map)
         //TODO: Replace base station cylinder with simple dot that scales when zooming
-        //TODO: Use calculations parameters app-wide
+        //TODO: Use calculation parameters app-wide
         //TODO: Save stations/parameters using local storage
+
+        // Future work:
+        //TODO: Mutual selections in List/Map
+        //TODO: Handle multiple antennas at the same location
 
         this.baseStations = new BaseStationList([
             {
