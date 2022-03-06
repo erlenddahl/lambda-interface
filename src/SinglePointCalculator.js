@@ -45,8 +45,6 @@ class SinglePointCalculator extends React.Component {
 
             if(data.error) throw data.error;
 
-            data.transmitPower = this.props.station.transmitPower;
-            data.distance = data.vector.length;
             data.labels = data.rsrp.map((_, i) => i);
             data.altitudes = data.vector.map(p => p.z);
             data.finalRsrp = data.rsrp[data.rsrp.length - 1];
