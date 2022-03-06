@@ -154,7 +154,7 @@ class CalculatorSetup extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                     "baseStations": this.props.selectedStations.map(p => this.helper.toBaseStationObject(p)),
-                    "minimumAllowableSignalValue": this.parameterValues.minimumAllowableSignalValue,
+                    "minimumAllowableRsrp": this.parameterValues.minimumAllowableRsrp,
                     "mobileNetworkRegressionType": this.parameterValues.mobileNetworkRegressionType,
                     "receiverHeightAboveTerrain": this.parameterValues.receiverHeightAboveTerrain,
                     "linkCalculationPointFrequency": this.parameterValues.linkCalculationPointFrequency

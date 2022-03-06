@@ -5,6 +5,7 @@ import FormLabel from 'react-bootstrap/FormLabel';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
+import UserSettings from '../Helpers/UserSettings';
 
 class CalculationParameters extends React.Component {
 
@@ -12,7 +13,7 @@ class CalculationParameters extends React.Component {
         super(props);
 
         this.validation = yup.object().shape({
-            minimumAllowableSignalValue: yup.number().integer().required(),
+            minimumAllowableRsrp: yup.number().integer().required(),
             receiverHeightAboveTerrain: yup.number().required(),
             linkCalculationPointFrequency: yup.number().required()
         });
@@ -29,10 +30,10 @@ class CalculationParameters extends React.Component {
             >
                 {({ handleSubmit, values, errors }) => (
                     <Form onSubmit={handleSubmit}>
-                        <Field name="minimumAllowableSignalValue">
+                        <Field name="minimumAllowableRsrp">
                             {({ field }) => (
                                 <FormGroup controlId={field.name}>
-                                    <FormLabel>Minimum signal value:</FormLabel>
+                                    <FormLabel>Minimum RSRP:</FormLabel>
                                     <FormControl type="text" {...field} />
                                     <ErrorMessage className="error-message" name={field.name} component="div" />
                                 </FormGroup>
