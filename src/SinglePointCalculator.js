@@ -176,7 +176,7 @@ class SinglePointCalculator extends React.Component {
             {!this.state.isBusy && r && <div>
                 
                 {this.state.showDetails && (<div>
-                    {this._renderChart(r, 250)}
+                    {this._renderChart(r, 230)}
                     <ConsoleInformationPanel data={r.snapshot}></ConsoleInformationPanel>
                 </div>)}
                 
