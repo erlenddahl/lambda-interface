@@ -11,6 +11,7 @@ export default class BaseStation{
         this.original = null;
         this.deselect();
         this.setEdited(false);
+        this.iconState = this.getState();
     }
 
     getCoordinateString(decimals=8){
@@ -19,11 +20,13 @@ export default class BaseStation{
 
     toggleSelect(){
         this.isSelected = !this.isSelected;
+        this.iconState = this.getState();
         return this;
     }
 
     select(){
         this.isSelected = true;
+        this.iconState = this.getState();
         return this;
     }
 
@@ -40,11 +43,13 @@ export default class BaseStation{
 
     deselect(){
         this.isSelected = false;
+        this.iconState = this.getState();
         return this;
     }
 
     setEdited(value){
         this.isBeingEdited = value;
+        this.iconState = this.getState();
         return this;
     }
 
@@ -55,5 +60,13 @@ export default class BaseStation{
         if (this.isSelected) return [5, 247, 255, 255];
 
         return [160, 0, 0, 255];
+    }
+
+    getState(){
+        if (this.state == "new") return "new";
+        if (this.isBeingEdited) return "edit";
+        if (this.isPreview) return "preview";
+        if (this.isSelected) return "selected";
+        return "normal";
     }
 }

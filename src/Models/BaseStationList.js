@@ -53,6 +53,7 @@ export default class BaseStationList{
 
         this.editedStation = station;
         this.editClone = station.clone({ original: station, isPreview: true, isEditClone: true, isSelected: true });
+        this.editClone.iconState = this.editClone.getState();
         this.stations.push(this.editClone);
         station.deselect().setEdited(true);
     }
