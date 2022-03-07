@@ -81,7 +81,7 @@ class EditStationDialog extends React.Component {
                         <Field name="transmitPower">
                             {({ field }) => (
                                 <FormGroup controlId={field.name}>
-                                    <FormLabel>Total transmit power:</FormLabel>
+                                    <FormLabel>Power:</FormLabel>
                                     <InputGroup>
                                         <FormControl type="number" {...field} />
                                         <InputGroup.Append>

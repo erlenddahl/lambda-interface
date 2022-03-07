@@ -30,7 +30,8 @@ class StationList extends React.Component {
             <th>id</th>
             <th>name</th>
             <th>antenna type</th>
-            <th>transmit power</th>
+            <th>power</th>
+            <th>gain</th>
             <th>height</th>
             <th>max radius</th>
             <th>lng</th>
@@ -44,6 +45,7 @@ class StationList extends React.Component {
             <td>{station.name}</td>
             <td>{station.antennaType}</td>
             <td>{station.transmitPower} dB</td>
+            <td>{station.gain}</td>
             <td>{station.height} m</td>
             <td>{station.maxRadius} m</td>
             <td title={station.lngLat[0]}>{station.lngLat[0].toFixed(5)}</td>
@@ -52,11 +54,11 @@ class StationList extends React.Component {
     }
 
     exportCsv(){
-        let csv = "id;name;antennaType;transmitPower;height;maxRadius;lng;lat<br />";
+        let csv = "id;name;antennaType;power;gain;height;maxRadius;lng;lat<br />";
 
         for(var i = 0; i < this.props.stations.length; i++){
             const s = this.props.stations[i];
-            csv += s.id + ";" + s.name + ";" + s.antennaType + ";" + s.transmitPower + ";" + s.height + ";" + s.maxRadius + ";" + s.lngLat[0] + ";" + s.lngLat[1] + "<br />";
+            csv += s.id + ";" + s.name + ";" + s.antennaType + ";" + s.transmitPower + ";" + s.gain + ";" + s.height + ";" + s.maxRadius + ";" + s.lngLat[0] + ";" + s.lngLat[1] + "<br />";
         }
 
         this.props.onPopupRequested({
