@@ -275,6 +275,7 @@ class App extends React.Component {
             this.baseStations.removePreviews();
         }
 
+        this.baseStations.resetSelections();
         this.baseStations.setSelectionMode(item.selectionMode || SELECTION_MODE.SINGLE);
         this.refreshState();
     }
