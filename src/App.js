@@ -44,7 +44,7 @@ class App extends React.Component {
                 transmitPower: 46,
                 gainDefinition: "125;140;5|90;125;25|65;90;15|40;65;4",
                 height: 12,
-                maxRadius: 100000,
+                maxRadius: 10000,
                 antennaType: "MobileNetwork"
             },
             {
@@ -54,7 +54,7 @@ class App extends React.Component {
                 transmitPower: 49,
                 gainDefinition: "-40;-30;8|-30;30;22|30;40;8",
                 height: 4,
-                maxRadius: 100000,
+                maxRadius: 10000,
                 antennaType: "MobileNetwork"
             }
         ].map(p => new BaseStation(p)));
@@ -231,7 +231,7 @@ class App extends React.Component {
             transmitPower: 46,
             gainDefinition: "18",
             height: 5,
-            maxRadius: 100000,
+            maxRadius: 10000,
             isPreview: true,
             isSelected: true,
             antennaType: "MobileNetwork"
