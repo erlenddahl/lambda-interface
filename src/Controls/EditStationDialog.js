@@ -8,8 +8,6 @@ import PropTypes from 'prop-types';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 
-import './EditStationDialog.css';
-
 class EditStationDialog extends React.Component {
 
     constructor(props) {

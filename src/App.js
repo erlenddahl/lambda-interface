@@ -30,6 +30,7 @@ class App extends React.Component {
         //TODO: Antenna angles (visualize on base station dot on map)
         //TODO: Replace base station cylinder with simple dot that scales when zooming
         //TODO: Save stations using local storage
+        //TODO: Download as SHP/CSV from calculation log (replace links with icons for more room?)
 
         // Future work:
         //TODO: Mutual selections in List/Map

@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquare, faCheckSquare } from '@fortawesome/pro-regular-svg-icons'
 
-import './LayerPicker.css';
-
 class LayerPicker extends React.Component {
 
     constructor(props) {

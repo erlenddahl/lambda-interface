@@ -6,8 +6,6 @@ import Table from 'react-bootstrap/Table';
 import { FlyToInterpolator } from 'react-map-gl';
 import * as d3 from 'd3-ease';
 
-import './StationList.css';
-
 class StationList extends React.Component {
 
     constructor(props) {

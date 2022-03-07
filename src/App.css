@@ -5,6 +5,19 @@ html, body, #root{
     padding: 0;
 }
 
+body {
+    margin: 0;
+    font-family: sans-serif; 
+    width: 100vw; 
+    height: 100vh; 
+    overflow: hidden; 
+    background: #111;
+}
+  
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}  
+
 .error-message{
     color: red;
     border-radius: 5px;
@@ -81,4 +94,46 @@ html, body, #root{
 
 .link-container a{
     margin-right: 10px;
+}
+
+.station-list-container tr{
+    cursor: pointer;
+}
+
+.sidebar{
+    position: absolute;
+    z-index: 1;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    width: 300px;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.sidebar-block{
+    margin-top: 20px;
+}
+
+.layer-picker{
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.layer-picker .disabled{
+    color: gray;
+    pointer-events: none;
+}
+
+.station-editor{
+    width: 100%;
+}
+
+.station-editor button{
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.main-menu button{
+    margin-right: 5px;
 }

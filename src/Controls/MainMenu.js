@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import './MainMenu.css';
-
 class MainMenu extends React.Component {
 
     constructor(props) {
