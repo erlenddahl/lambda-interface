@@ -12,7 +12,7 @@ export default class BaseStationList{
         const state = {
             selectedStation: this.selectionMode == SELECTION_MODE.SINGLE ? this.getSelectedItem() : null,
             selectedStations: this.selectionMode == SELECTION_MODE.MULTIPLE ? this.getSelectedItems() : null,
-            stations: this.stations
+            stations: this.stations.map(p => p)
         };
         return state;
     }
