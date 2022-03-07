@@ -29,8 +29,8 @@ class ImportStationsDialog extends React.Component {
                 delimiter: ";",
                 decimalSign: ",",
                 hasHeaders: true,
-                csv: "id;name;antennaType;transmitPower;height;maxRadius;lat;lng\n" + 
-                     "181199;Station name;MobileNetwork;62;250;50000;63,42050427064208;10,365430273040675"
+                csv: "id;name;antennaType;power;gain;height;maxRadius;lat;lng\n" + 
+                     "181199;Station name;MobileNetwork;40;22;250;50000;63,42050427064208;10,365430273040675"
             }
         }
     }
@@ -66,25 +66,25 @@ class ImportStationsDialog extends React.Component {
             const stations = csv.data.map((p, i) => ({
                 id: p.id,
                 name: p.name,
-                transmitPower: this.parseNumberWithSign(p.transmitPower, values.decimalSign, "Invalid transmit power at line " + i),
+                transmitPower: this.parseNumberWithSign(p.transmitPower, values.decimalSign, "Invalid power (" + p.transmitPower + ") at line " + i),
                 antennaType: p.antennaType,
-                height: this.parseNumberWithSign(p.height, values.decimalSign, "Invalid height at line " + i),
-                maxRadius: this.parseNumberWithSign(p.maxRadius, values.decimalSign, "Invalid max radius at line " + i),
-                lngLat: [this.parseNumberWithSign(p.lng, values.decimalSign, "Invalid lng at line " + i), this.parseNumberWithSign(p.lat, values.decimalSign, "Invalid lat at line " + i)]
+                height: this.parseNumberWithSign(p.height, values.decimalSign, "Invalid height (" + p.height + ") at line " + i),
+                maxRadius: this.parseNumberWithSign(p.maxRadius, values.decimalSign, "Invalid max radius (" + p.maxRadius + ") at line " + i),
+                lngLat: [this.parseNumberWithSign(p.lng, values.decimalSign, "Invalid lng (" + p.lng + ") at line " + i), this.parseNumberWithSign(p.lat, values.decimalSign, "Invalid lat (" + p.lat + ") at line " + i)]
             }));
 
             const headerOffset = values.hasHeaders ? 1 : 0;
             stations.map((p, i) => {
-                if(!p.id && p.id != 0) throw "Invalid id at line " + (i + headerOffset);
-                if(!p.name) throw "Invalid name at line " + (i + headerOffset);
-                if(p.antennaType.toLowerCase() != "mobilenetwork" && p.antennaType.toLowerCase() != "itsg5") throw "Invalid antenna type at line " + (i + headerOffset);
-                if(isNaN(p.transmitPower)) throw "Invalid transmit power at line " + (i + headerOffset);
-                if(isNaN(p.height)) throw "Invalid height at line " + (i + headerOffset);
-                if(isNaN(p.maxRadius)) throw "Invalid max radius at line " + (i + headerOffset);
-                if(isNaN(p.lngLat[0])) throw "Invalid lng at line " + (i + headerOffset);
-                if(isNaN(p.lngLat[1])) throw "Invalid lat at line " + (i + headerOffset);
-                if(p.lngLat[0] < 0 || p.lngLat[0] > 180) throw "Longitude out of bounds at line " + (i + headerOffset);
-                if(p.lngLat[1] < 0 || p.lngLat[1] > 180) throw "Latitude out of bounds at line " + (i + headerOffset);
+                if(!p.id && p.id != 0) throw "Empty id at line " + (i + headerOffset);
+                if(!p.name) throw "Empty name at line " + (i + headerOffset);
+                if(p.antennaType.toLowerCase() != "mobilenetwork" && p.antennaType.toLowerCase() != "itsg5") throw "Invalid antenna type (" + p.antennaType + ") at line " + (i + headerOffset);
+                if(isNaN(p.transmitPower)) throw "Invalid power (" + p.transmitPower + ") at line " + (i + headerOffset);
+                if(isNaN(p.height)) throw "Invalid height (" + p.height + ") at line " + (i + headerOffset);
+                if(isNaN(p.maxRadius)) throw "Invalid max radius (" + p.maxRadius + ") at line " + (i + headerOffset);
+                if(isNaN(p.lngLat[0])) throw "Invalid lng (" + p.lngLat[0] + ") at line " + (i + headerOffset);
+                if(isNaN(p.lngLat[1])) throw "Invalid lat (" + p.lngLat[1] + ") at line " + (i + headerOffset);
+                if(p.lngLat[0] < 0 || p.lngLat[0] > 180) throw "Longitude (" + p.lngLat[0] + ") out of bounds at line " + (i + headerOffset);
+                if(p.lngLat[1] < 0 || p.lngLat[1] > 180) throw "Latitude (" + p.lngLat[1] + ") out of bounds at line " + (i + headerOffset);
             });
 
             this.setState({
