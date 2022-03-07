@@ -177,13 +177,13 @@ class App extends React.Component {
         let showContextMenu = !c.selected;
 
         switch(this.state.activeCommand){
-            case "info":
+            case "list":
             case "calculate":
                 showContextMenu = false;
                 break;
             case "edit":
                 
-                // Clicked a station create a clone of this station for editing
+                // Clicked a station -- create a clone of this station for editing
                 if(c.selected){
                     this.baseStations.startEditExisting(c.selected);
                     showContextMenu = false;
