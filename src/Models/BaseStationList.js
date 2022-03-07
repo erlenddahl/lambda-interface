@@ -112,7 +112,7 @@ export default class BaseStationList{
 
     handleObjectClick(object, result){
 
-        result.clicked = _.find(this.stations, p => p.id == object.properties.id).toggleSelect();
+        result.clicked = _.find(this.stations, p => p.id == object.id).toggleSelect();
         result.selected = this.getSelection();
         
         return result;
