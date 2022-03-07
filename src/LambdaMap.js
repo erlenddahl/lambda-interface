@@ -4,7 +4,6 @@ import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import circle from '@turf/circle';
-import './LambdaMap.css';
 import ReactMapGL from 'react-map-gl';
 import { MAPBOX_TOKEN } from './Helpers/Constants';
 
