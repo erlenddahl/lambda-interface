@@ -43,7 +43,7 @@ class LambdaMap extends React.Component {
   }
   
   getTooltip(data){
-    if(data.isLink) return this.getLinkTooltip(data);
+    if(data.properties?.isLink) return this.getLinkTooltip(data.properties);
     return this.getStationTooltip(data);
   }
 
@@ -127,7 +127,7 @@ class LambdaMap extends React.Component {
         initialViewState={this.props.viewport}
         {...this.props.viewport}
         layers={layers}
-        getTooltip={info => info.object && this.getTooltip(info.object.properties)}
+        getTooltip={info => info.object && this.getTooltip(info.object)}
         onClick={this.props.onMapClicked}
         getCursor={() => 'crosshair'} />
         {this.props.children}
