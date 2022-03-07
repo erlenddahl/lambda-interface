@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DeckGL from '@deck.gl/react';
-import { GeoJsonLayer } from '@deck.gl/layers';
+import { GeoJsonLayer, IconLayer } from '@deck.gl/layers';
 import { MVTLayer } from '@deck.gl/geo-layers';
-import circle from '@turf/circle';
 import ReactMapGL from 'react-map-gl';
-import { MAPBOX_TOKEN } from './Helpers/Constants';
+import { MAPBOX_TOKEN, API_URL } from './Helpers/Constants';
 
 class LambdaMap extends React.Component {
 
@@ -68,11 +67,6 @@ class LambdaMap extends React.Component {
 
   render() {
 
-    const baseStationGeoJson = {
-      "type": "FeatureCollection",
-      "features": this.props.stations.map(p => ({ "type": "Feature", "properties": p, "geometry": { "type": "Polygon", "coordinates": circle([p.lngLat[0], p.lngLat[1]], 0.01).geometry.coordinates } }))
-    };
-
     const layers = [
       new MVTLayer({
         data: "https://openinframap.org/map.json",
@@ -84,23 +78,6 @@ class LambdaMap extends React.Component {
         getLineColor: [100, 100, 100],
         getLineWidth: 5,
         visible: this.props.layers.roadnetwork.visible
-      }),
-      new GeoJsonLayer({
-        id: 'geojson-layer',
-        data: baseStationGeoJson,
-        pickable: true,
-        stroked: false,
-        filled: true,
-        extruded: true,
-        lineWidthScale: 20,
-        lineWidthMinPixels: 2,
-        getFillColor: p => this.getStationColor(p.properties),
-        getRadius: 10,
-        getLineWidth: 1,
-        getElevation: p => p.properties.height,
-        autoHighlight: true,
-        highlightColor: [0, 0, 0, 255],
-        visible: this.props.layers.mystations.visible
       })
     ];
 
@@ -115,9 +92,26 @@ class LambdaMap extends React.Component {
         getLineColor: p => this.getLinkColor(-110, -60, p.properties.Max),
         autoHighlight: true,
         highlightColor: [0, 0, 0, 255],
-        visible: this.props.layers.mystations.visible
+        visible: this.props.layers.results.visible
       }));
     }
+
+    layers.push(new IconLayer({
+      id: 'icon-layer',
+      data: this.props.stations,
+      getIcon: d => ({
+        url: API_URL + "/icon?power=" + d.transmitPower + "&gainDefinition=" + d.gainDefinition + "&state=" + d.iconState,
+        width: 128,
+        height: 128,
+        anchorY: 64
+      }),
+      getSize: () => 64,
+      pickable: true,
+      sizeScale: 1,
+      getPosition: d => d.lngLat,
+      visible: this.props.layers.mystations.visible,
+      onIconError: e => console.log(e)
+    }));
 
     return (<ReactMapGL
       {...this.props.viewport}
