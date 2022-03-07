@@ -59,7 +59,7 @@ export default class BaseStationList{
     }
 
     startEditNew(station){
-        this.editedStation = station;
+        this.editedStation = station.setEdited(true);
         this.stations.push(station);
     }
 
