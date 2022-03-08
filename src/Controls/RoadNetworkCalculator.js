@@ -8,7 +8,7 @@ import CalculationParameters from "./CalculationParameters.js";
 import { API_URL } from '../Helpers/Constants.js';
 import UserSettings from '../Helpers/UserSettings.js';
 
-class CalculatorSetup extends React.Component {
+class RoadNetworkCalculator extends React.Component {
 
     constructor(props) {
         super(props);
@@ -280,11 +280,11 @@ class CalculatorSetup extends React.Component {
     }
 }
 
-CalculatorSetup.propTypes = {
+RoadNetworkCalculator.propTypes = {
     style: PropTypes.object,
     selectedStations: PropTypes.array,
     onAddGeoJsonLayer: PropTypes.func,
     currentGeoJsonLayerName: PropTypes.string
 };
 
-export default CalculatorSetup;
+export default RoadNetworkCalculator;

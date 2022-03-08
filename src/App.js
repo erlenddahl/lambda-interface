@@ -2,7 +2,7 @@ import React from 'react';
 import LambdaMap from './LambdaMap';
 import EditStationDialog from './Controls/EditStationDialog'
 import SinglePointCalculator from './SinglePointCalculator'
-import CalculatorSetup from './Controls/CalculatorSetup'
+import RoadNetworkCalculator from './Controls/RoadNetworkCalculator'
 import LayerPicker from './Controls/LayerPicker'
 import StationList from './Controls/StationList'
 import Sidebar from './Controls/Sidebar.js';
@@ -428,7 +428,7 @@ class App extends React.Component {
                 </Sidebar>}
             {this.state.activeCommand == "calculate" &&
                 <Sidebar style={{ marginTop: "60px", width: "900px" }}>
-                    <CalculatorSetup selectedStations={this.state.selectedStations} onAddGeoJsonLayer={this.addGeoJsonLayer} currentGeoJsonLayerName={this.state.resultsLayer?.name} />
+                    <RoadNetworkCalculator selectedStations={this.state.selectedStations} onAddGeoJsonLayer={this.addGeoJsonLayer} currentGeoJsonLayerName={this.state.resultsLayer?.name} />
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
                 <Sidebar style={{ marginTop: "60px", width: "800px" }}>
