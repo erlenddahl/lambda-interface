@@ -180,7 +180,7 @@ class App extends React.Component {
                 "type": "FeatureCollection",
                 "features": gj.features
                     .filter(p => p.properties.ID != linkProperties.ID)
-                    .concat(linkProperties.Points.map(p => {
+                    .concat(linkProperties.Points.filter(p => p.length > 2).map(p => {
 
                         let sum = 0;
                         let min = 9999999;
@@ -193,7 +193,7 @@ class App extends React.Component {
                             if(p[i] > max) max = p[i];
                         }
                         const avg = sum / count;
-                        
+
                         return {
                             "type": "Feature", 
                                 "properties": {...linkProperties, isExploded: true, Average: avg, Min: min, Max: max}, 
