@@ -20,6 +20,7 @@ import BaseStationList from './Models/BaseStationList';
 import BaseStation from './Models/BaseStation';
 import PopupContainer from './Controls/PopupContainer';
 import { Button } from 'react-bootstrap';
+import CalcHelper from './Calculations/CalcHelper';
 
 class App extends React.Component {
 
@@ -29,7 +30,8 @@ class App extends React.Component {
         //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
         //TODO: Save stations using local storage
         //TODO: Check MinPathLossTests
-        //TODO: Click a link to "explode" it into its separate points
+        
+        this.helper = new CalcHelper();
 
         this.baseStations = new BaseStationList([
             {
@@ -164,10 +166,46 @@ class App extends React.Component {
         });
     }
 
+    explodeResultsLink(linkProperties){
+
+        if(linkProperties.isExploded) return;
+
+        this.setState(s => {
+
+            const gj = s.resultsLayer.geoJson;
+
+            if(!gj) return;
+
+            const newGeoJson = {
+                "type": "FeatureCollection",
+                "features": gj.features
+                    .filter(p => p.properties.ID != linkProperties.ID)
+                    .concat(linkProperties.Points.map(p => ({
+                        "type": "Feature", 
+                            "properties": {...linkProperties, isExploded: true, Average: p[2], Min: p[2], Max: p[2]}, 
+                            "geometry": { 
+                                "type": "Point", 
+                                "coordinates": this.helper.toWgsArr([p[0], p[1]])
+                            }
+                    })))
+            };
+
+            return {
+                resultsLayer: {
+                    name: s.resultsLayer.name,
+                    geoJson: newGeoJson
+                }
+            };
+        });
+    }
+
     onMapClicked(info) {
 
 
-        if(info?.object?.properties?.isLink == true) return;
+        if(info?.object?.properties?.isLink == true){ 
+            this.explodeResultsLink(info.object.properties);
+            return;
+        }
 
         const c = this.baseStations.handleClick(info);
         let showContextMenu = !c.selected;
