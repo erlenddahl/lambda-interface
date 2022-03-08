@@ -27,7 +27,10 @@ class JobTable extends React.Component {
 
     render() {
 
-        if(!this.props.jobs || this.props.jobs.length < 1)
+        if(!this.props.jobs)
+            return <span></span>;
+
+        if(this.props.jobs.length < 1)
             return <span>You have no previously started jobs.</span>
 
         return (<table style={{width: "100%"}} className="mt-4">
@@ -53,7 +56,7 @@ class JobTable extends React.Component {
                             </span>)}
                             {!this.state.isBusy && p.status != "Processing" && (<a disabled={this.state.isBusy} style={{color:"rgb(193, 46, 46)"}} href="#" title="Delete this job and any results from it" onClick={() => this.props.onDeleteRequested(p)}><FontAwesomeIcon icon={faTrash} size="lg"></FontAwesomeIcon></a>)}
                             {!this.state.isBusy && p.status == "Processing" && (<a disabled={this.state.isBusy} style={{color:"rgb(193, 46, 46)"}} href="#" title="Abort this job" onClick={() => this.props.onAbortRequested(p)}><FontAwesomeIcon icon={faBan} size="lg"></FontAwesomeIcon></a>)}
-                            {this.state.isBusy && <span><FontAwesomeIcon icon={faSpinner} spin={true} size="lg"></FontAwesomeIcon> Loading data ...</span>}
+                            {this.state.isBusy && <span><FontAwesomeIcon icon={faSpinner} spin={true} size="lg"></FontAwesomeIcon> Working ...</span>}
                         </td>
                     </tr>
 

@@ -13,6 +13,7 @@ class CalculationParameters extends React.Component {
         super(props);
 
         this.validation = yup.object().shape({
+            apiKey: yup.string().required(),
             minimumAllowableRsrp: yup.number().integer().required(),
             receiverHeightAboveTerrain: yup.number().required(),
             linkCalculationPointFrequency: yup.number().required()
@@ -30,6 +31,15 @@ class CalculationParameters extends React.Component {
             >
                 {({ handleSubmit, values, errors }) => (
                     <Form onSubmit={handleSubmit}>
+                        <Field name="apiKey">
+                            {({ field }) => (
+                                <FormGroup controlId={field.name}>
+                                    <FormLabel>API Key:</FormLabel>
+                                    <FormControl type="text" {...field} />
+                                    <ErrorMessage className="error-message" name={field.name} component="div" />
+                                </FormGroup>
+                            )}
+                        </Field>
                         <Field name="minimumAllowableRsrp">
                             {({ field }) => (
                                 <FormGroup controlId={field.name}>

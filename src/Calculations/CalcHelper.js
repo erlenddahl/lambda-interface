@@ -33,7 +33,12 @@ export default class CalcHelper{
         };
     }
     
-    addCalculationParameters(data, parameters){
+    addCalculationParameters(data, parameters, apiKeyOnly){
+        if(!data) data = {};
+        data.apiKey = parameters.apiKey;
+
+        if(apiKeyOnly) return data;
+
         data.minimumAllowableRsrp = parameters.minimumAllowableRsrp;
         data.mobileRegression = parameters.mobileNetworkRegressionType;
         data.receiverHeightAboveTerrain = parameters.receiverHeightAboveTerrain;

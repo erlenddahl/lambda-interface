@@ -40,33 +40,36 @@ class RoadNetworkCalculator extends React.Component {
     }
 
     async refreshJobStatuses() {
-        try{
-            await Promise.all(this.state.jobs.map(async p => {
 
-                if(p.status == "Failed" || p.status == "Finished") return;
+        if(!this.state.jobs){
+            await this.loadJobs();
+        }else{
 
-                const requestOptions = {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' }
-                };
-                const response = await fetch(this.apiUrl + "?key=" + p.data.Id, requestOptions);
-                const data = await response.json();
-                if(!data.data){
-                    // This job has been finished, and will not return status data anymore.
-                    // Reload the job list to fetch the final item.
-                    await this.loadJobs();
-                    return; 
-                }
-                
-                this.updateJobState(data);
-            }));
-        }catch(ex){
-            console.log(ex);
+            try{
+                await Promise.all(this.state.jobs.map(async p => {
+
+                    if(p.status == "Failed" || p.status == "Finished") return;
+
+                    const data = await this.post("status", { key: p.data.Id }, true);
+                    if(!data?.data){
+                        // This job has been finished, and will not return status data anymore.
+                        // Reload the job list to fetch the final item.
+                        await this.loadJobs();
+                        return; 
+                    }
+                    
+                    this.updateJobState(data);
+                }));
+            }catch(ex){
+                console.log(ex);
+            }
         }
+
         this.intervalID = setTimeout(this.refreshJobStatuses.bind(this), 1000);
     }
 
     updateJobState(data){
+        if(this.state.jobs.error) return;
         this.setState(state => ({
             jobs: state.jobs.filter(p => p.data.Id !== data.data.Id).concat(data).sort((a,b) => a.data.Enqueued.localeCompare(b.data.Enqueued))
         }));
@@ -76,12 +79,7 @@ class RoadNetworkCalculator extends React.Component {
         this.setBusy(true);
 
         try{
-            const requestOptions = {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            };
-            const response = await fetch(this.apiUrl + "/delete?key=" + job.data.Id, requestOptions);
-            const data = await response.json();
+            const data = await this.post("delete", { key: job.data.Id }, true);
             
             if(data.error){
                 this.setState({ calculationError: data.error });
@@ -102,12 +100,7 @@ class RoadNetworkCalculator extends React.Component {
 
     async onAbortRequested(job){
         try{
-            const requestOptions = {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            };
-            const response = await fetch(this.apiUrl + "/abort?key=" + job.data.Id, requestOptions);
-            const data = await response.json();
+            const data = await this.post("abort", { key: job.data.Id }, true);
             
             if(data.error){
                 this.setState({ calculationError: data.error });
@@ -121,25 +114,19 @@ class RoadNetworkCalculator extends React.Component {
     }
 
     async loadJobs(){
-
-        this.setBusy(true);
-
         try{
-            const requestOptions = {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            };
-            const response = await fetch(this.apiUrl + "/jobs", requestOptions);
-            const data = await response.json();
-            const jobs = data.map(p => p);
+            const data = await this.post("jobs", null, true);
 
-            this.setState({ jobs: jobs });
+            if(data.error){
+                this.setState({ jobs: null, calculationError: data.error });
+            }else{
+                this.setState({ jobs: data.map(p => p) });
+            }
 
         }catch(ex){
             console.log(ex);
+            this.setState({ jobs: { error: ex.message || JSON.stringify(ex) } });
         }
-
-        this.setBusy(false);
     }
 
     async generateConfig(){
@@ -151,8 +138,7 @@ class RoadNetworkCalculator extends React.Component {
         this.setBusy(true);
 
         try{
-            const response = await fetch(this.apiUrl + "/generateConfig", this.getCalculationRequestOptions());
-            const data = await response.json();
+            const data = await this.post("generateConfig", this.getCalculationRequestBody());
             
             alert(JSON.stringify(data, null, 4));
 
@@ -173,15 +159,10 @@ class RoadNetworkCalculator extends React.Component {
         this.setBusy(true);
 
         try{
-            const requestOptions = {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            };
-            const response = await fetch(this.apiUrl + "/results?key=" + job.data.Id, requestOptions);
-            const data = await response.json();
+            const data = await this.post("results", { key: job.data.Id }, true);
             const geoJson = {
                 "type": "FeatureCollection",
-                "features": data.links.map(p => ({ 
+                "features": data.links.map(p => ({
                     "type": "Feature", 
                     "properties": {...p, isLink: true}, 
                     "geometry": { 
@@ -204,13 +185,19 @@ class RoadNetworkCalculator extends React.Component {
         return "results-geojson-" + job.data.Id;
     }
 
-    getCalculationRequestOptions(){
-        return {
+    async post(route, body, apiKeyOnly){
+        const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.helper.addCalculationParameters({
-                    "baseStations": this.props.selectedStations.map(p => this.helper.toBaseStationObject(p))
-                }, this.parameterValues))
+            body: JSON.stringify(this.helper.addCalculationParameters(body, this.parameterValues, apiKeyOnly))
+        };
+        const response = await fetch(this.apiUrl + (route ? "/" + route : ""), requestOptions);
+        return await response.json();
+    }
+
+    getCalculationRequestBody(){
+        return {
+            "baseStations": this.props.selectedStations.map(p => this.helper.toBaseStationObject(p))
         };
     }
 
@@ -228,8 +215,7 @@ class RoadNetworkCalculator extends React.Component {
         this.setBusy(true);
 
         try{
-            const response = await fetch(this.apiUrl, this.getCalculationRequestOptions());
-            const data = await response.json();
+            const data = await this.post("", this.getCalculationRequestBody())
 
             if(data.error){
                 this.setState({ calculationError: data.error, isBusy: false });
