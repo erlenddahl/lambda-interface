@@ -88,7 +88,7 @@ class LambdaMap extends React.Component {
         pickable: true,
         stroked: false,
         filled: true,
-        lineWidthScale: 8,
+        lineWidthScale: 15,
         getLineColor: p => this.getLinkColor(-110, -60, p.properties.Max),
         autoHighlight: true,
         highlightColor: [0, 0, 0, 255],

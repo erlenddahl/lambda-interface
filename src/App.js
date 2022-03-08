@@ -27,14 +27,10 @@ class App extends React.Component {
         super(props);
 
         //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
-        //TODO: Antenna angles (visualize on base station dot on map)
-        //TODO: Replace base station cylinder with simple dot that scales when zooming
         //TODO: Save stations using local storage
         //TODO: Download as SHP/CSV from calculation log (replace links with icons for more room?)
-
-        // Future work:
-        //TODO: Mutual selections in List/Map
-        //TODO: Handle multiple antennas at the same location
+        //TODO: Check MinPathLossTests
+        //TODO: Impossible to unselect edited station
 
         this.baseStations = new BaseStationList([
             {
