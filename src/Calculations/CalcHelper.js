@@ -21,6 +21,7 @@ export default class CalcHelper{
     toBaseStationObject(bs){
         var utm = this.toUtm(bs.lngLat);
         return {
+            "id": bs.id,
             "name": bs.name,
             "center": utm,
             "heightAboveTerrain": bs.height, 
