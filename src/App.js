@@ -30,7 +30,6 @@ class App extends React.Component {
         //TODO: Save stations using local storage
         //TODO: Download as SHP/CSV from calculation log
         //TODO: Check MinPathLossTests
-        //TODO: Impossible to unselect edited station
 
         this.baseStations = new BaseStationList([
             {
@@ -63,6 +62,7 @@ class App extends React.Component {
         this.onPointCalculationRequested = this.onPointCalculationRequested.bind(this);
         this.onMoveStationRequested = this.onMoveStationRequested.bind(this);
         this.onCreateNewStationRequested = this.onCreateNewStationRequested.bind(this);
+        this.onDeselectStationRequested = this.onDeselectStationRequested.bind(this);
         
         this.onCsvImportRequested = this.onCsvImportRequested.bind(this);
         this.openCsvPopup = this.openCsvPopup.bind(this);
@@ -271,13 +271,18 @@ class App extends React.Component {
             this.baseStations.removePreviews();
         }
 
-        this.baseStations.resetSelections();
-        this.baseStations.setSelectionMode(item.selectionMode || SELECTION_MODE.SINGLE);
+        this.baseStations.cancelEdit().setSelectionMode(item.selectionMode || SELECTION_MODE.SINGLE);
         this.refreshState();
     }
 
     refreshState(){
         this.setState(this.baseStations.getState());
+    }
+
+    onDeselectStationRequested(){
+        this.baseStations.cancelEdit();
+        this.refreshState();
+        this.hideContextMenu();
     }
 
     onImportSaved(stations) {
@@ -349,7 +354,7 @@ class App extends React.Component {
     render() {
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
-            <ContextMenu {...this.state.contextmenu} station={this.state.selectedStation} onCalculationRequested={this.onPointCalculationRequested} onMoveStationRequested={this.onMoveStationRequested} onNewStationRequested={this.onCreateNewStationRequested} onHideMenuRequested={this.hideContextMenu}></ContextMenu>
+            <ContextMenu {...this.state.contextmenu} station={this.state.selectedStation} onCalculationRequested={this.onPointCalculationRequested} onMoveStationRequested={this.onMoveStationRequested} onNewStationRequested={this.onCreateNewStationRequested} onHideMenuRequested={this.hideContextMenu} onDeselectStationRequested={this.onDeselectStationRequested}></ContextMenu>
             {this.state.singlePointCalculation && <PopupContainer>
                 <SinglePointCalculator {...this.state.singlePointCalculation} popupRequested={this.openCsvPopup} closeRequested={() => this.setState({ singlePointCalculation: null })}></SinglePointCalculator>
             </PopupContainer>}
