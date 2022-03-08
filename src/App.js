@@ -180,14 +180,29 @@ class App extends React.Component {
                 "type": "FeatureCollection",
                 "features": gj.features
                     .filter(p => p.properties.ID != linkProperties.ID)
-                    .concat(linkProperties.Points.map(p => ({
-                        "type": "Feature", 
-                            "properties": {...linkProperties, isExploded: true, Average: p[2], Min: p[2], Max: p[2]}, 
-                            "geometry": { 
-                                "type": "Point", 
-                                "coordinates": this.helper.toWgsArr([p[0], p[1]])
-                            }
-                    })))
+                    .concat(linkProperties.Points.map(p => {
+
+                        let sum = 0;
+                        let min = 9999999;
+                        let max = -9999999;
+                        let count = 0;
+                        for(var i = 2; i < p.length; i++){
+                            count++;
+                            sum += p[i];
+                            if(p[i] < min) min = p[i];
+                            if(p[i] > max) max = p[i];
+                        }
+                        const avg = sum / count;
+                        
+                        return {
+                            "type": "Feature", 
+                                "properties": {...linkProperties, isExploded: true, Average: avg, Min: min, Max: max}, 
+                                "geometry": { 
+                                    "type": "Point", 
+                                    "coordinates": this.helper.toWgsArr([p[0], p[1]])
+                                }
+                        }
+                    }))
             };
 
             return {
