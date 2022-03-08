@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import Alert from 'react-bootstrap/Alert';
 import ConsoleInformationPanel from '../Helpers/ConsoleInformationPanel.js';
+import { faTrash, faStop, faTasksAlt, faMap } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 class JobTable extends React.Component {
 
@@ -42,10 +44,10 @@ class JobTable extends React.Component {
                         <td>{moment(p.data.Enqueued).format('MMMM Do YYYY, HH:mm:ss')}</td>
                         <td>{p.status}</td>
                         <td className="link-container">
-                            {!this.state.isBusy && p.status != "InQueue" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.setState(s => ({showDetails: p == s.showDetails ? null : p }))}>{this.state.showDetails?.data.Id == p.data.Id ? "Hide details" : "Show details"}</a>)}
-                            {!this.state.isBusy && p.status == "Finished" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.onResultToggleRequested(p)}>{this.props.currentGeoJsonLayerName == this.getLayerName(p) ? "Hide results from map" : "Show results on map"}</a>)}
-                            {!this.state.isBusy && p.status != "Processing" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.props.onDeleteRequested(p)}>Delete</a>)}
-                            {!this.state.isBusy && p.status == "Processing" && (<a disabled={this.state.isBusy} href="#" onClick={() => this.props.onAbortRequested(p)}>Abort</a>)}
+                            {!this.state.isBusy && p.status != "InQueue" && (<a disabled={this.state.isBusy} href="#" title="Show or hide details about this job" onClick={() => this.setState(s => ({showDetails: p.data.Id == s.showDetails?.data.Id ? null : p }))} style={{opacity: this.state.showDetails?.data.Id == p.data.Id ? 1 : 0.4}}><FontAwesomeIcon icon={faTasksAlt} size="lg"></FontAwesomeIcon></a>)}
+                            {!this.state.isBusy && p.status == "Finished" && (<a disabled={this.state.isBusy} href="#" title="Show or hide results from this job on the map" onClick={() => this.onResultToggleRequested(p)} style={{opacity: this.props.currentGeoJsonLayerName == this.getLayerName(p) ? 1 : 0.4}}><FontAwesomeIcon icon={faMap} size="lg"></FontAwesomeIcon></a>)}
+                            {!this.state.isBusy && p.status != "Processing" && (<a disabled={this.state.isBusy} href="#" title="Delete this job and any results from it" onClick={() => this.props.onDeleteRequested(p)}><FontAwesomeIcon icon={faTrash} size="lg"></FontAwesomeIcon></a>)}
+                            {!this.state.isBusy && p.status == "Processing" && (<a disabled={this.state.isBusy} href="#" title="Abort this job" onClick={() => this.props.onAbortRequested(p)}><FontAwesomeIcon icon={faStop} size="lg"></FontAwesomeIcon></a>)}
                             {this.state.isBusy && <span>Loading data ...</span>}
                         </td>
                     </tr>
