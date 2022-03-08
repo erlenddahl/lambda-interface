@@ -58,7 +58,7 @@ class StationList extends React.Component {
 
         for(var i = 0; i < this.props.stations.length; i++){
             const s = this.props.stations[i];
-            csv += s.id + ";" + s.name + ";" + s.antennaType + ";" + s.transmitPower + ";" + s.gain + ";" + s.height + ";" + s.maxRadius + ";" + s.lngLat[0] + ";" + s.lngLat[1] + "<br />";
+            csv += s.id + ";" + s.name + ";" + s.antennaType + ";" + s.transmitPower + ";" + s.gainDefinition + ";" + s.height + ";" + s.maxRadius + ";" + s.lngLat[0] + ";" + s.lngLat[1] + "<br />";
         }
 
         this.props.onPopupRequested({

@@ -27,10 +27,11 @@ class ImportStationsDialog extends React.Component {
         this.state = {
             defaultValues: {
                 delimiter: ";",
-                decimalSign: ",",
+                decimalSign: ".",
                 hasHeaders: true,
-                csv: "id;name;antennaType;power;gain;height;maxRadius;lat;lng\n" + 
-                     "181199;Station name;MobileNetwork;40;22;250;50000;63,42050427064208;10,365430273040675"
+                csv: "id;name;antennaType;power;gain;height;maxRadius;lng;lat\n" + 
+                     "1254;Stasjon 1;MobileNetwork;46;125:140:5|90:125:25|65:90:15|40:65:4;12;10000;10.355430273040675;63.42050427064208\n" +
+                     "1255;Alfabra;MobileNetwork;49;-40:-30:8|-30:30:22|30:40:8;4;10000;10.355430273040675;63.41050427064208"
             }
         }
     }
@@ -66,7 +67,8 @@ class ImportStationsDialog extends React.Component {
             const stations = csv.data.map((p, i) => ({
                 id: p.id,
                 name: p.name,
-                transmitPower: this.parseNumberWithSign(p.transmitPower, values.decimalSign, "Invalid power (" + p.transmitPower + ") at line " + i),
+                transmitPower: this.parseNumberWithSign(p.power, values.decimalSign, "Invalid power (" + p.power + ") at line " + i),
+                gainDefinition: p.gain,
                 antennaType: p.antennaType,
                 height: this.parseNumberWithSign(p.height, values.decimalSign, "Invalid height (" + p.height + ") at line " + i),
                 maxRadius: this.parseNumberWithSign(p.maxRadius, values.decimalSign, "Invalid max radius (" + p.maxRadius + ") at line " + i),
@@ -77,6 +79,7 @@ class ImportStationsDialog extends React.Component {
             stations.map((p, i) => {
                 if(!p.id && p.id != 0) throw "Empty id at line " + (i + headerOffset);
                 if(!p.name) throw "Empty name at line " + (i + headerOffset);
+                if(!p.gainDefinition) throw "Empty gain at line " + (i + headerOffset);
                 if(p.antennaType.toLowerCase() != "mobilenetwork" && p.antennaType.toLowerCase() != "itsg5") throw "Invalid antenna type (" + p.antennaType + ") at line " + (i + headerOffset);
                 if(isNaN(p.transmitPower)) throw "Invalid power (" + p.transmitPower + ") at line " + (i + headerOffset);
                 if(isNaN(p.height)) throw "Invalid height (" + p.height + ") at line " + (i + headerOffset);
