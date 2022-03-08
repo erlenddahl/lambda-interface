@@ -37,7 +37,7 @@ class App extends React.Component {
                 name: "Stasjon 1",
                 lngLat: [10.355430273040675, 63.42050427064208],
                 transmitPower: 46,
-                gainDefinition: "125;140;5|90;125;25|65;90;15|40;65;4",
+                gainDefinition: "125:140:5|90:125:25|65:90:15|40:65:4",
                 height: 12,
                 maxRadius: 10000,
                 antennaType: "MobileNetwork"
@@ -47,7 +47,7 @@ class App extends React.Component {
                 name: "Alfabra",
                 lngLat: [10.355430273040675, 63.41050427064208],
                 transmitPower: 49,
-                gainDefinition: "-40;-30;8|-30;30;22|30;40;8",
+                gainDefinition: "-40:-30:8|-30:30:22|30:40:8",
                 height: 4,
                 maxRadius: 10000,
                 antennaType: "MobileNetwork"
