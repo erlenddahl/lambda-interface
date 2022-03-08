@@ -28,8 +28,8 @@ class App extends React.Component {
 
         //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
         //TODO: Save stations using local storage
-        //TODO: Download as SHP/CSV from calculation log
         //TODO: Check MinPathLossTests
+        //TODO: Click a link to "explode" it into its separate points
 
         this.baseStations = new BaseStationList([
             {
