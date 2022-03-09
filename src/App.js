@@ -407,7 +407,7 @@ class App extends React.Component {
                 </div>
             </PopupContainer>}
             {this.state.activeCommand == "edit" && this.state.selectedStation &&
-                <Sidebar style={{ marginTop: "60px" }}>
+                <Sidebar style={{ marginTop: "60px", width: "450px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.selectedStation.isEditClone} />
                 </Sidebar>}
             {this.state.activeCommand == "calculate" &&
