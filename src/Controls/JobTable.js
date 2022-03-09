@@ -6,6 +6,7 @@ import ConsoleInformationPanel from '../Helpers/ConsoleInformationPanel.js';
 import { faTrash, faTasksAlt, faMap, faFileCsv, faBan, faFileArchive, faSpinner } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { API_URL } from '../Helpers/Constants.js';
+import { Tooltip } from 'react-tippy';
 
 class JobTable extends React.Component {
 
@@ -48,14 +49,42 @@ class JobTable extends React.Component {
                         <td>{moment(p.data.Enqueued).format('MMMM Do YYYY, HH:mm:ss')}</td>
                         <td>{p.status}</td>
                         <td className="link-container">
-                            {!this.state.isBusy && p.status != "InQueue" && (<a disabled={this.state.isBusy} href="#" title="Show or hide details about this job" onClick={() => this.setState(s => ({showDetails: p.data.Id == s.showDetails?.data.Id ? null : p }))} style={{opacity: this.state.showDetails?.data.Id == p.data.Id ? 1 : 0.4}}><FontAwesomeIcon icon={faTasksAlt} size="lg"></FontAwesomeIcon></a>)}
-                            {!this.state.isBusy && p.status == "Finished" && (<span>
-                                <a disabled={this.state.isBusy} href="#" title="Show or hide results from this job on the map" onClick={() => this.onResultToggleRequested(p)} style={{opacity: this.props.currentGeoJsonLayerName == this.getLayerName(p) ? 1 : 0.4}}><FontAwesomeIcon icon={faMap} size="lg"></FontAwesomeIcon></a>
-                                <a target="_blank" rel="noopener noreferrer" href={API_URL + "/RoadNetwork/download?key=" + p.data.Id + "&format=csv"} title="Download results as CSV"><FontAwesomeIcon icon={faFileCsv} size="lg"></FontAwesomeIcon></a>
-                                <a target="_blank" rel="noopener noreferrer" href={API_URL + "/RoadNetwork/download?key=" + p.data.Id + "&format=shp"} title="Download results as SHP"><FontAwesomeIcon icon={faFileArchive} size="lg"></FontAwesomeIcon></a>
+                            {!this.state.isBusy && (<React.Fragment>
+                            {p.status != "InQueue" && (<Tooltip title="Show or hide details about this job">
+                                <a href="#" onClick={() => this.setState(s => ({showDetails: p.data.Id == s.showDetails?.data.Id ? null : p }))} style={{opacity: this.state.showDetails?.data.Id == p.data.Id ? 1 : 0.4}}>
+                                    <FontAwesomeIcon icon={faTasksAlt} size="lg"></FontAwesomeIcon>
+                                </a>
+                            </Tooltip>)}
+                            {p.status == "Finished" && (<span>
+                                <Tooltip title="Show or hide results from this job on the map">
+                                    <a href="#" onClick={() => this.onResultToggleRequested(p)} style={{opacity: this.props.currentGeoJsonLayerName == this.getLayerName(p) ? 1 : 0.4}}>
+                                        <FontAwesomeIcon icon={faMap} size="lg"></FontAwesomeIcon>
+                                    </a>
+                                </Tooltip>
+                                <Tooltip title="Download results as CSV">
+                                    <a target="_blank" rel="noopener noreferrer" href={API_URL + "/RoadNetwork/download?key=" + p.data.Id + "&format=csv"}>
+                                        <FontAwesomeIcon icon={faFileCsv} size="lg"></FontAwesomeIcon>
+                                    </a>
+                                </Tooltip>
+                                <Tooltip title="Download results as SHP">
+                                    <a target="_blank" rel="noopener noreferrer" href={API_URL + "/RoadNetwork/download?key=" + p.data.Id + "&format=shp"}>
+                                        <FontAwesomeIcon icon={faFileArchive} size="lg"></FontAwesomeIcon>
+                                    </a>
+                                </Tooltip>
                             </span>)}
-                            {!this.state.isBusy && p.status != "Processing" && (<a disabled={this.state.isBusy} style={{color:"rgb(193, 46, 46)"}} href="#" title="Delete this job and any results from it" onClick={() => this.props.onDeleteRequested(p)}><FontAwesomeIcon icon={faTrash} size="lg"></FontAwesomeIcon></a>)}
-                            {!this.state.isBusy && p.status == "Processing" && (<a disabled={this.state.isBusy} style={{color:"rgb(193, 46, 46)"}} href="#" title="Abort this job" onClick={() => this.props.onAbortRequested(p)}><FontAwesomeIcon icon={faBan} size="lg"></FontAwesomeIcon></a>)}
+                            {p.status != "Processing" && (
+                                <Tooltip title="Delete this job and any results from it">
+                                    <a style={{color:"rgb(193, 46, 46)"}} href="#" onClick={() => this.props.onDeleteRequested(p)}>
+                                        <FontAwesomeIcon icon={faTrash} size="lg"></FontAwesomeIcon>
+                                    </a>
+                                </Tooltip>)}
+                            {p.status == "Processing" && (
+                                <Tooltip title="Abort this job">
+                                    <a style={{color:"rgb(193, 46, 46)"}} href="#" onClick={() => this.props.onAbortRequested(p)}>
+                                        <FontAwesomeIcon icon={faBan} size="lg"></FontAwesomeIcon>
+                                    </a>
+                                </Tooltip>)}
+                            </React.Fragment>)}
                             {this.state.isBusy && <span><FontAwesomeIcon icon={faSpinner} spin={true} size="lg"></FontAwesomeIcon> Working ...</span>}
                         </td>
                     </tr>

@@ -10,11 +10,7 @@ import MainMenu from './Controls/MainMenu.js';
 import ContextMenu from './ContextMenu.js';
 import _ from 'lodash';
 import { SELECTION_MODE } from './Helpers/Constants';
-
 import { faMapMarkerEdit, faAbacus, faClipboardList } from '@fortawesome/pro-solid-svg-icons'
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
 import ImportStationsDialog from './Controls/ImportStationsDialog';
 import BaseStationList from './Models/BaseStationList';
 import BaseStation from './Models/BaseStation';
@@ -22,6 +18,10 @@ import PopupContainer from './Controls/PopupContainer';
 import { Button } from 'react-bootstrap';
 import CalcHelper from './Calculations/CalcHelper';
 import UserSettings from './Helpers/UserSettings';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-tippy/dist/tippy.css';
+import './App.css';
 
 class App extends React.Component {
 
