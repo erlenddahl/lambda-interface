@@ -110,7 +110,7 @@ class App extends React.Component {
             layers: {
                 openinframap: {
                     name: "Infrastructure (openinframap.org)",
-                    visible: false
+                    enabled: true
                 },
                 cellcoverage: {
                     name: "Cell coverage",

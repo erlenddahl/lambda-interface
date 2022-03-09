@@ -43,7 +43,17 @@ class LambdaMap extends React.Component {
   
   getTooltip(data){
     if(data.properties?.isLink) return this.getLinkTooltip(data.properties);
+    if(data.properties) return this.getGenericTooltip(data.properties);
     return this.getStationTooltip(data);
+  }
+
+  getGenericTooltip(props){
+    console.log(props);
+    let s = "";
+    for(var key in props){
+      s += key + ": " + props[key] + "\n";
+    }
+    return s;
   }
 
   getLinkTooltip(data){
@@ -70,7 +80,8 @@ class LambdaMap extends React.Component {
     const layers = [
       new MVTLayer({
         data: "https://openinframap.org/map.json",
-        visible: this.props.layers.openinframap.visible
+        visible: this.props.layers.openinframap.visible,
+        pickable: true
       }),
       new MVTLayer({
         id: "nvdb-roadlinks",
