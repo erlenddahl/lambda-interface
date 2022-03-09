@@ -7,6 +7,8 @@ import CalcHelper from "../Calculations/CalcHelper.js";
 import CalculationParameters from "./CalculationParameters.js";
 import { API_URL } from '../Helpers/Constants.js';
 import UserSettings from '../Helpers/UserSettings.js';
+import { Tooltip } from 'react-tippy';
+import HelpText from './HelpText.js';
 
 class RoadNetworkCalculator extends React.Component {
 
@@ -250,16 +252,25 @@ class RoadNetworkCalculator extends React.Component {
 
         return <div className="calculator-setup" style={this.props.style}>
 
-            <h3 className="my-3">New calculation</h3>
+            <HelpText className="my-3" tooltip="Use the input fields below to configure a new calculation, select the stations you want included by clicking them on the map, then start the calculation by clicking 'Calculate'.">
+                <h3>New calculation</h3>
+            </HelpText>
 
             <CalculationParameters onValuesChanged={this.onCalculationParametersChanged}></CalculationParameters>
 
-            <Alert className="my-3" variant="info">{this.props.selectedStations.length} stations selected for calculations. {!this.props.selectedStations.length && <span>Click a station on the map to select it.</span>}</Alert>
-            <Button onClick={this.onCalculationClicked} disabled={calculationStartBlocks}>Calculate</Button>
+            <Alert className="my-3" variant="info">{this.props.selectedStations.length} stations selected for calculations. Click a station on the map to select or deselect it.</Alert>
+            
+            <Tooltip title="Start a new calculation running on the server.">
+                <Button onClick={this.onCalculationClicked} disabled={calculationStartBlocks}>Calculate</Button>
+            </Tooltip>
 
-            <Button className="mx-2" variant="secondary" onClick={this.generateConfig} disabled={calculationStartBlocks}>Generate config for offline calculation</Button>
+            <Tooltip title="Generate a config file that you (with minor edits) can run on your own computer. This option may be quicker, especially if there are long-running jobs running on the server. See the 'Offline calculations' section in the documentation.">
+                <Button className="mx-2" variant="secondary" onClick={this.generateConfig} disabled={calculationStartBlocks}>Generate config for offline calculation</Button>
+            </Tooltip>
 
-            <h3 className="my-3 mt-5">Calculation log</h3>
+            <HelpText className="my-3 mt-5" tooltip="A list of calculations started using this API key. From here you can see calculation progress, show results on the map, download results, or delete old calculations.">
+                <h3>Calculation log</h3>
+            </HelpText>
             {this.state.calculationError && <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>}
 
             <JobTable jobs={this.state.jobs} currentGeoJsonLayerName={this.props.currentGeoJsonLayerName} onResultToggleRequested={this.toggleResults} onDeleteRequested={this.onDeleteRequested} onAbortRequested={this.onAbortRequested}></JobTable>

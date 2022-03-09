@@ -26,6 +26,13 @@ class JobTable extends React.Component {
         this.setState({isBusy: false});
     }
 
+    getTitle(status){
+        if(status == "Processing") return "This job is currently being processed.";
+        if(status == "InQueue") return "This job is enqueued, and will start processing once jobs before it in the queue completes.";
+        if(status == "Finished") return "This job has been finished. You can display results on the map or download them using the buttons to the right.";
+        return status;
+    }
+
     render() {
 
         if(!this.props.jobs)
@@ -47,7 +54,11 @@ class JobTable extends React.Component {
                 <React.Fragment key={p.data.Id}>
                     <tr>
                         <td>{moment(p.data.Enqueued).format('MMMM Do YYYY, HH:mm:ss')}</td>
-                        <td>{p.status}</td>
+                        <td>
+                            <Tooltip title={this.getTitle(p.status)}>
+                                {p.status}
+                            </Tooltip>
+                        </td>
                         <td className="link-container">
                             {!this.state.isBusy && (<React.Fragment>
                             {p.status != "InQueue" && (<Tooltip title="Show or hide details about this job">

@@ -137,3 +137,33 @@ code {
 .main-menu button{
     margin-right: 5px;
 }
+
+table tr:hover{
+    background-color: #c0c0c0;
+    cursor: pointer;
+}
+
+.discrete{
+    opacity: 0.5;
+}
+
+.discrete:hover{
+    opacity: 1;
+}
+
+.help-text{
+    cursor: pointer;
+}
+
+.help-text *{
+    display: inline-block;
+}
+
+h1, h2, h3, h4, h5, h6{
+    width: fit-content;
+}
+
+.form-label{
+    margin-bottom: 0;
+    margin-top: 0.5rem;
+}
