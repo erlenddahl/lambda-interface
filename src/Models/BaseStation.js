@@ -5,6 +5,17 @@ export default class BaseStation{
             this[key] = data[key];
     }
 
+    getStorageState(){
+        const s = {...this};
+        delete s.iconState;
+        delete s.isBeingEdited;
+        delete s.isEditClone;
+        delete s.isPreview;
+        delete s.isSelected;
+        delete s.original;
+        return s;
+    }
+
     reset(){
         this.isEditClone = false;
         this.isPreview = false;

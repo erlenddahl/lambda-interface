@@ -21,40 +21,18 @@ import BaseStation from './Models/BaseStation';
 import PopupContainer from './Controls/PopupContainer';
 import { Button } from 'react-bootstrap';
 import CalcHelper from './Calculations/CalcHelper';
+import UserSettings from './Helpers/UserSettings';
 
 class App extends React.Component {
 
     constructor(props) {
         super(props);
 
-        //TODO: Somehow implement users (simple API-key with some kind of station and results storage?)
-        //TODO: Save stations using local storage
         //TODO: Check MinPathLossTests
         
         this.helper = new CalcHelper();
 
-        this.baseStations = new BaseStationList([
-            {
-                id: "1254",
-                name: "Stasjon 1",
-                lngLat: [10.355430273040675, 63.42050427064208],
-                transmitPower: 46,
-                gainDefinition: "125:140:5|90:125:25|65:90:15|40:65:4",
-                height: 12,
-                maxRadius: 10000,
-                antennaType: "MobileNetwork"
-            },
-            {
-                id: "1255",
-                name: "Alfabra",
-                lngLat: [10.355430273040675, 63.41050427064208],
-                transmitPower: 49,
-                gainDefinition: "-40:-30:8|-30:30:22|30:40:8",
-                height: 4,
-                maxRadius: 10000,
-                antennaType: "MobileNetwork"
-            }
-        ].map(p => new BaseStation(p)));
+        this.baseStations = new BaseStationList(UserSettings.getBaseStations().map(p => new BaseStation(p)));
 
         this.onMapClicked = this.onMapClicked.bind(this);
         this.onViewportChange = this.onViewportChange.bind(this);
@@ -110,29 +88,30 @@ class App extends React.Component {
             layers: {
                 openinframap: {
                     name: "Infrastructure (openinframap.org)",
+                    visible: UserSettings.getLayerVisibility("openinframap"),
                     enabled: true
                 },
-                cellcoverage: {
+                /*cellcoverage: {
                     name: "Cell coverage",
                     visible: false
                 },
                 aadt: {
                     name: "Traffic",
                     visible: false
-                },
+                },*/
                 roadnetwork: {
                     name: "Road network",
-                    visible: false,
+                    visible: UserSettings.getLayerVisibility("roadnetwork"),
                     enabled: true
                 },
                 mystations: {
                     name: "My stations",
-                    visible: true,
+                    visible: UserSettings.getLayerVisibility("mystations", true),
                     enabled: true
                 },
                 results: {
                     name: "Results",
-                    visible: false,
+                    visible: UserSettings.getLayerVisibility("results"),
                     enabled: false
                 }
             },
@@ -141,14 +120,7 @@ class App extends React.Component {
             selectedStations: [],
             clickedPoint: null,
             stations: this.baseStations.stations,
-            viewport: {
-                width: "100%",
-                height: "100%",
-                latitude: 63.42050427064208,
-                longitude: 10.355430273040675,
-                zoom: 13.5,
-                bearing: 0
-            }
+            viewport: UserSettings.getViewport()
         };
     }
 
@@ -329,6 +301,7 @@ class App extends React.Component {
     }
 
     refreshState(){
+        UserSettings.setBaseStations(this.baseStations.getStorageState());
         this.setState(this.baseStations.getState());
     }
 
@@ -362,6 +335,7 @@ class App extends React.Component {
             viewport: data
         });
         this.hideContextMenu();
+        UserSettings.setViewport(data);
     }
 
     onPointCalculationRequested(station, coordinate){
@@ -383,6 +357,8 @@ class App extends React.Component {
 
     onLayerVisibilityChange(layerKey, visibility) {
         if(!this.state.layers[layerKey].enabled) return;
+
+        UserSettings.setLayerVisibility(layerKey, visibility);
 
         this.setState(state => {
             const layers = state.layers;

@@ -245,6 +245,7 @@ class RoadNetworkCalculator extends React.Component {
     }
 
     render() {
+
         const calculationStartBlocks = this.state.isBusy || !this.props.selectedStations.length || (this.parameterErrors && this.parameterErrors.length > 0);
 
         return <div className="calculator-setup" style={this.props.style}>

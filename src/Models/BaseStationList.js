@@ -17,6 +17,10 @@ export default class BaseStationList{
         return state;
     }
 
+    getStorageState(){
+        return this.stations.filter(p => !p.isEditClone && !p.isPreview).map(p => p.getStorageState());
+    }
+
     setSelectionMode(mode){
 
         if(mode != SELECTION_MODE.SINGLE && mode != SELECTION_MODE.MULTIPLE) throw "Invalid selection mode: '" + mode + "'";
