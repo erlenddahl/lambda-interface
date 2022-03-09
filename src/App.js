@@ -93,7 +93,8 @@ class App extends React.Component {
                 openinframap: {
                     name: "Infrastructure (openinframap.org)",
                     visible: UserSettings.getLayerVisibility("openinframap"),
-                    enabled: true
+                    enabled: true,
+                    tooltip: "Shows infrastructure from openinframap.org. Hold the mouse over an item to see all the information provided by the source."
                 },
                 /*cellcoverage: {
                     name: "Cell coverage",
@@ -106,17 +107,20 @@ class App extends React.Component {
                 roadnetwork: {
                     name: "Road network",
                     visible: UserSettings.getLayerVisibility("roadnetwork"),
-                    enabled: true
+                    enabled: true,
+                    tooltip: "Shows all road links in the road network as black lines. Hold the mouse over a road link to see its ID."
                 },
                 mystations: {
                     name: "My stations",
                     visible: UserSettings.getLayerVisibility("mystations", true),
-                    enabled: true
+                    enabled: true,
+                    tooltip: "Shows all the stations you have created."
                 },
                 results: {
                     name: "Results",
                     visible: UserSettings.getLayerVisibility("results"),
-                    enabled: false
+                    enabled: false,
+                    tooltip: "Shows results from a road network calculation. To enable this layer, you must first click 'Show results on map' on a finished calculation in the 'Calculate road network' section. Hold the mouse over a link result to see min, max and average values along this link, and click a link to split it into all its separate calculation points."
                 }
             },
             activeCommand: "edit",

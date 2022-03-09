@@ -88,6 +88,7 @@ class LambdaMap extends React.Component {
         data: "https://mobilitet.sintef.no/maps/roadnetwork/{z}/{x}/{y}/tile.mvt",
         getLineColor: [100, 100, 100],
         getLineWidth: 5,
+        pickable: true,
         visible: this.props.layers.roadnetwork.visible
       })
     ];
