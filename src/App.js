@@ -29,6 +29,7 @@ class App extends React.Component {
         super(props);
 
         //TODO: Check MinPathLossTests
+        //TODO: Fix save/cancel/delete buttons in station editor to bottom, scroll the contents above
         
         this.helper = new CalcHelper();
 
@@ -71,18 +72,21 @@ class App extends React.Component {
                     icon: faMapMarkerEdit,
                     text: "Info/Edit",
                     cmd: "edit",
-                    active: true
+                    active: true,
+                    tooltip: "See or edit information about the selected station. If no stations are selected, the window will be hidden. Click a station on the map to select it."
                 },
                 {
                     icon: faClipboardList,
                     text: "List",
-                    cmd: "list"
+                    cmd: "list",
+                    tooltip: "See a complete list of all the stations on your map. Click a row to move the map to the clicked station."
                 },
                 {
                     icon: faAbacus,
                     text: "Calculate road network",
                     cmd: "calculate",
-                    selectionMode: SELECTION_MODE.MULTIPLE
+                    selectionMode: SELECTION_MODE.MULTIPLE,
+                    tooltip: "Calculate signal strength (RSRP) along the road network, or see results from previous calculations."
                 }
             ],
             layers: {
