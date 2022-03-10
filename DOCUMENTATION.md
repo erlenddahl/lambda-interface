@@ -8,8 +8,8 @@ Warning: The online demonstrator has primarly been tested in Mozilla Firefox and
 ## Placing new base stations on the map
 To place a new station on the map, click on the map where you want to place it, and pick "Create new station at this location" in the context menu that appears. The station will then appear as a gray circle, which will be colorized when it has been saved. Edit the base station parameters as required, and click "Save station" to finalize it.
 
-<video width="320" height="240" controls>
-  <source src="./Docs/media/create-station.mp4" type="video/mp4">
+<video width="840" height="652" controls>
+  <source src="./src/Docs/media/create-station.mp4" type="video/mp4">
 </video>
 
 ## Base station visualization
