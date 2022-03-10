@@ -76,7 +76,7 @@ class EditStationDialog extends React.Component {
                                 {({ field }) => <InputEditor field={field} unit="Db" title="Power" tooltip="The base transmit power of this station. It is equal in all directions. For RSRP calculations, power and (directional) gain is added before subtracting the different losses."></InputEditor>}
                             </Field>
                             <Field name="gainDefinition">
-                                {({ field }) => <InputEditor field={field} unit="Db" title="Gain" tooltip="The (directional) gain of this station. It can be a single number for constant gain in all directions, or a sector definition for different gain in different directions. Example: '-45:45:18|45:60:7' (18 Db between -45 and 45 degrees, and 7 Db between 45 and 60 degrees). See the the 'Station parameters' section in the documentation."></InputEditor>}
+                                {({ field }) => <InputEditor field={field} unit="Db" title="Gain" tooltip="The (directional) gain of this station. It can be a single number for constant gain in all directions, or a sector definition for different gain in different directions. Example: '-45:45:18|45:60:7' (18 Db between -45 and 45 degrees, and 7 Db between 45 and 60 degrees)."></InputEditor>}
                             </Field>
                             <Field name="height">
                                 {({ field }) => <InputEditor field={field} unit="m" title="Height above terrain" tooltip="Transmitter height above the terrain."></InputEditor>}
