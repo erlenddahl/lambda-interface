@@ -1,12 +1,16 @@
 # The online demonstrator
 The online demonstrator is meant to be a simple map-based tool for testing the path loss calculations. Base stations can be placed on the map, and the tool can be used to calculate path loss between a selected base station and a certain point on the map, or between selected base stations and the road network.
 
-Warning: This tool has primarly been tested in Mozilla Firefox and Google Chrome. It will probably work in most modern browsers, but it should not be surprising if there are issues in older browsers such as Internet Explorer.
+For long-running calculations with high performance requirements, it is recommended to download the model executable and run it on your own calculation computer, as the current server and queue system may make calculations take a long time. See the 'Offline calculations' section further down.
+
+Warning: The online demonstrator has primarly been tested in Mozilla Firefox and Google Chrome. It will probably work in most modern browsers, but it should not be surprising if there are issues in older browsers such as Internet Explorer.
 
 ## Placing new base stations on the map
 To place a new station on the map, click on the map where you want to place it, and pick "Create new station at this location" in the context menu that appears. The station will then appear as a gray circle, which will be colorized when it has been saved. Edit the base station parameters as required, and click "Save station" to finalize it.
 
-<video src='./Docs/media/create-station.mp4'></video>
+<video width="320" height="240" controls>
+  <source src="./Docs/media/create-station.mp4" type="video/mp4">
+</video>
 
 ## Base station visualization
 
