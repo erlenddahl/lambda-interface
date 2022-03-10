@@ -41,7 +41,7 @@ class JobTable extends React.Component {
         if(this.props.jobs.length < 1)
             return <span>You have no previously started jobs.</span>
 
-        return (<table style={{width: "100%"}} className="mt-4">
+        return (<table style={{width: "100%"}}>
             <thead>
                 <tr>
                     <th>Created</th>

@@ -250,30 +250,34 @@ class RoadNetworkCalculator extends React.Component {
 
         const calculationStartBlocks = this.state.isBusy || !this.props.selectedStations.length || (this.parameterErrors && this.parameterErrors.length > 0);
 
-        return <div className="calculator-setup" style={this.props.style}>
+        return <div className="sidebar-content-container" style={this.props.style}>
 
-            <HelpText className="my-3" tooltip="Use the input fields below to configure a new calculation, select the stations you want included by clicking them on the map, then start the calculation by clicking 'Calculate'.">
-                <h3>New calculation</h3>
-            </HelpText>
+            <div className="sidebar-content-controls">
 
-            <CalculationParameters onValuesChanged={this.onCalculationParametersChanged}></CalculationParameters>
+                <HelpText className="my-3" tooltip="Use the input fields below to configure a new calculation, select the stations you want included by clicking them on the map, then start the calculation by clicking 'Calculate'.">
+                    <h3>New calculation</h3>
+                </HelpText>
 
-            <Alert className="my-3" variant="info">{this.props.selectedStations.length} stations selected for calculations. Click a station on the map to select or deselect it.</Alert>
-            
-            <Tooltip title="Start a new calculation running on the server.">
-                <Button onClick={this.onCalculationClicked} disabled={calculationStartBlocks}>Calculate</Button>
-            </Tooltip>
+                <CalculationParameters onValuesChanged={this.onCalculationParametersChanged}></CalculationParameters>
 
-            <Tooltip title="Generate a config file that you (with minor edits) can run on your own computer. This option may be quicker, especially if there are long-running jobs running on the server. See the 'Offline calculations' section in the documentation.">
-                <Button className="mx-2" variant="secondary" onClick={this.generateConfig} disabled={calculationStartBlocks}>Generate config for offline calculation</Button>
-            </Tooltip>
+                <Alert className="my-3" variant="info">{this.props.selectedStations.length} stations selected for calculations. Click a station on the map to select or deselect it.</Alert>
+                
+                <Tooltip title="Start a new calculation running on the server.">
+                    <Button onClick={this.onCalculationClicked} disabled={calculationStartBlocks}>Calculate</Button>
+                </Tooltip>
 
-            <HelpText className="my-3 mt-5" tooltip="A list of calculations started using this API key. From here you can see calculation progress, show results on the map, download results, or delete old calculations.">
-                <h3>Calculation log</h3>
-            </HelpText>
-            {this.state.calculationError && <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>}
+                <Tooltip title="Generate a config file that you (with minor edits) can run on your own computer. This option may be quicker, especially if there are long-running jobs running on the server. See the 'Offline calculations' section in the documentation.">
+                    <Button className="mx-2" variant="secondary" onClick={this.generateConfig} disabled={calculationStartBlocks}>Generate config for offline calculation</Button>
+                </Tooltip>
 
-            <JobTable jobs={this.state.jobs} currentGeoJsonLayerName={this.props.currentGeoJsonLayerName} onResultToggleRequested={this.toggleResults} onDeleteRequested={this.onDeleteRequested} onAbortRequested={this.onAbortRequested}></JobTable>
+                <br />
+                <HelpText className="my-3 mt-5" tooltip="A list of calculations started using this API key. From here you can see calculation progress, show results on the map, download results, or delete old calculations.">
+                    <h3>Calculation log</h3>
+                </HelpText>
+                {this.state.calculationError && <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>}
+
+                <JobTable jobs={this.state.jobs} currentGeoJsonLayerName={this.props.currentGeoJsonLayerName} onResultToggleRequested={this.toggleResults} onDeleteRequested={this.onDeleteRequested} onAbortRequested={this.onAbortRequested}></JobTable>
+            </div>
         </div>
     }
 }

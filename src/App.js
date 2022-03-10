@@ -29,7 +29,6 @@ class App extends React.Component {
         super(props);
 
         //TODO: Check MinPathLossTests
-        //TODO: Fix save/cancel/delete buttons in station editor to bottom, scroll the contents above
         
         this.helper = new CalcHelper();
 
@@ -407,15 +406,15 @@ class App extends React.Component {
                 </div>
             </PopupContainer>}
             {this.state.activeCommand == "edit" && this.state.selectedStation &&
-                <Sidebar style={{ marginTop: "60px", width: "450px" }}>
+                <Sidebar style={{ width: "450px" }}>
                     <EditStationDialog selectedStation={this.state.selectedStation} onSave={this.onEditSaved} onCancel={this.onEditCancelled} onDelete={this.onEditDelete} isEditing={this.state.selectedStation.isEditClone} />
                 </Sidebar>}
             {this.state.activeCommand == "calculate" &&
-                <Sidebar style={{ marginTop: "60px", width: "900px" }}>
+                <Sidebar style={{ width: "900px" }}>
                     <RoadNetworkCalculator selectedStations={this.state.selectedStations} onAddGeoJsonLayer={this.addGeoJsonLayer} currentGeoJsonLayerName={this.state.resultsLayer?.name} />
                 </Sidebar>}
             {this.state.activeCommand == "list" &&
-                <Sidebar style={{ marginTop: "60px", width: "800px" }}>
+                <Sidebar style={{ width: "800px" }}>
                     <StationList stations={this.state.stations} onMapTransitionRequested={this.initiateMapTransition} onImportRequested={this.onCsvImportRequested} onPopupRequested={this.openCsvPopup} />
                 </Sidebar>}
             <LambdaMap stations={this.state.stations} resultsLayer={this.state.resultsLayer} onMapClicked={this.onMapClicked} viewport={this.state.viewport} onViewportChange={this.onViewportChange} layers={this.state.layers}>

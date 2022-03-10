@@ -67,14 +67,18 @@ class StationList extends React.Component {
     }
 
     render() {
-        return <div className="station-list-container" style={this.props.style}>
-            <Table striped bordered hover>
-                <thead>{this._renderHeaders()}</thead>
-                <tbody>{this.props.stations.map(this._renderStation)}</tbody>
-            </Table>
+        return <div className="station-list-container sidebar-content-container" style={this.props.style}>
+            <div className="sidebar-content-controls">
+                <Table striped bordered hover>
+                    <thead>{this._renderHeaders()}</thead>
+                    <tbody>{this.props.stations.map(this._renderStation)}</tbody>
+                </Table>
+            </div>
 
-            <Button className="mt-4" onClick={this.props.onImportRequested}>Import CSV</Button>
-            <Button className="mt-4 mx-2" onClick={() => this.exportCsv()}>Export CSV</Button>
+            <div className='sidebar-content-buttons'>
+                <Button className="mt-4" onClick={this.props.onImportRequested}>Import CSV</Button>
+                <Button className="mt-4 mx-2" onClick={() => this.exportCsv()}>Export CSV</Button>
+            </div>
         </div>
     }
 }
