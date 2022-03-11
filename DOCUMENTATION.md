@@ -101,7 +101,9 @@ When a job has finished, results can be downloaded as CSV or SHP files, both con
 ![](docs/calculation-results.png) | ![](docs/calculation-results-exploded.png)
 
 ## RSRP vs RSSI in the results
+The RSSI, which was used when collecting data in the LambdaRoad project, contains the total received signal energy over the entire bandwidth of the signal, including the signal of interest, noise and interference. While this is a good value to use when collecting data, it is difficult to estimate since noise and interference is not a part of the model. The RSRP contains the average received signal level per resource element of the LTE signal. Therefore, the RSRP is a better parameter to use when estimating the path loss than the RSSI.
 
+This means that the tool is focused on RSRP, but for ITS G5 it has to report a suboptimal RSSI calculation, since it is a WiFi technology without resource blocks.
 
 ## Performance
 As the application has to retrieve and process a one meter resolution height profile of up to tens of kilometers for every single point it has to calculate, there has been a large focus on performance. Elevation data is downloaded (either manually or on demand), then converted to an optimized file format to allow very quick file loading. Elevation data is stored in tiles of 512x512 meters, which was found in testing to be a good balance between size (less tiles must be loaded in to memory) and memory usage (less total data has to be loaded into memory). Since multiple tiles may have to be loaded into memory to retrieve a single height profile, the road link calculation orders the links by the angle between the West-East line and the line from the base station to the center point of the road link. This means that links using the same tiles are calculated after each other, lowering the amount of tiles that must be loaded into memory multiple times.
@@ -115,7 +117,16 @@ Offline calculations are generally more performant than the online applications,
 The command line application is a .NET Standard application written in C#. It consists of two path loss models (mobile network 800MHz and ITS G5), as well as a framework for running path loss calculations on a road network, in a grid, or to a single point. It also includes a tool for extracting elevation data from Hoydedata.no and converting it to a more performant custom binary format for speedy calculations.
 
 ## Calculation modes
+The application can handle two different types of config files, either for running a road network calculation, or for running an elevation data pre-processing. In addition, the application can run grid calculations and single point calculations, but these have not been the focus of the LambdaRoad project, and there has not been implemented a config entry point for them. A user competent in C# would be able to run them anyway, with some modifications to the application.
+
 ### Road network
+A road network calculation is a calculation where the received signal strength from one or more base stations is calculated along all roads within the base station's range.
+
+Road network calculations are descripted in detail in the section 'Running road network calculations' above.
+
+The config file below shows an example of a config file for a road network calculation:
+
+
 ### Grid
 ### Single point
 ## Path loss models
