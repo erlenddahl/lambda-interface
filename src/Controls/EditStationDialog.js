@@ -65,7 +65,7 @@ class EditStationDialog extends React.Component {
                             </Field>
                             <Field name="antennaType">
                             {({ field }) => (
-                                <InputEditor field={field} title="Antenna type" tooltip="The unique ID of this station, used for identifying the station in calculation results. If this ID is not unique, road link calculations will fail.">
+                                <InputEditor field={field} title="Antenna type" tooltip="The type of antenna. Can be either Mobile network (800MHz) or ITS G5.">
                                     <FormControl as="select" {...field}>
                                         <option value="MobileNetwork">Mobile network</option>
                                         <option value="ItsG5">ITS G5</option>
