@@ -35,7 +35,7 @@ class JobTable extends React.Component {
 
     render() {
 
-        if(!this.props.jobs)
+        if(!this.props.jobs || this.props.jobs.error)
             return <span></span>;
 
         if(this.props.jobs.length < 1)
