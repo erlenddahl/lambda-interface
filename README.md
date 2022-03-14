@@ -1,6 +1,6 @@
 # LambdaRoad - Web-based map tool
 
-This is the repo for the LambdaRoad web-based map tool, which allows the user to view, add and edit stations on a multi-layered map, run path loss calculations, and view their results. The majority of this file documents how the tool can be used, how it works internally, how it can be run offline, and partially how the source code can be understood and modified.
+This is the repo for the LambdaRoad [web-based map tool](http://mobilitet.sintef.no/lambda/), which allows the user to view, add and edit stations on a multi-layered map, run path loss calculations, and view their results. The majority of this file documents how the tool can be used, how it works internally, how it can be run offline, and partially how the source code can be understood and modified.
 
 Two path loss models were created in the LambdaRoad project, both based on signal strength data collected in Norway: [one for mobile network at 800MHz](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/MobileNetworkPathLossCalculator.cs), and one for [ITS G5](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/ItsG5PathLossCalculator.cs). Both models have been implemented in a command line application for calculating path loss along the road network. A web based map tool was created to demonstrate the path loss models, and allow easy experimentation and testing. The documentation for data collection and model creation can be read as part of the [LambdaRoad WP1 Report](docs/WP1-report_LambdaRoad_final2.pdf).
 
