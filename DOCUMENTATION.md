@@ -1,6 +1,6 @@
-# The LambdaRoad path loss model and online demonstrator
+# LambdaRoad path loss calculations and online demonstrator
 
-In the LambdaRoad project, two path loss models were created based on collected signal strength data: one for mobile network at 800MHz, and one for ITS G5. Both models have been implemented in a command line application for calculating path loss along the road network. A web based map tool was created to demonstrate the path loss models, and allow easy experimentation and testing.
+In the LambdaRoad project, two path loss models were created based on collected signal strength data: [one for mobile network at 800MHz](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/MobileNetworkPathLossCalculator.cs), and one for [ITS G5](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/ItsG5PathLossCalculator.cs). Both models have been implemented in a command line application for calculating path loss along the road network. A web based map tool was created to demonstrate the path loss models, and allow easy experimentation and testing.
 
 ![](docs/header.png)
 
@@ -316,9 +316,14 @@ The JSON below shows an example of a config file for a road network calculation:
 ```
 
 ### Grid
+A method for running calculations in a grid (a square on the map) was implemented as part of performance testing, but as it was not a focus of this project, there was never developed a config system or runnable entry point for this type of calculation. The [FullRun/Grid](https://github.com/erlenddahl/lambdaroad-model/tree/main/LambdaModel.Tests/FullRun/Grid) unit tests in the unit test project shows how the grid calculations can be run.
+
 ### Single point
+Single point calculations were implemented for easy testing in the map based tool (see 'Running path loss calculations from a base station to a point'). As it has no value for the command line application in this project, there was never developed a config system or runnable entry point for this type of calculation, except for the one through the REST API. For code examples on how to run single point calculations, see [Controllers/SinglePointController](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaRestApi/Controllers/SinglePointController.cs) in the LambdaRestApi project.
+
 ## Path loss models
-### Mobile network
-### ITS G5
-### Implementing new models
+In the LambdaRoad project, two path loss models were created based on collected signal strength data: [one for mobile network at 800MHz](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/MobileNetworkPathLossCalculator.cs), and one for [ITS G5](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/ItsG5PathLossCalculator.cs). The documentation for data collection and model creation can be read as part of the [LambdaRoad WP1 Report](docs/WP1-report_LambdaRoad_final2.pdf).
+
+New path loss models can be created by implementing the [IPathLossCalculator interface](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/IPathLossCalculator.cs), then modifying the relevant config class to instantiate the new path loss model when relevant.
+
 ## Elevation data
