@@ -6,7 +6,7 @@ import Alert from 'react-bootstrap/Alert';
 class HelpDialog extends React.Component {
 
     render() {
-        return (<div className="p-3">
+        return (<div className="p-3" style={{overflow: "auto", height: "100%"}}>
 
             <h2>LambdaRoad</h2>
 
