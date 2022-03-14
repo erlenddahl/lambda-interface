@@ -124,4 +124,4 @@ The online map tool sends data to the server, which runs the command line applic
 
 Offline calculations are generally more performant than the online applications, both because there is no calculation queue, and because the application for some reason is about twice as fast when compiled as a standalone executable as compared to a part of an ASP.NET REST API. Offline calculations can also be easier to set up for complex calculations, as you have full control of the config-file the application runs.
 
-More information about the offline calculations can be found in the backend documentation.
+More information about the offline calculations can be found in the [backend documentation](https://github.com/erlenddahl/lambdaroad-model).
