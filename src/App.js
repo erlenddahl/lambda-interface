@@ -10,7 +10,7 @@ import MainMenu from './Controls/MainMenu.js';
 import ContextMenu from './ContextMenu.js';
 import _ from 'lodash';
 import { SELECTION_MODE } from './Helpers/Constants';
-import { faMapMarkerEdit, faAbacus, faClipboardList } from '@fortawesome/pro-solid-svg-icons'
+import { faMapMarkerEdit, faAbacus, faClipboardList, faQuestionCircle } from '@fortawesome/pro-solid-svg-icons'
 import ImportStationsDialog from './Controls/ImportStationsDialog';
 import BaseStationList from './Models/BaseStationList';
 import BaseStation from './Models/BaseStation';
@@ -18,6 +18,7 @@ import PopupContainer from './Controls/PopupContainer';
 import { Button } from 'react-bootstrap';
 import CalcHelper from './Calculations/CalcHelper';
 import UserSettings from './Helpers/UserSettings';
+import HelpDialog from './Controls/HelpDialog';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-tippy/dist/tippy.css';
@@ -28,8 +29,6 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        //TODO: Check MinPathLossTests
-        
         this.helper = new CalcHelper();
 
         this.baseStations = new BaseStationList(UserSettings.getBaseStations().map(p => new BaseStation(p)));
@@ -61,6 +60,7 @@ class App extends React.Component {
         this.onLayerVisibilityChange = this.onLayerVisibilityChange.bind(this);
 
         this.state = {
+            showHelpDialog: !localStorage.getItem("helpshown"),
             contextmenu: {
                 shown: false,
                 left: "100px",
@@ -86,6 +86,13 @@ class App extends React.Component {
                     cmd: "calculate",
                     selectionMode: SELECTION_MODE.MULTIPLE,
                     tooltip: "Calculate signal strength (RSRP) along the road network, or see results from previous calculations."
+                },
+                {
+                    icon: faQuestionCircle,
+                    text: "Help",
+                    cmd: "help",
+                    selectionMode: null,
+                    tooltip: "Open the help popup."
                 }
             ],
             layers: {
@@ -290,6 +297,12 @@ class App extends React.Component {
     }
 
     onMenuItemClicked(item) {
+
+        if(item.cmd == "help"){
+            this.setState({showHelpDialog: true});
+            return;
+        }
+
         this.setState(state => ({
             menuItems: state.menuItems.map(p => {
                 p.active = p.text == item.text;
@@ -387,6 +400,11 @@ class App extends React.Component {
         this.setState({ copyPopup: data });
     }
 
+    closeAndForgetHelpDialog(){
+        this.setState({showHelpDialog: false});
+        localStorage.setItem("helpshown", true);
+    }
+
     render() {
         return (<div style={{ width: "100%", height: "100%" }}>
             <MainMenu style={{ zIndex: 1, position: "absolute", padding: "10px" }} items={this.state.menuItems} onMenuItemClicked={this.onMenuItemClicked} />
@@ -396,6 +414,9 @@ class App extends React.Component {
             </PopupContainer>}
             {this.state.showStationImportDialog && <PopupContainer>
                 <ImportStationsDialog onSave={this.onImportSaved} onCancel={this.onImportCancelled} ></ImportStationsDialog>
+            </PopupContainer>}
+            {this.state.showHelpDialog && <PopupContainer>
+                <HelpDialog closeRequested={() => this.closeAndForgetHelpDialog()} />
             </PopupContainer>}
             {this.state.copyPopup && <PopupContainer>
                 <div>
