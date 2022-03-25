@@ -4,7 +4,7 @@ This is the code repository for the LambdaRoad [web-based map tool](http://mobil
 
 Two path loss models were created in the LambdaRoad project, both based on signal strength data collected in Norway: [one for the mobile network (800MHz)](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/MobileNetworkPathLossCalculator.cs), and one for [ITS G5](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/ItsG5PathLossCalculator.cs). Both models have been implemented in the [command line application](https://github.com/erlenddahl/lambdaroad-model) that acts as a backend for the web-based tool. More information about the data collection can be found in the [LambdaRoad WP1 Report](https://sintef.brage.unit.no/sintef-xmlui/handle/11250/2981432).
 
-New path loss models can be created by implementing the [IPathLossCalculator interface](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/IPathLossCalculator.cs), then modifying the relevant config class to instantiate the new path loss model when relevant.
+New path loss models (or variations of the existing ones, such as mobile network models for different frequencies) can be created by implementing the [IPathLossCalculator interface](https://github.com/erlenddahl/lambdaroad-model/blob/main/LambdaModel/PathLoss/IPathLossCalculator.cs), then modifying the relevant config class to instantiate the new path loss model when relevant.
 
 ![](docs/header.png)
 
@@ -21,17 +21,26 @@ For long-running calculations with high performance requirements, it is recommen
 
 Warning: The online demonstrator has primarly been tested in Mozilla Firefox and Google Chrome. It will probably work in most modern browsers, but it should not be surprising if there are issues in older browsers such as Internet Explorer.
 
+## API keys
+In order to run a road network calculation, you need an API key. This is to reduce the load on the server, since road network calculations are resource intensive. Contact erlend.dahl@sintef.no to get one.
+
 ## User data in the online demonstrator
 All base stations you place on the map are saved only in your web browser's local storage. This means that if you switch to another browser or another computer, you will lose your setup. You can export stations and import them in another browser or on another computer, see 'Importing/exporting data'.
 
 If you run a single point calculation, the base station parameters as well as the coordinates of the target point is sent to the server and processed, but nothing is saved anywhere.
 
-If you run a road link calculation, the parameters of all selected base stations are sent to the server, and the relevant parameters are stored as part of the result files. You can manually delete these files by deleting the calculations results in the 'Calculate road network' section of the tool.
+If you run a road network calculation, the parameters of all selected base stations are sent to the server, and the relevant parameters are stored as part of the result files. Calculations and results started with a certain API key will only be available to users with the same API key. You can manually delete these files by deleting the calculations results in the 'Calculate road network' section of the tool.
 
 If you do not want to send any data to our server, you can run the entire calculation offline instead. See the 'Offline calculations' section below.
 
 ## What is a "base station" in this tool?
-In the current implementation of the tool, a "base station" should probably have been called "an antenna" -- it is a single signal source. If you need to simulate a base station with multiple antennas, you must zoom in as much as you can and place the base stations very close to each other, or use offline calculations where you can easily define multiple base stations on the same coordinate in the config file.
+In the current implementation of the tool, a base station is a single signal source. If you need to simulate a base station with multiple antennas, you can do this in one of the following ways:
+
+1. Calculate the total sum of power/gain for all antennas, and input the summed values in the Power/Gain fields on the base station.
+2. Zoom in as much as you can and place the base stations very close to each other.
+3. Use offline calculations where you can easily define multiple base stations on the same coordinate in the config file.
+
+Option 1, while requiring some manual preparation work for the user, will result in shorter calculation times, as the total number of base stations will be reduced.
 
 ## Placing new base stations on the map
 To place a new station on the map, click on the map where you want to place it, and pick "Create new station at this location" in the context menu that appears. The station will then appear as a gray circle, which will be colorized when it has been saved. Edit the base station parameters as required, and click "Save station" to finalize it.
