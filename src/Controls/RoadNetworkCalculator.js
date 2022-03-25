@@ -43,27 +43,30 @@ class RoadNetworkCalculator extends React.Component {
 
     async refreshJobStatuses() {
 
-        if(!this.state.jobs){
-            await this.loadJobs();
-        }else{
+        if(this.parameterValues?.apiKey){
 
-            try{
-                await Promise.all(this.state.jobs.map(async p => {
+            if(!this.state.jobs || this.state.jobs.length < 1){
+                await this.loadJobs();
+            }else{
 
-                    if(p.status == "Failed" || p.status == "Finished") return;
+                try{
+                    await Promise.all(this.state.jobs.map(async p => {
 
-                    const data = await this.post("status", { key: p.data.Id }, true);
-                    if(!data?.data){
-                        // This job has been finished, and will not return status data anymore.
-                        // Reload the job list to fetch the final item.
-                        await this.loadJobs();
-                        return; 
-                    }
-                    
-                    this.updateJobState(data);
-                }));
-            }catch(ex){
-                console.log(ex);
+                        if(p.status == "Failed" || p.status == "Finished") return;
+
+                        const data = await this.post("status", { key: p.data.Id }, true);
+                        if(!data?.data){
+                            // This job has been finished, and will not return status data anymore.
+                            // Reload the job list to fetch the final item.
+                            await this.loadJobs();
+                            return; 
+                        }
+                        
+                        this.updateJobState(data);
+                    }));
+                }catch(ex){
+                    console.log(ex);
+                }
             }
         }
 
@@ -116,6 +119,9 @@ class RoadNetworkCalculator extends React.Component {
     }
 
     async loadJobs(){
+
+        if(!this.parameterValues?.apiKey) return;
+
         try{
             const data = await this.post("jobs", null, true);
 
@@ -276,6 +282,7 @@ class RoadNetworkCalculator extends React.Component {
                 </HelpText>
                 {this.state.calculationError && <Alert className="mt-4" variant="danger">{this.state.calculationError}</Alert>}
 
+                <br />
                 <JobTable jobs={this.state.jobs} currentGeoJsonLayerName={this.props.currentGeoJsonLayerName} onResultToggleRequested={this.toggleResults} onDeleteRequested={this.onDeleteRequested} onAbortRequested={this.onAbortRequested}></JobTable>
             </div>
         </div>
