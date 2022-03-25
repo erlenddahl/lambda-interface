@@ -10,9 +10,9 @@ class HelpDialog extends React.Component {
 
             <h2>LambdaRoad</h2>
 
-            <p>Welcome to the online demonstrator for the LambdaRoad path loss models. In this tool, you can create base stations on the map (or import them from CSV), and run hightly detailed path loss calculations along the road network. Stations you have created are stored in your browser&apos;s local storage for your convenience. To run road network calculations, you need an API key. Contact <a href="mailto:erlend.dahl@sintef.no">erlend.dahl@sintef.no</a> to get one.</p>
+            <p>Welcome to the online demonstrator for the LambdaRoad path loss models. In this tool, you can create base stations on the map (or import them from CSV), and run highly detailed path loss calculations along the road network. Stations you have created are stored in your browser&apos;s local storage for your convenience. To run road network calculations, you need an API key. Contact <a href="mailto:erlend.dahl@sintef.no">erlend.dahl@sintef.no</a> to get one.</p>
 
-            <p>Source code and documentation of the online tool can be found <a href="https://github.com/erlenddahl/lambdaroad-interface" target="_blank" rel="noreferrer">here</a>. Source code and documentation for the calculation core and command line application that can be used for offline calculations can be found <a href="https://github.com/erlenddahl/lambdaroad-interface" target="_blank" rel="noreferrer">here</a>.</p>
+            <p>Source code and documentation of the online tool can be found <a href="https://github.com/erlenddahl/lambdaroad-interface" target="_blank" rel="noreferrer">here</a>. Source code and documentation for the calculation core and command line application that can be used for offline calculations can be found <a href="https://github.com/erlenddahl/lambdaroad-model" target="_blank" rel="noreferrer">here</a>.</p>
 
             <p style={{"fontWeight": "bold"}}>In general, hold your mouse over something in the tool to get a mouseover explanation.</p>
 
